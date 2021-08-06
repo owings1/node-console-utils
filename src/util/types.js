@@ -78,6 +78,10 @@ const Cast = {
 
 const Is = {
 
+    Array: function(arg) {
+        return Array.isArray(arg)
+    },
+
     Error: function(arg) {
         return arg instanceof Error
     },

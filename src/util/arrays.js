@@ -1,3 +1,16 @@
+/**
+ * Append all values to an array.
+ *
+ * @throws {TypeError}
+ * @param {array} The array to push to
+ * @param {array} The values to push
+ * @return {array} The input array
+ */
+function append(arr, values) {
+    values.forEach(value => arr.push(value))
+    return arr
+}
+
 function arrayHash(...args) {
     return Object.fromEntries(
         args.map(Object.values).flat().map(value =>
@@ -23,4 +36,4 @@ function arrayUnique(...arrs) {
 }
 
 
-module.exports = {arrayHash, arraySum, arrayUnique}
+module.exports = {append, arrayHash, arraySum, arrayUnique}
