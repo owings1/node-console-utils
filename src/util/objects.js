@@ -43,6 +43,7 @@ function lset(obj, keyPath, value) {
     if (!keyPath) {
         return
     }
+    const parts = Is.Array(keyPath) ? keyPath : String(keyPath).split('.')
     let base = obj
     for (let i = 0; i < parts.length - 1; ++i) {
         const key = parts[i]
