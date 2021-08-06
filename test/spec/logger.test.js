@@ -25,9 +25,9 @@
 const {expect} = require('chai')
 const chalk = require('chalk')
 const {ger, MockOutput} = require('../helpers/index.js')
-const {merge, Logger, Strings} = require('../../index.js')
+const {merge, Logger, strings} = require('../../index.js')
 
-const {stripAnsi} = Strings
+const {stripAnsi} = strings
 
 describe('Logger', () => {
 

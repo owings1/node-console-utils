@@ -3,7 +3,10 @@ const {merge} = require('./src/util/merge.js')
 module.exports = {
     get Logger() { return require('./src/logger.js') },
     get HashProxy() { return require('./src/hash-proxy.js') },
-    get Strings() { return require('./src/util/strings.js')},
+    get strings() { return require('./src/util/strings.js')},
+    get arrays() { return require('./src/util/arrays.js')},
+    get errors() { return require('./src/util/errors.js')},
+    get objects() { return require('./src/util/objects.js')},
     merge,
     Cast,
     Is,
