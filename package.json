@@ -1,0 +1,24 @@
+{
+  "name": "console-utils",
+  "version": "1.0.0",
+  "description": "chalk and logging utils for nodejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc --reporter=text-summary mocha && nyc report --reporter=lcov"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owings1/node-console-utils.git"
+  },
+  "keywords": [
+    "chalk",
+    "ansi",
+    "logging"
+  ],
+  "author": "Doug Owings <doug@dougowings.net>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/owings1/node-console-utils/issues"
+  },
+  "homepage": "https://github.com/owings1/node-console-utils#readme"
+}
