@@ -1,7 +1,7 @@
-import stream from 'stream'
-import {stripAnsi} from '../../src/util/strings.js'
+const stream = require('stream')
+const {stripAnsi} = require('../../src/util/strings.js')
 
-export class MockOutput extends stream.Writable {
+class MockOutput extends stream.Writable {
 
     constructor(...args) {
         super(...args)
@@ -16,3 +16,5 @@ export class MockOutput extends stream.Writable {
 
     get plain() { return stripAnsi(this.raw) }
 }
+
+module.exports = {MockOutput}

@@ -22,18 +22,18 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import chalkpkg from 'chalk'
-import chalkPipe from 'chalk-pipe'
-import {formatWithOptions} from 'util'
-import {Cast, Is} from './util/types.js'
-import {Caret} from './util/chars.js'
-import {cat} from './util/strings.js'
-import merge from './util/merge.js'
-import {parseStack} from './util/errors.js'
-import HashProxy from './hash-proxy.js'
-import {revalue} from './util/objects.js'
-import {ArgumentError} from './errors.js'
-const {Instance: Chalk, level: DefaultColor} = chalkpkg
+const {Instance: Chalk, level: DefaultColor} = require('chalk')
+const chalkPipe = require('chalk-pipe')
+const {formatWithOptions} = require('util')
+const HashProxy = require('./hash-proxy.js')
+const {Cast, Is} = require('./util/types.js')
+const {Caret} = require('./util/chars.js')
+const {cat} = require('./util/strings.js')
+const {merge} = require('./util/merge.js')
+const {parseStack} = require('./util/errors.js')
+const {revalue} = require('./util/objects.js')
+
+const {ArgumentError} = require('./errors.js')
 
 const LevelNums = {
     error : 0,
@@ -210,7 +210,7 @@ function log(level, ...args) {
     this[method](body + '\n')
 }
 
-export default class Logger {
+module.exports = class Logger {
 
     constructor(opts) {
         opts = merge(Defaults, opts)

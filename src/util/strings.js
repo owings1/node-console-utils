@@ -50,7 +50,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-export const Regex = {
+const Regex = {
     // From: https://github.com/chalk/ansi-regex/blob/c1b5e45f/index.js
     Ansi: new RegExp([
         '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
@@ -58,11 +58,11 @@ export const Regex = {
     ].join('|'), 'g')
 }
 
-export function cat(...args) {
+function cat(...args) {
     return args.flat().join('')
 }
 
-export function stripAnsi(str) {
+function stripAnsi(str) {
     return str.replace(Regex.Ansi, '')
 }
 
@@ -73,9 +73,11 @@ export function stripAnsi(str) {
  * @param {string} The input string
  * @return {string} The result string
  */
-export function ucfirst(str) {
+function ucfirst(str) {
     if (str == null || !str.length) {
         return str
     }
     return str.substring(0, 1).toUpperCase() + str.substring(1)
 }
+
+module.exports = {cat, stripAnsi, ucfirst, Regex}

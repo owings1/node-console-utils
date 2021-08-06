@@ -1,6 +1,6 @@
-import {expect} from 'chai'
-import HashProxy from '../../src/hash-proxy.js'
-import {ger} from '../helpers/index.js'
+const {expect} = require('chai')
+const HashProxy = require('../../src/hash-proxy.js')
+const {ger, MockOutput} = require('../helpers/index.js')
 
 function noop() {}
 

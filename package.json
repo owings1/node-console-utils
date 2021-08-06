@@ -2,10 +2,9 @@
   "name": "node-console-utils",
   "version": "1.0.0",
   "description": "chalk and logging utils for nodejs",
-  "type": "module",
-  "exports": "index.js",
+  "main": "index.js",
   "scripts": {
-    "test": "mocha test/**/*.test.js"
+    "test": "nyc --reporter=text-summary mocha test/** && nyc report --reporter=lcov"
   },
   "repository": {
     "type": "git",
@@ -27,12 +26,13 @@
   },
   "dependencies": {
     "chalk": "^4.1.2",
-    "chalk-pipe": "^5.1.1",
+    "chalk-pipe": "^4.0.0",
     "deepmerge": "^4.2.2"
   },
   "devDependencies": {
     "chai": "^4.3.4",
-    "mocha": "^9.0.3"
+    "mocha": "^9.0.3",
+    "nyc": "^15.1.0"
   },
   "mocha": {
     "extension": [

@@ -1,7 +1,10 @@
-import Logger from './src/logger.js'
-import HashProxy from './src/hash-proxy.js'
-import merge from './src/util/merge.js'
-export {merge, Logger, HashProxy}
-
-export {Cast, Is} from './src/util/types.js'
-export * as Strings from './src/util/strings.js'
+const {Cast, Is} = require('./src/util/types.js')
+const {merge} = require('./src/util/merge.js')
+module.exports = {
+    get Logger() { return require('./src/logger.js') },
+    get HashProxy() { return require('./src/hash-proxy.js') },
+    get Strings() { return require('./src/util/strings.js')},
+    merge,
+    Cast,
+    Is,
+}

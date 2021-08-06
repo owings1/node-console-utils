@@ -20,10 +20,10 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import {ArgumentError} from './errors.js'
-import {Is} from './util/types.js'
+const {ArgumentError} = require('./errors.js')
+const {Is} = require('./util/types.js')
 
-export default function HashProxy(source, opts) {
+module.exports = function HashProxy(source, opts) {
     checkArg(source, 'source', 'object', Is.Object)
     if (opts) {
         checkArg(opts, 'opts', 'object', Is.Object)

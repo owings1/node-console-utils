@@ -1,5 +1,5 @@
 
-export function getError(cb) {
+function getError(cb) {
     let ret
     try {
         ret = cb()
@@ -28,4 +28,4 @@ class TestError extends Error {
 
 class GetErrorError extends TestError {}
 
-export {getError as ger}
+module.exports = {getError, ger: getError}

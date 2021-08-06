@@ -56,9 +56,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import {EventEmitter} from 'events'
+const {EventEmitter} = require('events')
 
-export const Cast = {
+const Cast = {
    /**
     * 
     * @param {...*}
@@ -76,7 +76,7 @@ export const Cast = {
     }
 }
 
-export const Is = {
+const Is = {
 
     Error: function(arg) {
         return arg instanceof Error
@@ -148,3 +148,5 @@ export const Is = {
 }
 
 Is.WritableStream = Is.WriteableStream
+
+module.exports = {Cast, Is}

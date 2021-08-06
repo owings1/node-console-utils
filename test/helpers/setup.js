@@ -1,10 +1,9 @@
-import chai from 'chai'
-
+const {Assertion} = require('chai')
 // see https://www.chaijs.com/guide/helpers/ 
-chai.Assertion.addMethod('erri', function (type) {
+Assertion.addMethod('erri', function (type) {
     var obj = this._obj
     // preconditon, whether positive or negative assertion
-    new chai.Assertion(this._obj).to.be.instanceof(Error)
+    new Assertion(this._obj).to.be.instanceof(Error)
 
     var name = type + 'Error'
     var isprop = 'is' + name

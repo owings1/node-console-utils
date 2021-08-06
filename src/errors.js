@@ -1,8 +1,13 @@
-export class BaseError extends Error {
+class BaseError extends Error {
     constructor(...args) {
         super(...args)
         this.name = this.constructor.name
     }
 }
 
-export class ArgumentError extends BaseError {}
+class ArgumentError extends BaseError {}
+
+module.exports = {
+    ArgumentError,
+    BaseError,
+}

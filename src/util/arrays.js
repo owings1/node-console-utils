@@ -1,4 +1,4 @@
-export function arrayHash(...args) {
+function arrayHash(...args) {
     return Object.fromEntries(
         args.map(Object.values).flat().map(value =>
             [value, true]
@@ -14,11 +14,13 @@ export function arrayHash(...args) {
  * @param {array} The input array
  * @return {integer} The result sum
  */
-export function arraySum(arr) {
+function arraySum(arr) {
     return arr.reduce((acc, cur) => acc + cur, 0)
 }
 
-export function arrayUnique(...arrs) {
+function arrayUnique(...arrs) {
     return Object.keys(arrayHash(...arrs))
 }
 
+
+module.exports = {arrayHash, arraySum, arrayUnique}

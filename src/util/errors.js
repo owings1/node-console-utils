@@ -54,7 +54,7 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import {Is} from './types.js'
+const {Is} = require('./types.js')
 
 /**
  * Adapted from:
@@ -66,7 +66,7 @@ import {Is} from './types.js'
  * @param {Error} The error to parse
  * @return {object} Strings {stack, message, rawMessage}
  */
-export function parseStack(err) {
+function parseStack(err) {
 
     // Normalize raw error message.
     const rawMessage = rawErrorMessage(err)
@@ -102,7 +102,7 @@ export function parseStack(err) {
  * @param {Error} The error to examine
  * @return {string} The normalized message
  */
-export function getRawMessage(err) {
+function getRawMessage(err) {
     let raw = ''
     if (Is.Function(err.inspect)) {
         raw += err.inspect()
@@ -111,3 +111,5 @@ export function getRawMessage(err) {
     }
     return raw
 }
+
+module.exports = {getRawMessage, parseStack}
