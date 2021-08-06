@@ -1,0 +1,1 @@
+export const Caret = '\u276f'

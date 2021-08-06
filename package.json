@@ -1,10 +1,11 @@
 {
-  "name": "console-utils",
+  "name": "node-console-utils",
   "version": "1.0.0",
   "description": "chalk and logging utils for nodejs",
-  "main": "index.js",
+  "type": "module",
+  "exports": "index.js",
   "scripts": {
-    "test": "nyc --reporter=text-summary mocha && nyc report --reporter=lcov"
+    "test": "mocha test/**/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -20,5 +21,25 @@
   "bugs": {
     "url": "https://github.com/owings1/node-console-utils/issues"
   },
-  "homepage": "https://github.com/owings1/node-console-utils#readme"
+  "homepage": "https://github.com/owings1/node-console-utils#readme",
+  "engines": {
+    "node": ">=12.20"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "chalk-pipe": "^5.1.1",
+    "deepmerge": "^4.2.2"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "mocha": "^9.0.3"
+  },
+  "mocha": {
+    "extension": [
+      "test.js"
+    ],
+    "file": [
+      "test/helpers/setup.js"
+    ]
+  }
 }
