@@ -1,5 +1,5 @@
 {
-  "name": "node-console-utils",
+  "name": "console-utils-h",
   "version": "1.0.0",
   "description": "chalk and logging utils for nodejs",
   "main": "index.js",
