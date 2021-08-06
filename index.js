@@ -1,4 +1,4 @@
-const {Cast, Is} = require('./src/util/types.js')
+const {Cast, Is, typeOf} = require('./src/util/types.js')
 const {merge} = require('./src/util/merge.js')
 module.exports = {
     get Logger() { return require('./src/logger.js') },
@@ -10,4 +10,5 @@ module.exports = {
     merge,
     Cast,
     Is,
+    typeOf,
 }

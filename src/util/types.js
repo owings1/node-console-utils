@@ -58,6 +58,25 @@
  */
 const {EventEmitter} = require('events')
 
+static typeOf(arg) {
+    if (arg === null) {
+        return 'null'
+    }
+    if (Is.Array(arg)) {
+        return 'array'
+    }
+    if (Is.Buffer(arg)) {
+        return 'buffer'
+    }
+    if (Is.Stream(arg)) {
+        return 'stream'
+    }
+    if (Is.Object(arg)) {
+        return 'object'
+    }
+    return typeof arg
+}
+
 const Cast = {
    /**
     * 
@@ -65,7 +84,7 @@ const Cast = {
     * @return {array}
     */
     toArray(val) {
-        if (Array.isArray(val)) {
+        if (Is.Array(val)) {
             return val
         }
         const arr = []
@@ -80,6 +99,10 @@ const Is = {
 
     Array: function(arg) {
         return Array.isArray(arg)
+    },
+
+    Buffer: function(arg) {
+        return Buffer.isBuffer(arg)
     },
 
     Error: function(arg) {
@@ -153,4 +176,4 @@ const Is = {
 
 Is.WritableStream = Is.WriteableStream
 
-module.exports = {Cast, Is}
+module.exports = {Cast, Is, typeOf}
