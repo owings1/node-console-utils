@@ -58,7 +58,7 @@
  */
 const {EventEmitter} = require('events')
 
-static typeOf(arg) {
+function typeOf(arg) {
     if (arg === null) {
         return 'null'
     }
