@@ -1,6 +1,26 @@
 const {Is} = require('./types')
 const {ArgumentError} = require('../errors')
 
+/* ... find a home buddy
+static buffersEqual(a, b) {
+    if (Util.isFunction(a.equals)) {
+        return a.equals(b)
+    }
+    if (Util.isFunction(a.compare)) {
+        return a.compare(b) == 0
+    }
+    const len = a.length
+    if (len != b.length) {
+        return false
+    }
+    for (let i = 0; i < len; ++i) {
+        if (a.readUInt8(i) !== b.readUInt8(i)) {
+            return false
+        }
+    }
+    return true
+}
+*/
 function lget(obj, keyPath) {
     if (!keyPath) {
         return
