@@ -2,6 +2,8 @@ const {expect} = require('chai')
 const {ger, TestError} = require('./errors.js')
 const {Cast: {toArray}, Is, objects: {lget}} = require('../../index.js')
 
+const {log, error: logerr} = console
+
 function makeCases(...args) {
 
     const cases = toArray(args.pop())
@@ -15,7 +17,7 @@ function makeCases(...args) {
         const n = i + 1
         const opts = normOpts({...opt, ...opts_})
         if (!Is.Function(opts.run)) {
-            console.error('case:', n, 'opts:', opts)
+            logerr('case:', n, 'opts:', opts)
             throw new MakeCasesError('Must provide a run function.')
         }
         const desc = getDescription(opts)
@@ -31,10 +33,10 @@ function makeCases(...args) {
                 }
             } finally {
                 if (debug) {
-                    console.log('case number:', n, 'of', cases.length)
-                    console.log('opts (spec):', opts_)
-                    console.log('opts (norm):', opts)
-                    console.log({result})
+                    log('case number:', n, 'of', cases.length)
+                    log('opts (spec):', opts_)
+                    log('opts (norm):', opts)
+                    log({result})
                 }
             }
             const should = expect(result)

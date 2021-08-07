@@ -3,10 +3,6 @@ const {ArgumentError} = require('../errors')
 
 const objects = module.exports = {
 
-    isNullOrEmpty: function isNullOrEmptyObject(arg) {
-        return !Is.Iterable(arg) || objects.isEmpty(arg)
-    },
-
     /**
      * Check whether an object is empty. Returns false if the parameter is not
      * iterable.
@@ -24,6 +20,10 @@ const objects = module.exports = {
         return true
     },
 
+    isNullOrEmpty: function isNullOrEmptyObject(arg) {
+        return !Is.Iterable(arg) || objects.isEmpty(arg)
+    },
+
     lget: function lget(obj, keyPath) {
         if (!keyPath) {
             return
@@ -38,6 +38,7 @@ const objects = module.exports = {
         }
         return base
     },
+
     lset: function lset(obj, keyPath, value) {
         if (!Is.Object(obj)) {
             throw new ArgumentError(`Argument (obj) must be an object.`)
@@ -57,6 +58,7 @@ const objects = module.exports = {
         base[parts[parts.length - 1]] = value
         return obj
     },
+
     rekey: function rekey(obj, cb) {
         return Object.fromEntries(
             Object.entries(obj).map(([key, value], i) =>
@@ -64,6 +66,7 @@ const objects = module.exports = {
             )
         )
     },
+
     revalue: function revalue(obj, cb) {
         return Object.fromEntries(
             Object.entries(obj).map(([key, value], i) =>
@@ -71,6 +74,7 @@ const objects = module.exports = {
             )
         )
     },
+
     valuesHash: function valuesHash(...args) {
         return Object.fromEntries(
             args.map(Object.values).flat().map(value =>
@@ -78,6 +82,7 @@ const objects = module.exports = {
             )
         )
     },
+
     /**
      * Update an object with new values.
      *

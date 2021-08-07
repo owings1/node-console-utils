@@ -106,6 +106,13 @@ const strings = module.exports = {
         return str.substring(0, 1).toLowerCase() + str.substring(1)
     },
 
+    /**
+     * Strip ANSI sequences from a string.
+     *
+     * @throws {TypeError}
+     * @param {string} The input string
+     * @return {string} The result string
+     */
     stripAnsi: function stripAnsi(str) {
         return str.replace(Regex.Ansi, '')
     },
