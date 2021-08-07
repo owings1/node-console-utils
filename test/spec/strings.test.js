@@ -33,49 +33,30 @@ describe.only('strings', () => {
 
     })
 
-    describe('Regex', () => {
-
-        describe('Ansi', () => {
-
-            it('should ...')
-            it('todo', function () {
-                
-            })
-        })
-
-        describe('Regex', () => {
-
-            it('should ...')
-            it('todo', function () {
-                
-            })
-        })
-    })
-
     describe('#cat', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases.defaults(strings.cat)
+        .build({json: 'args'}, [
+            {exp: 'abc', args: ['a','b','c']},
+            {exp: 'abc', args: [['a','b','c']]},
+            {exp: 'abc', args: [['a','b'],'c']},
+            {exp: ''},
+        ])
     })
 
     describe('#endsWith', () => {
 
         cases(strings.endsWith, [
-            {err: TypeError, oper: 'instanceof'},
+            {err: TypeError},
         ])
-
-        it('should ...')
     })
 
     describe('#escapeRegex', () => {
 
         cases(strings.escapeRegex, [
             {err: TypeError, oper: 'instanceof'},
+            {skip: true},
         ])
-
-        it('should ...')
     })
 
     describe('#lcfirst', () => {
@@ -84,25 +65,21 @@ describe.only('strings', () => {
             {err: TypeError, oper: 'instanceof', args: [['a']], json: 'args'},
             {skip: true},
         ])
-
     })
 
     describe('#stripAnsi', () => {
 
         cases(strings.escapeRegex, [
             {err: TypeError, oper: 'instanceof'},
+            {skip: true},
         ])
-
-        it('todo', function () {
-            
-        })
     })
 
     describe('#ucfirst', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(strings.ucfirst, [
+            {err: TypeError, oper: 'instanceof', args: [['a']], json: 'args'},
+            {skip: true},
+        ])
     })
 })
