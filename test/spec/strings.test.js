@@ -23,20 +23,15 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, cases} = require('../helpers/index.js')
+const {ger, cases: {defaults: defs}} = require('../helpers/index.js')
 
 const {strings} = require('../../index.js')
 
 describe.only('strings', () => {
 
-    beforeEach(function () {
-
-    })
-
     describe('#cat', () => {
 
-        cases.defaults(strings.cat)
-        .build({json: 'args'}, [
+        defs(strings.cat, {json: 'args'}).build([
             {exp: 'abc', args: ['a','b','c']},
             {exp: 'abc', args: [['a','b','c']]},
             {exp: 'abc', args: [['a','b'],'c']},
@@ -46,40 +41,58 @@ describe.only('strings', () => {
 
     describe('#endsWith', () => {
 
-        cases(strings.endsWith, [
-            {err: TypeError},
+        defs(strings.endsWith).build({err: TypeError}, [
+            {args: ['']},
+            {args: [null, '']},
+        ]).build({exp: true}, [
+            {args: ['a ', ' ']},
+            {args: ['huoihasdf', 'asdf']},
+            {args: ['', '']},
+            {args: ['asdf', '']},
+        ]).build({exp: false}, [
+            {args: ['asdf', 'huoihasdf']},
+            {args: ['huoihasdf', 'asdF']},
         ])
     })
 
     describe('#escapeRegex', () => {
 
-        cases(strings.escapeRegex, [
-            {err: TypeError, oper: 'instanceof'},
-            {skip: true},
+        defs(strings.escapeRegex).build([
+            {err: TypeError},
+            {exp: '\\^', args: '^'},
         ])
     })
 
     describe('#lcfirst', () => {
 
-        cases(strings.lcfirst, [
-            {err: TypeError, oper: 'instanceof', args: [['a']], json: 'args'},
-            {skip: true},
+        defs(strings.lcfirst).build([
+            {err: TypeError, args: [['a']], json: 'args'},
+            {exp: 'foo', args: 'Foo'},
+            {exp: 'fOO', args: 'FOO'},
+            {exp: '1foo', args: '1foo'},
+            {exp: '', args: ''},
         ])
     })
 
     describe('#stripAnsi', () => {
 
-        cases(strings.escapeRegex, [
-            {err: TypeError, oper: 'instanceof'},
-            {skip: true},
+
+        defs(strings.stripAnsi, {json: true}).build([
+            {err: TypeError},
+            {exp: 'tongue', args: '\x1B[31mtongue\x1B[39m'},
+            {exp: 'skirt', args: ['\x1B[34mskirt\x1B[39m', 6]},
+            {exp: 'x1B[34mskirt1B[39m', args: 'x1B[34mskirt1B[39m'},
         ])
     })
 
     describe('#ucfirst', () => {
 
-        cases(strings.ucfirst, [
-            {err: TypeError, oper: 'instanceof', args: [['a']], json: 'args'},
-            {skip: true},
+        defs(strings.ucfirst).build([
+            {err: TypeError, args: [['a']], json: 'args'},
+            {exp: 'Foo', args: 'foo'},
+            {exp: 'FOO', args: 'fOO'},
+            {exp: '1foo', args: '1foo'},
+            {exp: '', args: ''},
         ])
     })
 })

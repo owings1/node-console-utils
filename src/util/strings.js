@@ -70,7 +70,7 @@ const strings = module.exports = {
     },
 
     /**
-     * String ends with
+     * String ends with. Every string ends with the empty string.
      *
      * @throws {TypeError}
      * @param {string} String to examine
