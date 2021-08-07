@@ -55,29 +55,58 @@ const Regex = {
     Ansi: new RegExp([
         '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
         '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))',
-    ].join('|'), 'g')
+    ].join('|'), 'g'),
 }
 
-function cat(...args) {
-    return args.flat().join('')
-}
+const strings = module.exports = {
 
-function stripAnsi(str) {
-    return str.replace(Regex.Ansi, '')
-}
+    Regex,
 
-/**
- * Capitalize the first letter of a string.
- *
- * @throws {TypeError}
- * @param {string} The input string
- * @return {string} The result string
- */
-function ucfirst(str) {
-    if (str == null || !str.length) {
-        return str
-    }
-    return str.substring(0, 1).toUpperCase() + str.substring(1)
-}
+    cat: function cat(...args) {
+        return args.flat().join('')
+    },
 
-module.exports = {cat, stripAnsi, ucfirst, Regex}
+    /**
+     * String ends with
+     *
+     * @throws {TypeError}
+     * @param {string} String to examine
+     * @param {string} The end string to search for
+     * @return {boolean}
+     */
+    endsWith: function endsWith(str, srch) {
+        return str.length - str.lastIndexOf(srch) === srch.length
+    },
+
+    /**
+     * Lowercase the first letter of a string.
+     *
+     * @throws {TypeError}
+     * @param {string} The input string
+     * @return {string} The result string
+     */
+    lcfirst: function lcfirst(str) {
+        if (str == null || !str.length) {
+            return str
+        }
+        return str.substring(0, 1).toLowerCase() + str.substring(1)
+    },
+
+    stripAnsi: function stripAnsi(str) {
+        return str.replace(Regex.Ansi, '')
+    },
+
+    /**
+     * Capitalize the first letter of a string.
+     *
+     * @throws {TypeError}
+     * @param {string} The input string
+     * @return {string} The result string
+     */
+    ucfirst: function ucfirst(str) {
+        if (str == null || !str.length) {
+            return str
+        }
+        return str.substring(0, 1).toUpperCase() + str.substring(1)
+    },
+}

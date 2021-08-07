@@ -1,14 +1,14 @@
 {
-  "name": "console-utils-h",
+  "name": "utils-h",
   "version": "1.0.0",
-  "description": "chalk and logging utils for nodejs",
+  "description": "chalk, logging, and other basic utils for nodejs",
   "main": "index.js",
   "scripts": {
     "test": "nyc --reporter=text-summary mocha test/** && nyc report --reporter=lcov"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/owings1/node-console-utils.git"
+    "url": "git+https://github.com/owings1/node-utils-h.git"
   },
   "keywords": [
     "chalk",
@@ -18,12 +18,9 @@
   "author": "Doug Owings <doug@dougowings.net>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/owings1/node-console-utils/issues"
+    "url": "https://github.com/owings1/node-utils-h/issues"
   },
-  "homepage": "https://github.com/owings1/node-console-utils#readme",
-  "engines": {
-    "node": ">=12.20"
-  },
+  "homepage": "https://github.com/owings1/node-utils-h#readme",
   "dependencies": {
     "chalk": "^4.1.2",
     "chalk-pipe": "^4.0.0",

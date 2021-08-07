@@ -69,7 +69,7 @@ const {Is} = require('./types.js')
 function parseStack(err) {
 
     // Normalize raw error message.
-    const rawMessage = rawErrorMessage(err)
+    const rawMessage = getRawMessage(err)
 
     let message = ''
     let stack = err.stack || rawMessage

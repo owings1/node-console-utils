@@ -60,7 +60,7 @@ const {append} = require('./arrays.js')
 
 const noBlanks = line => typeof line != 'undefined' && line !== null
 
-class Diffs {
+const diffs = {
 
     /**
      * Adapted from:
@@ -75,7 +75,7 @@ class Diffs {
      * @param {object} (optional) The options {chlk}
      * @return {string} The diff
      */
-    static unified(actual, expected, opts) {
+    unified: function unifiedDiff(actual, expected, opts) {
 
         opts = opts || {}
 
@@ -104,7 +104,7 @@ class Diffs {
         const patch = diff.createPatch('string', actual, expected)
         const lines = patch.split('\n').splice(5).map(format).filter(noBlanks)
         return lines.join('\n')
-    }
+    },
 
     /**
      * Adapted from:
@@ -120,7 +120,7 @@ class Diffs {
      * @param {object} (optional) The options {chlk, isNumbers, separator}
      * @return {string} Diff
      */
-    static inline(actual, expected, opts) {
+    inline: function inlineDiff(actual, expected, opts) {
 
         opts = opts || {}
 
@@ -142,34 +142,43 @@ class Diffs {
 
         const changes = diff.diffWordsWithSpace(actual, expected)
         const lines = changes.map(format).join('').split('\n')
-        return Diffs.numberLinesIfNeeded(lines, opts).join('\n')
-    }
-
-    static numberLinesIfNeeded(lines, opts) {
-        const opt = (opts || {}).numbers
-        const isNums = typeof opt == 'function' ? opt(lines) : Boolean(opt)
-        return isNums ? Diffs.numberLines(lines, opts) : lines
-    }
-
-    static numberLines(lines, opts) {
-
-        opts = opts || {}
-
-        const {separator = ' | '} = opts
-        const chlk = {
-            number    : chalk.reset,
-            separator : chalk.grey,
-            ...opts.chlk,
-        }
-
-        const width = String(lines.length).length
-        const joiner = chlk.separator(separator)
-
-        return lines.map((line, i) => {
-            const nstr = String(i + 1).padStart(width, ' ')
-            return [chlk.number(nstr), line].join(joiner)
-        })
-    }
+        return numberLinesIfNeeded(lines, opts).join('\n')
+    },
 }
 
-module.exports = Diffs
+function numberLinesIfNeeded(lines, opts) {
+    const opt = (opts || {}).numbers
+    const isNums = typeof opt === 'function' ? opt(lines) : Boolean(opt)
+    return isNums ? Diffs.numberLines(lines, opts) : lines
+}
+
+function numberLines(lines, opts) {
+
+    opts = opts || {}
+
+    const {separator = ' | '} = opts
+    const chlk = {
+        number    : chalk.reset,
+        separator : chalk.grey,
+        ...opts.chlk,
+    }
+
+    const width = String(lines.length).length
+    const joiner = chlk.separator(separator)
+
+    return lines.map((line, i) => {
+        const nstr = String(i + 1).padStart(width, ' ')
+        return [chlk.number(nstr), line].join(joiner)
+    })
+}
+
+module.exports = {
+    ...diffs,
+    ...namedf(diffs),
+}
+
+function namedf(obj) {
+    return Object.fromEntries(
+        Object.values(obj).map(f => [f.name, f])
+    )
+}

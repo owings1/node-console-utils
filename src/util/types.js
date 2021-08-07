@@ -83,7 +83,7 @@ const Cast = {
     * @param {...*}
     * @return {array}
     */
-    toArray(val) {
+    toArray: function castToArray(val) {
         if (Is.Array(val)) {
             return val
         }
@@ -92,25 +92,29 @@ const Cast = {
             arr.push(val)
         }
         return arr
-    }
+    },
 }
 
 const Is = {
 
-    Array: function(arg) {
+    Array: function isArray(arg) {
         return Array.isArray(arg)
     },
 
-    Buffer: function(arg) {
+    Buffer: function isBuffer(arg) {
         return Buffer.isBuffer(arg)
     },
 
-    Error: function(arg) {
+    Error: function isError(arg) {
         return arg instanceof Error
     },
 
-    Function: function(arg) {
+    Function: function isFunction(arg) {
         return typeof arg === 'function'
+    },
+
+    Iterable: function isIterable(arg) {
+        return arg != null && Is.Function(obj[Symbol.iterator])
     },
 
     /**
@@ -119,7 +123,7 @@ const Is = {
      * Copyright (c) 2014-2017, Jon Schlinkert.
      * Released under the MIT License.
      */
-    Object: function(arg) {
+    Object: function isObject(arg) {
         return Object.prototype.toString.call(arg) === '[object Object]'
     },
 
@@ -129,7 +133,7 @@ const Is = {
      * Copyright (c) 2014-2017, Jon Schlinkert.
      * Released under the MIT License.
      */
-    PlainObject: function(o) {
+    PlainObject: function isPlainObject(o) {
         let ctor
         let prot
         if (Is.Object(o) === false) {
@@ -153,19 +157,23 @@ const Is = {
         return true
     },
 
-    ReadableStream: function(arg) {
+    ReadableStream: function isReadableStream(arg) {
         return arg instanceof EventEmitter && Is.Function(arg.read)
     },
 
-    Stream: function(arg) {
+    Stream: function isStream(arg) {
         return Is.ReadableStream(arg) || Is.WriteableStream(arg)
     },
 
-    String: function(arg) {
+    String: function isString(arg) {
         return typeof arg === 'string'
     },
 
-    WriteableStream: function(arg) {
+    WritableStream: function isWritableStream(arg) {
+        return Is.WriteableStream(arg)
+    },
+
+    WriteableStream: function isWriteableStream(arg) {
         return (
             arg instanceof EventEmitter &&
             Is.Function(arg.write) &&
@@ -174,6 +182,16 @@ const Is = {
     },
 }
 
-Is.WritableStream = Is.WriteableStream
+module.exports = {
+    typeOf,
+    Cast,
+    Is,
+    ...namedf(Cast),
+    ...namedf(Is),
+}
 
-module.exports = {Cast, Is, typeOf}
+function namedf(obj) {
+    return Object.fromEntries(
+        Object.values(obj).map(f => [f.name, f])
+    )
+}

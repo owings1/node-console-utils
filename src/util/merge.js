@@ -1,11 +1,28 @@
 const {Is} = require('./types.js')
 const deepmerge = require('deepmerge')
+
 function mergeDefault(...args) {
     return deepmerge.all(args.filter(Boolean), {
         isMergeableObject: Is.PlainObject,
     })
 }
-module.exports = {mergeDefault, merge: mergeDefault}
+
+const merge = {
+    merge   : mergeDefault,
+    default : mergeDefault,
+}
+
+module.exports = {
+    ...merge,
+    ...namedf(merge),
+}
+
+function namedf(obj) {
+    return Object.fromEntries(
+        Object.values(obj).map(f => [f.name, f])
+    )
+}
+
 /*
     static createMerger(opts) {
         const {arrayHash, checkArg, isPlainObject} = Util

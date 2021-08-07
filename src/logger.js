@@ -1,5 +1,5 @@
 /**
- * node-console-utils - Logger
+ * node-console-utils-n - Logger
  *
  * Copyright (C) 2021 Doug Owings
  * 
@@ -24,8 +24,9 @@
  */
 const {Instance: Chalk, level: DefaultColor} = require('chalk')
 const chalkPipe = require('chalk-pipe')
+
 const {formatWithOptions} = require('util')
-const HashProxy = require('./hash-proxy.js')
+
 const {Cast, Is} = require('./util/types.js')
 const {Caret} = require('./util/chars.js')
 const {cat} = require('./util/strings.js')
@@ -33,6 +34,7 @@ const {merge} = require('./util/merge.js')
 const {parseStack} = require('./util/errors.js')
 const {revalue} = require('./util/objects.js')
 
+const HashProxy = require('./hash-proxy.js')
 const {ArgumentError} = require('./errors.js')
 
 const LevelNums = {
@@ -79,8 +81,8 @@ Defaults.colors = DefaultColor
  * The chalk color styles to use.
  */
 Defaults.styles = {
-    default: 'chalk',
-    brace: 'grey',
+    default : 'chalk',
+    brace   : 'grey',
     error: {
         prefix  : 'red',
         string  : '#884444',
@@ -212,12 +214,15 @@ function log(level, ...args) {
 
 module.exports = class Logger {
 
+    /**
+     * @throws {ArgumentError}
+     */
     constructor(opts) {
         opts = merge(Defaults, opts)
         checkWriteStream(opts.stdout, 'opts.stdout')
         checkWriteStream(opts.stderr, 'opts.stderr')
         const chalk = new Chalk({
-            level: opts.colors ? Defaults.colors : 0
+            level: opts.colors ? Defaults.colors : 0,
         })
         const chalkp = HashProxy(opts.styles, {
             filter     : Is.String,

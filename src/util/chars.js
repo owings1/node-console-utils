@@ -1,3 +1,3 @@
-const Caret = '\u276f'
-
-module.exports = {Caret}
+const chars = module.exports = {
+    Caret: '\u276f',
+}

@@ -1,5 +1,5 @@
 const {expect} = require('chai')
-const HashProxy = require('../../src/hash-proxy.js')
+const {HashProxy} = require('../../index.js')
 const {ger, MockOutput} = require('../helpers/index.js')
 
 function noop() {}
