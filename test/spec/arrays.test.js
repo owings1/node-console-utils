@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger} = require('../helpers/index.js')
+const {ger, cases} = require('../helpers/index.js')
 
 const {arrays} = require('../../index.js')
 
@@ -35,25 +35,16 @@ describe('arrays', () => {
 
     describe('#append', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(arrays.append, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#sum', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(arrays.sum, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#unique', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(arrays.unique, [{skip: true, desc: 'TODO...'}])
     })
 })

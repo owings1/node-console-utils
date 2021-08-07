@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger} = require('../helpers/index.js')
+const {ger, cases} = require('../helpers/index.js')
 
 const {buffers} = require('../../index.js')
 
@@ -35,9 +35,6 @@ describe('buffers', () => {
 
     describe('#equal', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(buffers.equal, [{skip: true, desc: 'TODO...'}])
     })
 })

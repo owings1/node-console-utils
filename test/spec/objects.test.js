@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger} = require('../helpers/index.js')
+const {ger, cases} = require('../helpers/index.js')
 
 const {objects} = require('../../index.js')
 
@@ -33,67 +33,43 @@ describe('objects', () => {
 
     })
 
-    describe('#isNullOrEmpty', () => {
-
-        it('should ...')
-        it('todo', function () {
-            
-        })
-    })
-
     describe('#isEmpty', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(objects.isEmpty, [{skip: true, desc: 'TODO...'}])
+    })
+
+    describe('#isNullOrEmpty', () => {
+
+        cases(objects.isNullOrEmpty, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#lget', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(objects.lget, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#lset', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(objects.lset, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#rekey', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(objects.rekey, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#revalue', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(objects.revalue, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#valuesHash', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(objects.valuesHash, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#update', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(objects.update, [{skip: true, desc: 'TODO...'}])
     })
 })

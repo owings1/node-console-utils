@@ -23,11 +23,11 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger} = require('../helpers/index.js')
+const {ger, cases} = require('../helpers/index.js')
 
 const {strings} = require('../../index.js')
 
-describe('strings', () => {
+describe.only('strings', () => {
 
     beforeEach(function () {
 
@@ -62,31 +62,37 @@ describe('strings', () => {
 
     describe('#endsWith', () => {
 
+        cases(strings.endsWith, [
+            {err: TypeError, oper: 'instanceof'},
+        ])
+
         it('should ...')
-        it('todo', function () {
-            
-        })
     })
 
     describe('#escapeRegex', () => {
 
+        cases(strings.escapeRegex, [
+            {err: TypeError, oper: 'instanceof'},
+        ])
+
         it('should ...')
-        it('todo', function () {
-            
-        })
     })
 
     describe('#lcfirst', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(strings.lcfirst, [
+            {err: TypeError, oper: 'instanceof', args: [['a']], json: 'args'},
+            {skip: true},
+        ])
+
     })
 
     describe('#stripAnsi', () => {
 
-        it('should ...')
+        cases(strings.escapeRegex, [
+            {err: TypeError, oper: 'instanceof'},
+        ])
+
         it('todo', function () {
             
         })

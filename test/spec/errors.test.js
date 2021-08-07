@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger} = require('../helpers/index.js')
+const {ger, cases} = require('../helpers/index.js')
 
 const {errors} = require('../../index.js')
 
@@ -35,17 +35,11 @@ describe('errors', () => {
 
     describe('#getRawMessage', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(errors.getRawMessage, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#parseStack', () => {
 
-        it('should ...')
-        it('todo', function () {
-            
-        })
+        cases(errors.parseStack, [{skip: true, desc: 'TODO...'}])
     })
 })

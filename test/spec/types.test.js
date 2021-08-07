@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger} = require('../helpers/index.js')
+const {ger, cases} = require('../helpers/index.js')
 
 const {types} = require('../../index.js')
 
@@ -34,6 +34,10 @@ describe('types', () => {
     })
 
     describe('#typeOf', () => {
+
+        cases(types.typeOf, [
+            {exp: 'string', args: 'foo'}
+        ])
 
         it('should ...')
         it('todo', function () {
