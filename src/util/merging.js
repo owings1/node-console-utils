@@ -1,15 +1,20 @@
-const {Is} = require('./types.js')
 const deepmerge = require('deepmerge')
-
-function mergeDefault(...args) {
-    return deepmerge.all(args.filter(Boolean), {
-        isMergeableObject: Is.PlainObject,
-    })
-}
+const {Is : {PlainObject: isPlain}, isObject} = require('./types.js')
 
 const merging = {
-    merge   : mergeDefault,
-    default : mergeDefault,
+    plain: function mergePlain(...args) {
+        return deepmerge.all(args.filter(isPlain), {
+            isMergeableObject: isPlain,
+        })
+    },
+    spread: function spreadMerge(...args) {
+        return Object.fromEntries(
+            args.filter(isObject).map(Object.entries).flat()
+        )
+    },
+    get merge() {
+        return merging.plain
+    },
 }
 
 module.exports = {

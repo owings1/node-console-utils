@@ -101,6 +101,10 @@ const Is = {
         return Array.isArray(arg)
     },
 
+    Boolean: function isBoolean(arg) {
+        return arg === true || arg === false
+    },
+
     Buffer: function isBuffer(arg) {
         return Buffer.isBuffer(arg)
     },
@@ -167,6 +171,10 @@ const Is = {
 
     String: function isString(arg) {
         return typeof arg === 'string'
+    },
+
+    Symbol: function isSymbol(arg) {
+        return typeof arg === 'symbol'
     },
 
     WritableStream: function isWritableStream(arg) {
