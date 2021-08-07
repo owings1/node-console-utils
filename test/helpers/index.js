@@ -1,3 +1,3 @@
-const {ger, getError} = require('./errors.js')
+const {ger} = require('./errors.js')
 const {MockOutput} = require('./io.js')
-module.exports = {ger, getError, MockOutput}
+module.exports = {ger, MockOutput}
