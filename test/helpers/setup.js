@@ -8,7 +8,6 @@ Assertion.addMethod('erri', function (type) {
     // preconditon, whether positive or negative assertion
     new Assertion(obj).to.be.instanceof(Error)
 
-    console.log('ERRI')
     let name = type
     if (typeof name === 'function') {
         name = type.name

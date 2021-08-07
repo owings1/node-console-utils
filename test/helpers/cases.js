@@ -6,7 +6,8 @@ const {
     Cast: {toArray},
     types: {isFunction: isFunc, isString, isArray, isObject},
     objects: {lget, lset, update},
-    merging: {spread},
+    merging: {spread, merge},
+    arrays: {last},
 } = require('../../index.js')
 
 const {log, error: logerr, warn} = console
@@ -36,10 +37,66 @@ function defaults(...args) {
         build    : self.build,
         defaults : defaults.bind(self),
     })
+
     return self.build
 }
 
+function set(...args) {
+    const opts = spread(
+        isFunc(args[0]) ? {run: args.shift()} : {},
+        ...args,
+    )
+    this.track.push(opts)
+    return this.run
+}
+
+function unset(isAll) {
+    if (isAll) {
+        this.track.splice(0)
+    } else {
+        this.track.pop()
+    }
+    return this.run
+}
+
+function test(...args) {
+    const opts = isFunc(args[0]) ? {run: args.shift()} : {}
+    create(args.flat().map(test => spread(this.defs, ...this.track, opts, test)))
+    return this.run
+}
+
+function tests(cb) {
+    const save = this.track.slice(0)
+    try {
+        cb(this.run)
+    } finally {
+        this.track = save
+    }
+    return this.run
+}
+
+function def(...args) {
+    const opts = spread(
+        isFunc(args[0]) ? {run: args.shift()} : {},
+        ...args,
+    )
+    const self = {
+        def,
+        defs: merge(opts),
+        track: [],
+    }
+    self.run = {}
+    update(self.run, {
+        //run : self.run,
+        test : test.bind(self),
+        set: set.bind(self),
+        unset: unset.bind(self),
+        tests: tests.bind(self),
+    })
+    return self.run
+}
 module.exports = defaults({})
+module.exports.def = def
 
 const create = tests => tests.forEach((opts, i) => {
     const n = i + 1
@@ -55,19 +112,24 @@ const create = tests => tests.forEach((opts, i) => {
     function testCase() {
         const call = test.run.bind(this, ...test.args)
         const run = test.err ? ger.bind(null, call) : call
-        let result
         try {
-            result = run()
+            test.result = run()
+            if (test.cb) {
+                test.cb.call(this, test)
+            }
+            if (test.resg) {
+                test.result = test.resg.call(this, test)
+            }
         } finally {
             if (test.debug) {
-                log('case number:', n, 'of', tests.length)
-                log('opts (test):', test)
-                log('opts (norm):', opts)
-                log({result})
+                log(`test (${n} of ${tests.length})`, test)
             }
         }
-        const should = expect(result)
-        lget(should, test.oper).apply(should, test.exp)
+        if (test.expg) {
+            test.exp = test.expg.call(this, test)
+        }
+        const should = expect(test.result)
+        lget(should, test.oper).call(should, test.exp)
     }
     const that = getit(it, opts)
     that.call(that, test.desc, testCase)
@@ -83,15 +145,14 @@ function createCase(opts) {
             opts.exp = opts.err
         }
     }
-    opts.exp = toArray(opts.exp)
     if (opts.err && opts.eoper && opts.oper) {
         opts.oper = opts.eoper
     }
     if (!opts.oper) {
         if (opts.err && opts.eoper) {
             opts.oper = opts.eoper
-        } else if (opts.exp.length === 1) {
-            opts.oper = getUnaryOperator(opts, opts.exp[0])
+        } else {
+            opts.oper = getUnaryOperator(opts, opts.exp)
         }
     }
     if (isString(opts.oper)) {
@@ -100,6 +161,9 @@ function createCase(opts) {
     opts.oper = toArray(opts.oper)
     if (!opts.desc) {
         opts.desc = buildDesciption(opts)
+    }
+    if (opts.desca) {
+        opts.desc += `, and ${opts.desca}`
     }
     return opts
 }
@@ -122,9 +186,9 @@ function buildDesciption(opts) {
             return opts[strkey]
         }
         const stringer = [true, key].includes(json)
-            ? JSON.stringify
+            ? tojson
             : stringly
-        const val = opts[key]
+        const val = key === 'exp' ? [opts[key]] : opts[key]
         const str = val.map(stringer)
         return val.length === 1 ? str : `(${str})`
     })
@@ -133,8 +197,6 @@ function buildDesciption(opts) {
     if (!retstr) {
         if (err) {
             retstr = 'throw'
-        } else if (oper.join('') === 'equal') {
-            retstr = 'return'
         } else {
             retstr = oper.join(' ')
         }
@@ -142,14 +204,26 @@ function buildDesciption(opts) {
     return `should ${retstr} ${expstr} for ${argstr}`
 }
 
-
-
 function stringly(arg) {
     if (isFunc(arg)) {
         return arg.name
     }
     let str = String(arg)
     return isString(arg) ? `'${str}'` : str
+}
+/*
+From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify:
+If you return a Number, String, Boolean, or null, the stringified version of that value is used as the property's value.
+If you return a Function, Symbol, or undefined, the property is not included in the output.
+If you return any other object, the object is recursively stringified, calling the replacer function on each property.
+*/
+function tojson(arg) {
+    return JSON.stringify(arg, (key, value) => {
+        if (isFunc(value)) {
+            return value.name ?? '(function)'
+        }
+        return value
+    })
 }
 
 class MakeCasesError extends TestError {}

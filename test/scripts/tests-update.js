@@ -36,16 +36,16 @@ function createUtilsSpecs() {
             logger.info('Skipping', bname)
             return
         }
-        const utilName = bname.split('.').slice(0, -1).join('-')
-        const specFile = resolve(specDir, utilName + '.test.js')
+        const name = bname.split('.').slice(0, -1).join('-')
+        const specFile = resolve(specDir, name + '.test.js')
         const srcFile = resolve(srcDir, bname)
         const srcRel = relpath(srcFile)
         const specRel = relpath(specFile)
         if (fs.existsSync(specFile)) {
-            logger.info('Spec exists for', logger.chalk.green(utilName), {file: specRel})
+            logger.info('Spec exists for', logger.chalk.green(name), {file: specRel})
             return
         }
-        logger.info('Creating spec for', logger.chalk.yellow(utilName), {file: specRel})
+        logger.info('Creating spec for', logger.chalk.yellow(name), {file: specRel})
         const mod = require(srcFile)
         const rootOrder = revalue(mod, (v, i) => i)
         const nameHash = {}
@@ -91,7 +91,7 @@ function createUtilsSpecs() {
                     let tstr
                     if (value === 'function') {
                         const pstr = thisPath.join('.')
-                        tstr = `cases(${pstr}, [{skip: true, desc: 'TODO...'}])`
+                        tstr = `defs(${pstr}, {}).build[{skip: true, desc: 'TODO...'}])`
                     } else {
                         tstr = `it('TODO...')`
                     }
@@ -99,14 +99,14 @@ function createUtilsSpecs() {
                 } else if (Is.Object(value)) {
                     addContent(value, thisPath)
                 } else {
-                    logger.warn('Cannot render spec for', {type: typeOf(value)})
+                    logger.warn('Cannot render spec for', {name, type: typeOf(value)})
                 }
                 lines.push(spaces(indent) + '})')
             })
         }
-        addContent(spec, [utilName])
+        addContent(spec, [name])
         const specContent = lines.join('\n')
-        const content = render(template, {name: utilName, specContent})
+        const content = render(template, {name, specContent})
         fs.writeFileSync(specFile, content)
         logger.info('Wrote file with', count, 'specs')
     })

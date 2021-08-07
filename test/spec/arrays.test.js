@@ -23,28 +23,50 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, cases} = require('../helpers/index.js')
+const {ger, cases: {def}} = require('../helpers/index.js')
+
+const {tests, test, set, unset} = def()
 
 const {arrays} = require('../../index.js')
 
-describe('arrays', () => {
+describe.only('arrays', () => {
 
     beforeEach(function () {
 
     })
 
-    describe('#append', () => {
+    describe.only('#append', () => {
 
-        cases(arrays.append, [{skip: true, desc: 'TODO...'}])
+        set(arrays.append, {json: true})
+
+        tests(() => {
+            set({oper: 'deep.equal'}).test(
+                {exp: [1,3,4], args: [[1], [3,4]]},
+            ).set(
+                {desca: 'modify the array'}, 
+                {expg: test => test.args[0]},
+            ).test(
+                {exp: [1, 2], args: [[1], [2]]},
+                {exp: [{}, 2], args: [[{}], [2]]},
+            )
+        }).tests(() => {
+            set({eoper: 'erri', json: 'args'}).test(
+                {err: TypeError, debug: false},
+            )
+        })
+
+        unset(true)
     })
 
     describe('#sum', () => {
 
-        cases(arrays.sum, [{skip: true, desc: 'TODO...'}])
-    })
+        set(arrays.sum, {json: 'args'})
 
-    describe('#unique', () => {
+        test(
+            {err: TypeError},
+            {exp: 8, args: [[1,3,4]]},
+        )
 
-        cases(arrays.unique, [{skip: true, desc: 'TODO...'}])
+        unset(true)
     })
 })

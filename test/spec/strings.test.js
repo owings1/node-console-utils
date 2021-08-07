@@ -27,7 +27,7 @@ const {ger, cases: {defaults: defs}} = require('../helpers/index.js')
 
 const {strings} = require('../../index.js')
 
-describe.only('strings', () => {
+describe('strings', () => {
 
     describe('#cat', () => {
 

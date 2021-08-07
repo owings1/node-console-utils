@@ -23,7 +23,6 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const chalk = require('chalk')
 const {ger, MockOutput} = require('../helpers/index.js')
 const {merge, Logger, strings} = require('../../index.js')
 
