@@ -1,78 +1,120 @@
 const {expect} = require('chai')
+const assert = require('assert')
+const util = require('util')
 const {ger, TestError} = require('./errors.js')
-const {Cast: {toArray}, Is, objects: {lget}} = require('../../index.js')
+const {
+    Cast: {toArray},
+    types: {isFunction: isFunc, isString, isArray, isObject},
+    objects: {lget, lset, update},
+    merging: {spread},
+} = require('../../index.js')
 
-const {log, error: logerr} = console
+const {log, error: logerr, warn} = console
 
-function makeCases(...args) {
+const DefaultUnaryOperator = 'equal'
+const DefaultUnaryErrorOperator = 'erri'
 
-    const cases = toArray(args.pop())
-    let opt = args[0]
+const Opt = Symbol('opt')
 
-    if (Is.Function(opt)) {
-        opt = {run: opt}
-    }
-
-    cases.forEach((opts_, i) => {
-        const n = i + 1
-        const opts = normOpts({...opt, ...opts_})
-        if (!Is.Function(opts.run)) {
-            logerr('case:', n, 'opts:', opts)
-            throw new MakeCasesError('Must provide a run function.')
-        }
-        const desc = getDescription(opts)
-        const {run, args, oper, exp, err, debug} = opts
-        const that = it[['only', 'skip'].find(o => opts[o])] || it
-        that.call(that, desc, function () {
-            let result
-            try {
-                if (err) {
-                    result = ger(() => run.apply(this, args))
-                } else {
-                    result = run.apply(this, args)
-                }
-            } finally {
-                if (debug) {
-                    log('case number:', n, 'of', cases.length)
-                    log('opts (spec):', opts_)
-                    log('opts (norm):', opts)
-                    log({result})
-                }
-            }
-            const should = expect(result)
-            lget(should, oper).apply(should, exp)
-        })
-    })
+function build(...args) {
+    const tests = toArray(args.pop())
+    const opts = spread(
+        this[Opt],
+        isFunc(args[0]) ? {run: args.shift()} : {},
+        ...args,
+    )
+    create(tests.map(test => spread(opts, test)))
+    return this.build
 }
-module.exports = {makeCases, cases: makeCases}
 
-function normOpts(opts) {
+function defaults(...args) {
+    const opts = isFunc(args[0]) ? {run: args.shift()} : {}
+    const self = lset({}, Opt, spread(this[Opt], opts, ...args))
+    self.build = build.bind(self)
+    update(self.build, {
+        // chain
+        build    : self.build,
+        defaults : defaults.bind(self),
+    })
+    return self.build
+}
+
+module.exports = defaults({})
+
+const create = tests => tests.forEach((opts, i) => {
+    const n = i + 1
+    const test = createCase(opts)
+    if (!isFunc(test.run)) {
+        warn(['case:', n, 'opts:', opts])
+        const msg = 'Must provide a run function.'
+        if (!test.skip) {
+            throw new MakeCasesError(msg)
+        }
+        warn(msg, {skipped: true})
+    }
+    function testCase() {
+        const call = test.run.bind(this, ...test.args)
+        const run = test.err ? ger.bind(null, call) : call
+        let result
+        try {
+            result = run()
+        } finally {
+            if (test.debug) {
+                log('case number:', n, 'of', tests.length)
+                log('opts (test):', test)
+                log('opts (norm):', opts)
+                log({result})
+            }
+        }
+        const should = expect(result)
+        lget(should, test.oper).apply(should, test.exp)
+    }
+    const that = getit(it, opts)
+    that.call(that, test.desc, testCase)
+})
+
+const getit = (it, opts) => opts.skip ? it.skip : (opts.only ? it.only : it)
+
+function createCase(opts) {
     opts = {...opts}
     opts.args = toArray(opts.args)
     if (opts.err) {
-        if (!opts.exp) {
+        if (opts.err !== true) {
             opts.exp = opts.err
         }
     }
     opts.exp = toArray(opts.exp)
+    if (opts.err && opts.eoper && opts.oper) {
+        opts.oper = opts.eoper
+    }
     if (!opts.oper) {
-        if (opts.err) {
-            opts.oper = 'erri'
-        } else {
-            opts.oper = 'equal'
+        if (opts.err && opts.eoper) {
+            opts.oper = opts.eoper
+        } else if (opts.exp.length === 1) {
+            opts.oper = getUnaryOperator(opts, opts.exp[0])
         }
     }
-    if (Is.String(opts.oper)) {
+    if (isString(opts.oper)) {
         opts.oper = opts.oper.split('.')
     }
     opts.oper = toArray(opts.oper)
+    if (!opts.desc) {
+        opts.desc = buildDesciption(opts)
+    }
     return opts
 }
 
-function getDescription(opts) {
-    if (opts.desc) {
-        return opts.desc
+function getUnaryOperator(opts, val) {
+    if (opts.err) {
+        if (isFunc(val)) {
+            return 'instanceof'
+        }
+        return DefaultUnaryErrorOperator
     }
+    return DefaultUnaryOperator
+}
+
+function buildDesciption(opts) {
     const {exp, args, json} = opts
     const [expstr, argstr] = ['exp', 'args'].map(key => {
         const strkey = key + 'str'
@@ -100,12 +142,14 @@ function getDescription(opts) {
     return `should ${retstr} ${expstr} for ${argstr}`
 }
 
+
+
 function stringly(arg) {
-    if (Is.Function(arg)) {
+    if (isFunc(arg)) {
         return arg.name
     }
     let str = String(arg)
-    return Is.String(arg) ? `'${str}'` : str
+    return isString(arg) ? `'${str}'` : str
 }
 
 class MakeCasesError extends TestError {}
