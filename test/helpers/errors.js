@@ -28,4 +28,4 @@ class TestError extends Error {
 
 class GetErrorError extends TestError {}
 
-module.exports = {ger: getError}
+module.exports = {ger: getError, TestError}

@@ -8,7 +8,11 @@ Assertion.addMethod('erri', function (type) {
     // preconditon, whether positive or negative assertion
     new Assertion(this._obj).to.be.instanceof(Error)
 
-    var name = type + 'Error'
+    var name = type
+    // ends with
+    if (name.length - name.lastIndexOf('Error') !== 'Error'.length) {
+        name += 'Error'
+    }
     var isprop = 'is' + name
 
     this.assert(
