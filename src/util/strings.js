@@ -56,6 +56,9 @@ const Regex = {
         '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
         '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))',
     ].join('|'), 'g'),
+
+    // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#using_special_characters
+    Regex: /[.*+?^${}()|[\]\\]/g,
 }
 
 const strings = module.exports = {
@@ -76,6 +79,17 @@ const strings = module.exports = {
      */
     endsWith: function endsWith(str, srch) {
         return str.length - str.lastIndexOf(srch) === srch.length
+    },
+
+    /**
+     * Escape special regex characters in a string.
+     *
+     * @throws {TypeError}
+     * @param {string} The string to escape
+     * @return {string} The escaped string
+     */
+    escapeRegex: function escapeRegex(str) {
+        return str.replace(Regex.Regex, '\\$&')
     },
 
     /**
