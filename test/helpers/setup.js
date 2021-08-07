@@ -4,16 +4,19 @@ const idx = require('../../index.js')
 Object.values(idx)
 // see https://www.chaijs.com/guide/helpers/ 
 Assertion.addMethod('erri', function (type) {
-    var obj = this._obj
+    const obj = this._obj
     // preconditon, whether positive or negative assertion
-    new Assertion(this._obj).to.be.instanceof(Error)
+    new Assertion(obj).to.be.instanceof(Error)
 
-    var name = type
-    // ends with
-    if (name.length - name.lastIndexOf('Error') !== 'Error'.length) {
+    console.log('ERRI')
+    let name = type
+    if (typeof name === 'function') {
+        name = type.name
+    } else if (name.length - name.lastIndexOf('Error') !== 'Error'.length) {
+        // ends with
         name += 'Error'
     }
-    var isprop = 'is' + name
+    const isprop = 'is' + name
 
     this.assert(
         obj.name === name || obj[isprop] === true,
