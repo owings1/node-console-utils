@@ -4,7 +4,8 @@
   "description": "chalk, logging, and other basic utils for nodejs",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=text-summary mocha test/** && nyc report --reporter=lcov"
+    "test": "nyc --reporter=text-summary mocha test/** && nyc report --reporter=lcov",
+    "co": "open coverage/lcov-report/index.html"
   },
   "repository": {
     "type": "git",

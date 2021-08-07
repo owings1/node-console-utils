@@ -27,14 +27,14 @@ const chalkPipe = require('chalk-pipe')
 
 const {formatWithOptions} = require('util')
 
-const {Cast, Is} = require('./util/types.js')
-const {Caret} = require('./util/chars.js')
-const {cat} = require('./util/strings.js')
-const {merge} = require('./util/merge.js')
+const {Cast, Is}   = require('./util/types.js')
+const {Caret}      = require('./util/chars.js')
+const {cat}        = require('./util/strings.js')
+const {merge}      = require('./util/merging.js')
 const {parseStack} = require('./util/errors.js')
-const {revalue} = require('./util/objects.js')
+const {revalue}    = require('./util/objects.js')
 
-const HashProxy = require('./hash-proxy.js')
+const HashProxy       = require('./hash-proxy.js')
 const {ArgumentError} = require('./errors.js')
 
 const LevelNums = {
@@ -222,7 +222,7 @@ module.exports = class Logger {
         checkWriteStream(opts.stdout, 'opts.stdout')
         checkWriteStream(opts.stderr, 'opts.stderr')
         const chalk = new Chalk({
-            level: opts.colors ? Defaults.colors : 0,
+            level: getOptColorLevel(opts.colors),
         })
         const chalkp = HashProxy(opts.styles, {
             filter     : Is.String,
@@ -233,7 +233,7 @@ module.exports = class Logger {
             colors: {
                 enumerable: true,
                 get: () => Boolean(this.chalk.level),
-                set: n => this.chalk.level = n ? Defaults.colors : 0,
+                set: v =>  this.chalk.level = getOptColorLevel(v),
             },
             styles: {get: () => chalkp.ingress, enumerable: true},
         })
@@ -320,6 +320,13 @@ function getLevelNumber(value) {
         return -1
     }
     return Defaults.logLevel
+}
+
+function getOptColorLevel(value) {
+    if (value === 'force') {
+        return Defaults.colors || 1
+    }
+    return value ? Defaults.colors : 0
 }
 
 function checkWriteStream(arg, name) {

@@ -128,8 +128,9 @@ describe('Logger', () => {
             expect(output).to.equal(stripAnsi(output))
         })
 
-        it('should format with color when colors=true', function () {
-            const output = this.create({colors: true}).format(1)
+        it('should format with color when colors=force', function () {
+            const logger = this.create({colors: 'force'})
+            const output = logger.format(1)
             // chalk.yellow
             expect(output).to.equal('\x1B[33m1\x1B[39m')
         })
@@ -146,19 +147,19 @@ describe('Logger', () => {
             this.opts.format = function (args) {
                 return this.chalk.red('abc')
             }
-            const logger = this.create({colors: true, prefix: null})
+            const logger = this.create({colors: 'force', prefix: null})
             logger.opts.colors = false
             logger.info('')
             expect(this.stdout.raw.trim()).to.equal('abc')
         })
 
-        it('should log with color when colors set after constructor', function () {
+        it('should log with color when colors set to force after constructor', function () {
             const exp = '\x1B[31mabc\x1B[39m'
             this.opts.prelog = function (level, args) {
                 return this.chalks.default.red('abc')
             }
             const logger = this.create({colors: false, prefix: null})
-            logger.opts.colors = true
+            logger.opts.colors = 'force'
             logger.info()
             expect(this.stdout.raw.trim()).to.equal(exp)
         })

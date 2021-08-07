@@ -7,14 +7,14 @@ function mergeDefault(...args) {
     })
 }
 
-const merge = {
+const merging = {
     merge   : mergeDefault,
     default : mergeDefault,
 }
 
 module.exports = {
-    ...merge,
-    ...namedf(merge),
+    ...merging,
+    ...namedf(merging),
 }
 
 function namedf(obj) {
