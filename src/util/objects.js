@@ -24,17 +24,27 @@ const objects = module.exports = {
         return !Is.Iterable(arg) || objects.isEmpty(arg)
     },
 
-    lget: function lget(obj, keyPath) {
-        if (!keyPath) {
-            return
+    keyPath: function getKeyPath(kpath) {
+        if (Is.Array(kpath)) {
+            return kpath
         }
-        const parts = Is.Array(keyPath) ? keyPath : String(keyPath).split('.')
+        if (Is.Symbol(kpath)) {
+            return [kpath]
+        }
+        return String(kpath).split('.')
+    },
+
+    lget: function lget(obj, keyPath, dflt) {
+        keyPath = objects.keyPath(keyPath)
+        if (keyPath.length === 0) {
+            return dflt
+        }
         let base = obj
-        for (let i = 0; i < parts.length; ++i) {
+        for (let i = 0; i < keyPath.length; ++i) {
             if (!Is.Object(base)) {
-                return
+                return dflt
             }
-            base = base[parts[i]]
+            base = base[keyPath[i]]
         }
         return base
     },
@@ -43,19 +53,16 @@ const objects = module.exports = {
         if (!Is.Object(obj)) {
             throw new ArgumentError(`Argument (obj) must be an object.`)
         }
-        if (!keyPath) {
-            return
-        }
-        const parts = Is.Array(keyPath) ? keyPath : String(keyPath).split('.')
+        keyPath = objects.keyPath(keyPath)
         let base = obj
-        for (let i = 0; i < parts.length - 1; ++i) {
-            const key = parts[i]
+        for (let i = 0; i < keyPath.length - 1; ++i) {
+            const key = keyPath[i]
             if (!Is.Object(base[key])) {
                 base[key] = {}
             }
             base = base[key]
         }
-        base[parts[parts.length - 1]] = value
+        base[keyPath[keyPath.length - 1]] = value
         return obj
     },
 
@@ -93,6 +100,31 @@ const objects = module.exports = {
     update: function update(target, source) {
         target = target || {}
         source = source || {}
+        /*
+
+        Using Object.keys differs if there is a getter in the source
+        that refers to the target.
+
+            Object.keys(source).forEach(key => {
+                target[key] = source[key]
+            })
+
+        For example:
+
+            let target = {}
+            let source = {a: 1, get x() { return target.a }}
+            update(target, source)
+
+        With keys: {a: 1, x: 1}
+        With entries: {a: 1, x: undefined}
+
+        But with keys the result could be surprising to some users:
+
+            let target = {}
+            let source = {a: 1, get [9]() { return target.a }}
+
+        With keys: {'9': undefined, a: 1}
+        */
         Object.entries(source).forEach(([key, value]) => {
             target[key] = value
         })
