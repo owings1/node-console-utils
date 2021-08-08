@@ -15,30 +15,36 @@ const {log, error: logerr, warn} = console
 const DefaultUnaryOperator = 'equal'
 const DefaultUnaryErrorOperator = 'erri'
 
-const Opt = Symbol('opt')
+const s_ = Symbol('self')
 
-function build(...args) {
-    const tests = toArray(args.pop())
-    const opts = spread(
-        this[Opt],
-        isFunc(args[0]) ? {run: args.shift()} : {},
-        ...args,
-    )
-    create(tests.map(test => spread(opts, test)))
-    return this.build
-}
-
-function defaults(...args) {
-    const opts = isFunc(args[0]) ? {run: args.shift()} : {}
-    const self = lset({}, Opt, spread(this[Opt], opts, ...args))
-    self.build = build.bind(self)
-    update(self.build, {
-        // chain
-        build    : self.build,
-        defaults : defaults.bind(self),
-    })
-
-    return self.build
+function def(...args) {
+    const cb = isFunc(last(args)) ? args.pop() : false
+    const title = isString(args[0]) ? args.shift() : (isFunc(args[0]) ? '#' + args[0].name : false)
+    const opts = spread(isFunc(args[0]) ? {run: args.shift()} : {}, ...args)
+    const isNew = !this[s_]
+    const self = isNew ? lset({}, s_, true) : this
+    if (isNew) {
+        update(self, {
+            def: def.bind(self),
+            opts: merge(opts),
+            track: [],
+        })
+        update(self.def, {
+            test : test.bind(self),
+            set: set.bind(self),
+        })
+    }
+    if (cb) {
+        const save = self.track.slice(0)
+        self.track.push(opts)
+        const desc = title ? () => describe(title, cb) : cb
+        try {
+            desc()
+        } finally {
+            self.track = save
+        }
+    }
+    return self.def
 }
 
 function set(...args) {
@@ -47,62 +53,22 @@ function set(...args) {
         ...args,
     )
     this.track.push(opts)
-    return this.run
-}
-
-function unset(isAll) {
-    if (isAll) {
-        this.track.splice(0)
-    } else {
-        this.track.pop()
-    }
-    return this.run
+    return this.def
 }
 
 function test(...args) {
     const opts = isFunc(args[0]) ? {run: args.shift()} : {}
-    create(args.flat().map(test => spread(this.defs, ...this.track, opts, test)))
-    return this.run
+    create(args.flat().map(test => spread(this.opts, ...this.track, opts, test)))
+    return this.def
 }
 
-function tests(cb) {
-    const save = this.track.slice(0)
-    try {
-        cb(this.run)
-    } finally {
-        this.track = save
-    }
-    return this.run
-}
-
-function def(...args) {
-    const opts = spread(
-        isFunc(args[0]) ? {run: args.shift()} : {},
-        ...args,
-    )
-    const self = {
-        def,
-        defs: merge(opts),
-        track: [],
-    }
-    self.run = {}
-    update(self.run, {
-        //run : self.run,
-        test : test.bind(self),
-        set: set.bind(self),
-        unset: unset.bind(self),
-        tests: tests.bind(self),
-    })
-    return self.run
-}
-module.exports = defaults({})
-module.exports.def = def
+module.exports = def()
 
 const create = tests => tests.forEach((opts, i) => {
     const n = i + 1
     const test = createCase(opts)
     if (!isFunc(test.run)) {
-        warn(['case:', n, 'opts:', opts])
+        warn(['case:', n, 'test:', test])
         const msg = 'Must provide a run function.'
         if (!test.skip) {
             throw new MakeCasesError(msg)

@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, cases} = require('../helpers/index.js')
+const {ger, def} = require('../helpers/index.js')
 
 const {merging} = require('../../index.js')
 
@@ -35,6 +35,6 @@ describe('merging', () => {
 
     describe('#merge', () => {
 
-        cases(merging.merge, [{skip: true, desc: 'TODO...'}])
+        def(merging.merge, [{skip: true, desc: 'TODO...'}])
     })
 })

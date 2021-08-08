@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, cases} = require('../helpers/index.js')
+const {ger, def} = require('../helpers/index.js')
 
 const {objects} = require('../../index.js')
 
@@ -35,41 +35,41 @@ describe('objects', () => {
 
     describe('#isEmpty', () => {
 
-        cases(objects.isEmpty, [{skip: true, desc: 'TODO...'}])
+        def(objects.isEmpty, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#isNullOrEmpty', () => {
 
-        cases(objects.isNullOrEmpty, [{skip: true, desc: 'TODO...'}])
+        def(objects.isNullOrEmpty, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#lget', () => {
 
-        cases(objects.lget, [{skip: true, desc: 'TODO...'}])
+        def(objects.lget, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#lset', () => {
 
-        cases(objects.lset, [{skip: true, desc: 'TODO...'}])
+        def(objects.lset, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#rekey', () => {
 
-        cases(objects.rekey, [{skip: true, desc: 'TODO...'}])
+        def(objects.rekey, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#revalue', () => {
 
-        cases(objects.revalue, [{skip: true, desc: 'TODO...'}])
+        def(objects.revalue, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#valuesHash', () => {
 
-        cases(objects.valuesHash, [{skip: true, desc: 'TODO...'}])
+        def(objects.valuesHash, [{skip: true, desc: 'TODO...'}])
     })
 
     describe('#update', () => {
 
-        cases(objects.update, [{skip: true, desc: 'TODO...'}])
+        def(objects.update, [{skip: true, desc: 'TODO...'}])
     })
 })

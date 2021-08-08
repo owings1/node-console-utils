@@ -23,76 +23,81 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, cases: {defaults: defs}} = require('../helpers/index.js')
+const {ger, def} = require('../helpers/index.js')
+const {test, set} = def
 
 const {strings} = require('../../index.js')
 
 describe('strings', () => {
 
-    describe('#cat', () => {
-
-        defs(strings.cat, {json: 'args'}).build([
+    def(strings.cat, {json: 'args'}, () => {
+        test(
             {exp: 'abc', args: ['a','b','c']},
             {exp: 'abc', args: [['a','b','c']]},
             {exp: 'abc', args: [['a','b'],'c']},
             {exp: ''},
-        ])
+        )
     })
 
-    describe('#endsWith', () => {
+    def(strings.endsWith, () => {
 
-        defs(strings.endsWith).build({err: TypeError}, [
-            {args: ['']},
-            {args: [null, '']},
-        ]).build({exp: true}, [
-            {args: ['a ', ' ']},
-            {args: ['huoihasdf', 'asdf']},
-            {args: ['', '']},
-            {args: ['asdf', '']},
-        ]).build({exp: false}, [
-            {args: ['asdf', 'huoihasdf']},
-            {args: ['huoihasdf', 'asdF']},
-        ])
+        def({err: TypeError}, () => {
+            test(
+                {args: ['']},
+                {args: [null, '']},
+            )
+        })
+
+        def({exp: true}, () => {
+            test(
+                {args: ['a ', ' ']},
+                {args: ['huoihasdf', 'asdf']},
+                {args: ['', '']},
+                {args: ['asdf', '']},
+            )
+        })
+
+        def({exp: false}, () => {
+            test(
+                {args: ['asdf', 'huoihasdf']},
+                {args: ['huoihasdf', 'asdF']},
+            )
+        })
     })
 
-    describe('#escapeRegex', () => {
-
-        defs(strings.escapeRegex).build([
+    def(strings.escapeRegex, () => {
+        test(
             {err: TypeError},
             {exp: '\\^', args: '^'},
-        ])
+        )
     })
 
-    describe('#lcfirst', () => {
-
-        defs(strings.lcfirst).build([
+    def(strings.lcfirst, () => {
+        test(
             {err: TypeError, args: [['a']], json: 'args'},
             {exp: 'foo', args: 'Foo'},
             {exp: 'fOO', args: 'FOO'},
             {exp: '1foo', args: '1foo'},
             {exp: '', args: ''},
-        ])
+        )
     })
 
-    describe('#stripAnsi', () => {
-
-
-        defs(strings.stripAnsi, {json: true}).build([
+    def(strings.stripAnsi, {json: true}, () => {
+        test(
             {err: TypeError},
             {exp: 'tongue', args: '\x1B[31mtongue\x1B[39m'},
             {exp: 'skirt', args: ['\x1B[34mskirt\x1B[39m', 6]},
             {exp: 'x1B[34mskirt1B[39m', args: 'x1B[34mskirt1B[39m'},
-        ])
+        )
     })
 
-    describe('#ucfirst', () => {
-
-        defs(strings.ucfirst).build([
+    def(strings.ucfirst, () => {
+        test(
             {err: TypeError, args: [['a']], json: 'args'},
             {exp: 'Foo', args: 'foo'},
             {exp: 'FOO', args: 'fOO'},
             {exp: '1foo', args: '1foo'},
             {exp: '', args: ''},
-        ])
+        )
     })
 })

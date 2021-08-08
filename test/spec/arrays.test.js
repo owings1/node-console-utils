@@ -23,50 +23,42 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, cases: {def}} = require('../helpers/index.js')
+const {ger, def} = require('../helpers/index.js')
 
-const {tests, test, set, unset} = def()
+const {test, set} = def
 
 const {arrays} = require('../../index.js')
 
-describe.only('arrays', () => {
+describe('arrays', () => {
 
-    beforeEach(function () {
+    def(arrays.append, () => {
 
-    })
-
-    describe.only('#append', () => {
-
-        set(arrays.append, {json: true})
-
-        tests(() => {
-            set({oper: 'deep.equal'}).test(
-                {exp: [1,3,4], args: [[1], [3,4]]},
-            ).set(
-                {desca: 'modify the array'}, 
-                {expg: test => test.args[0]},
-            ).test(
-                {exp: [1, 2], args: [[1], [2]]},
-                {exp: [{}, 2], args: [[{}], [2]]},
-            )
-        }).tests(() => {
-            set({eoper: 'erri', json: 'args'}).test(
-                {err: TypeError, debug: false},
-            )
+        def('errors', {json: 'args'}, () => {
+            test({err: TypeError, args: []})
         })
 
-        unset(true)
+        def({oper: 'deep.equal', json: true}, () => {
+
+            test({exp: [1,3,4], args: [[1], [3,4]]})
+
+            def(() => {
+                set({
+                    desca: 'modify the array',
+                    expg: ({args}) => args[0]}
+                )
+                test(
+                    {exp: [1, 2],  args: [[1], [2]] },
+                    {exp: [{}, 2], args: [[{}],[2]] },
+                )
+            })
+        })
     })
 
-    describe('#sum', () => {
-
-        set(arrays.sum, {json: 'args'})
+    def(arrays.sum, {json: 'args'}, () => {
 
         test(
-            {err: TypeError},
+            {err: TypeError, args: []},
             {exp: 8, args: [[1,3,4]]},
         )
-
-        unset(true)
     })
 })
