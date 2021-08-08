@@ -21,60 +21,167 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {ArgumentError} = require('./errors.js')
-const {Is} = require('./util/types.js')
+const {isObject, isFunction: isFunc} = require('./util/types.js')
+const {hasKey, keyPath, lget, lset} = require('./util/objects.js')
 
-module.exports = function HashProxy(source, opts) {
-    checkArg(source, 'source', 'object', Is.Object)
-    if (opts) {
-        checkArg(opts, 'opts', 'object', Is.Object)
-    } else {
-        opts = {}
+const SrcKey = Symbol('source')
+const IngKey = Symbol('ingress')
+const CrtKey = Symbol('create')
+
+class HashProxy {
+
+    static create(source, opts) {
+        checkArg(source, 'source', 'object', isObject)
+        if (opts) {
+            checkArg(opts, 'opts', 'object', isObject)
+        } else {
+            opts = {}
+        }
+        if (opts.transform) {
+            checkArg(opts.transform, 'transform', 'function', isFunc)
+        } else {
+            opts.transform = passthru
+        }
+        if (opts.filter) {
+            checkArg(opts.filter, 'filter', 'function', isFunc)
+        } else {
+            opts.filter = truth
+        }
+        const {ingress, target} = build(source, opts)
+        Object.defineProperty(target, CrtKey, {value: true})
+        return new HashProxy(source, target, ingress, opts)//{ingress, target}
     }
-    if (opts.transform) {
-        checkArg(opts.transform, 'transform', 'function', Is.Function)
-    } else {
-        opts.transform = passthru
+
+    constructor(source, target, ingress, opts) {
+        if (target[CrtKey] !== true) {
+            throw new ArgumentError(`Must use static ${this.constructor.name} create method`)
+        }
+        // todo defineprop
+        this.source = source
+        this.target = target
+        this.ingress = ingress
+        this.opts = opts
     }
-    if (opts.filter) {
-        checkArg(opts.filter, 'filter', 'function', Is.Function)
-    } else {
-        opts.filter = truth
+
+    createEntry(kpath, value) {
+        checkEntry(kpath, value)
+        kpath = keyPath(kpath)
+        if (hasKey(this.source, kpath)) {
+            throw new ArgumentError(`Key exists: ${kpath.join('.')}`)
+        }
+        const {opts} = this
+        const leafKey = kpath.pop()
+        let {source, target, ingress} = this
+        for (let i = 0; i < kpath.length; ++i) {
+            const key = kpath[i]
+            if (!isObject(target[key])) {
+                const tobj = {}
+                const tgtProp = getTargetNodeProp(tobj)
+                Object.defineProperty(target, key, tgtProp)
+            }
+            if (!isObject(source[key])) {
+                source[key] = {}
+            }
+            if (!isObject(ingress[key])) {
+                const iobj = {}
+                const inProp = getIngressNodeProp(source[key], iobj, opts)
+                Object.defineProperty(ingress, key, inProp)
+            }
+            target = target[key]
+            source = source[key]
+            ingress = ingress[key]
+        }
+        const tgtProp = getTargetLeafProp(source, leafKey, opts)
+        const inProp = getIngressLeafProp(source, target, leafKey, opts)
+        Object.defineProperty(target, leafKey, tgtProp)
+        Object.defineProperty(ingress, leafKey, inProp)
+        ingress[leafKey] = value
     }
-    return build(source, opts)
+
+    upsertEntry(kpath, value) {
+        checkEntry(kpath, value)
+        kpath = keyPath(kpath)
+        if (!hasKey(this.source, kpath)) {
+            return this.createEntry(kpath, value)
+        }
+        if (isObject(lget(this.source, kpath))) {
+            throw new ArgumentError(`Cannot overwrite an object value`)
+        }
+        lset(this.ingress, kpath, value)
+    }
 }
+
+module.exports = HashProxy
 
 function build(source, opts) {
     const ingress = {}, target = {}
-    const enumerable = Boolean(opts.enumerable)
-    const {filter, transform} = opts
     Object.keys(source).forEach(key => {
-        const prop = {enumerable}
-        if (Is.Object(source[key])) {
+        let inProp, tgtProp
+        if (isObject(source[key])) {
             const next = build(source[key], opts)
-            Object.defineProperty(target, key, {value: next.target})
-            prop.get = () => next.ingress
-            prop.set = object => {
-                if (!Is.Object(object)) {
-                    return
-                }
-                Object.keys(object).forEach(key =>
-                    next.ingress[key] = object[key]
-                )
-            }
+            tgtProp = getTargetNodeProp(next.target)
+            inProp = getIngressNodeProp(source[key], next.ingress, opts)
         } else {
-            target[key] = transform(source[key])
-            prop.get = () => source[key]
-            prop.set = value => {
-                if (!filter(value)) {
-                    return
-                }
-                source[key] = value
-                target[key] = transform(value)
-            }
+            tgtProp = getTargetLeafProp(source, key, opts)
+            inProp = getIngressLeafProp(source, target, key, opts)
         }
-        Object.defineProperty(ingress, key, prop)
+        Object.defineProperty(target, key, tgtProp)
+        Object.defineProperty(ingress, key, inProp)
     })
     return {ingress, target}
+}
+
+function getIngressNodeProp(srcNode, nextIn, opts) {
+    const enumerable = Boolean(opts.enumerable)
+    return {
+        enumerable,
+        get: () => nextIn,
+        set: object => {
+            if (!isObject(object)) {
+                return
+            }
+            Object.keys(object).forEach(key => {
+                if (key in srcNode) {
+                    nextIn[key] = object[key]
+                }
+            })
+        }
+    }
+}
+
+function getTargetNodeProp(nextTarget) {
+    return {
+        value: nextTarget,
+        enumerable: true,
+    }
+}
+
+// src, tgt are already resolved to depth - 1
+function getIngressLeafProp(srcLeaf, tgtLeaf, key, opts) {
+    const enumerable = Boolean(opts.enumerable)
+    const {filter, transform} = opts
+    return {
+        enumerable,
+        get: () => srcLeaf[key],
+        set: value => {
+            if (!filter(value)) {
+                return
+            }
+            srcLeaf[key] = value
+            tgtLeaf[key] = transform(value)
+        }
+    }
+}
+
+function getTargetLeafProp(srcLeaf, key, opts) {
+    const {transform} = opts
+    return {
+        value: transform(srcLeaf[key]),
+        // some day this might get fixed.
+        writable   : true,
+        enumerable : true,
+        writeable  : true,
+    }
 }
 
 function passthru(value) {
@@ -88,5 +195,15 @@ function truth() {
 function checkArg(value, name, desc, check) {
     if (!check(value)) {
         throw new ArgumentError(`Argument (${name}) a ${desc}`)
+    }
+}
+
+function checkEntry(kpath, value) {
+    kpath = keyPath(kpath)
+    if (!kpath) {
+        throw new ArgumentError(`Bad keypath ${kpath}`)
+    }
+    if (isObject(value)) {
+        throw new ArgumentError('Value cannot be an object.')
     }
 }

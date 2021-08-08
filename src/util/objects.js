@@ -1,7 +1,13 @@
 const {Is} = require('./types')
 const {ArgumentError} = require('../errors')
 
+const SymNoKey = Symbol('NoKey')
+
 const objects = module.exports = {
+
+    hasKey: function hasKey(obj, key) {
+        return objects.lget(obj, key, SymNoKey) !== SymNoKey
+    },
 
     /**
      * Check whether an object is empty. Returns false if the parameter is not
@@ -42,6 +48,9 @@ const objects = module.exports = {
         let base = obj
         for (let i = 0; i < keyPath.length; ++i) {
             if (!Is.Object(base)) {
+                return dflt
+            }
+            if (!(keyPath[i] in base)) {
                 return dflt
             }
             base = base[keyPath[i]]

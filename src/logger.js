@@ -212,6 +212,8 @@ function log(level, ...args) {
     this[method](body + '\n')
 }
 
+const SymHp = Symbol('hp')
+
 module.exports = class Logger {
 
     /**
@@ -224,11 +226,13 @@ module.exports = class Logger {
         const chalk = new Chalk({
             level: getOptColorLevel(opts.colors),
         })
-        const chalkp = HashProxy(opts.styles, {
+        //this._styles = opts.styles
+        const chalkp = HashProxy.create(opts.styles, {
             filter     : Is.String,
             transform  : style => chalkPipe(style, chalk),
             enumerable : true,
         })
+        Object.defineProperty(this, SymHp, {value: chalkp})
         Object.defineProperties(opts, {
             colors: {
                 enumerable: true,
@@ -245,6 +249,10 @@ module.exports = class Logger {
                 {value: log.bind(this, level), enumerable: true}
             )),
         })
+    }
+
+    addStyle(k, v) {
+        this[SymHp].upsertEntry(k, v)
     }
 
     write(data) {
