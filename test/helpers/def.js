@@ -18,20 +18,32 @@ const DefaultUnaryErrorOperator = 'erri'
 const s_ = Symbol('self')
 
 function def(...args) {
-    const cb = isFunc(last(args)) ? args.pop() : false
-    const title = isString(args[0]) ? args.shift() : (isFunc(args[0]) ? '#' + args[0].name : false)
-    const opts = spread(isFunc(args[0]) ? {run: args.shift()} : {}, ...args)
+
+    let title, opts, cb
+    if (isFunc(last(args))) {
+        cb = args.pop()
+    }
+    if (isString(args[0])) {
+        title = args.shift()
+        opts = {}
+    } else if (isFunc(args[0])) {
+        title = '#' + args[0].name
+        opts = {run: args.shift()}
+    }
+    opts = spread(opts, ...args)
+
     const isNew = !this[s_]
     const self = isNew ? lset({}, s_, true) : this
+
     if (isNew) {
         update(self, {
-            def: def.bind(self),
-            opts: merge(opts),
-            track: [],
+            def   : def.bind(self),
+            opts  : merge(opts),
+            track : [],
         })
         update(self.def, {
-            test : test.bind(self),
-            set: set.bind(self),
+            test: test.bind(self),
+            set : set.bind(self),
         })
     }
     if (cb) {
@@ -47,6 +59,15 @@ function def(...args) {
     return self.def
 }
 
+function test(...args) {
+    const opts = isFunc(args[0]) ? {run: args.shift()} : {}
+    const tests = args.flat().map(test =>
+        spread(this.opts, ...this.track, opts, test)
+    )
+    createTests(tests)
+    return this.def
+}
+
 function set(...args) {
     const opts = spread(
         isFunc(args[0]) ? {run: args.shift()} : {},
@@ -56,15 +77,9 @@ function set(...args) {
     return this.def
 }
 
-function test(...args) {
-    const opts = isFunc(args[0]) ? {run: args.shift()} : {}
-    create(args.flat().map(test => spread(this.opts, ...this.track, opts, test)))
-    return this.def
-}
-
 module.exports = def()
 
-const create = tests => tests.forEach((opts, i) => {
+const createTests = tests => tests.forEach((opts, i) => {
     const n = i + 1
     const test = createCase(opts)
     if (!isFunc(test.run)) {

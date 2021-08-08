@@ -23,8 +23,8 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, def} = require('../helpers/index.js')
-const {test, set} = def
+const {ger, def, def: {test, set}} = require('../helpers/index.js')
+
 
 const {strings} = require('../../index.js')
 
