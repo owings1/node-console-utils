@@ -275,6 +275,14 @@ module.exports = class Logger {
         return this.opts.format.call(this, args)
     }
 
+    get name() {
+        return this.opts.name ?? 'Logger'
+    }
+
+    set name(name) {
+        this.opts.name = name
+    }
+
     get stdout() {
         return this.opts.stdout
     }
