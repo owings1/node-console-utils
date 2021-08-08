@@ -3,7 +3,7 @@ const {ArgumentError} = require('../errors')
 
 const SymNoKey = Symbol('NoKey')
 
-const objects = module.exports = {
+const objects = {
 
     hasKey: function hasKey(obj, key) {
         return objects.lget(obj, key, SymNoKey) !== SymNoKey
@@ -139,4 +139,15 @@ const objects = module.exports = {
         })
         return target
     },
+}
+
+module.exports = {
+    ...objects,
+    ...namedf(objects),
+}
+
+function namedf(obj) {
+    return Object.fromEntries(
+        Object.values(obj).map(f => [f.name, f])
+    )
 }
