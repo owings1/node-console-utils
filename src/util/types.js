@@ -133,7 +133,7 @@ const Is = {
     },
 
     Iterable: function isIterable(arg) {
-        return arg != null && Is.Function(obj[Symbol.iterator])
+        return arg != null && Is.Function(arg[Symbol.iterator])
     },
 
     /**
