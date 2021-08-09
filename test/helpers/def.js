@@ -120,6 +120,9 @@ function test(...args) {
         if (!opts.args) {
             todo.args = ['...']
         }
+        if (opts.exp === undefined) {
+            todo.exp = '...'
+        }
         args.push(todo)
     }
     const tests = args.flat().map(test => spread(opts, test))
@@ -210,8 +213,13 @@ function createCase(opts) {
     }
     opts.oper = toArray(opts.oper)
     if (!opts.desc) {
-        if (opts.skip && opts.args.length === 1 && opts.args[0] === '...' && opts.argsstr == null) {
-            opts.argsstr = opts.args[0]
+        if (opts.skip) {
+            if (opts.args.length === 1 && opts.args[0] === '...' && opts.argsstr == null) {
+                opts.argsstr = opts.args[0]
+            }
+            if (opts.exp === '...' && opts.expstr == null) {
+                opts.expstr = opts.exp
+            }
         }
         opts.desc = buildDesciption(opts)
     }

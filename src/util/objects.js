@@ -17,13 +17,23 @@ const objects = {
      * @return {boolean}
      */
     isEmpty: function isEmptyObject(obj) {
-        if (!Is.Object(obj)) {
+        if (Is.Object(obj) === false) {
             return false
         }
         for (const k in obj) {
             return false
         }
         return true
+    },
+
+    isNonEmpty: function isNonEmptyObject(obj) {
+        if (Is.Object(obj) === false) {
+            return false
+        }
+        for (const k in obj) {
+            return true
+        }
+        return false
     },
 
     isNullOrEmpty: function isNullOrEmptyObject(arg) {

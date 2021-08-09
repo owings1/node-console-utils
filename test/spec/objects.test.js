@@ -33,49 +33,104 @@ describe('objects', () => {
 
     })
 
-    describe('#isEmpty', () => {
-
-        def(objects.isEmpty, [{skip: true, desc: 'TODO...'}])
-    })
-
-    describe('#isNullOrEmpty', () => {
-
-        def(objects.isNullOrEmpty, [{skip: true, desc: 'TODO...'}])
-    })
-
-    describe('#lget', () => {
-
-        const {lget} = objects
-
-        def(objects.lget, () => {
+    def(objects.isEmpty, () => {
+        def({exp: true}, () => {
             test(
-                {exp: 'A', args: [new (class A{}), 'constructor.name']}
+                {args: [{}]},
+            )
+        })
+        def({exp: false}, () => {
+            test(
+                {args: [{a: 1}]},
+                {args: [Object.fromEntries([[undefined, undefined]])]},
             )
         })
     })
 
-    describe('#lset', () => {
-
-        def(objects.lset, [{skip: true, desc: 'TODO...'}])
+    def(objects.isNonEmpty, () => {
+        def({exp: true}, () => {
+            test(
+                {args: [{a: 1}]},
+                {args: [Object.fromEntries([[undefined, undefined]])]},
+            )
+        })
+        def({exp: false}, () => {
+            test(
+                {args: []},
+                {args: [{}]},
+                {args: [function(){}]},
+            )
+        })
     })
 
-    describe('#rekey', () => {
-
-        def(objects.rekey, [{skip: true, desc: 'TODO...'}])
+    def(objects.isNullOrEmpty, () => {
+        def({exp: true}, () => {
+            test(
+                {args: []},
+                {args: [{}]},
+            )
+        })
+        def({exp: false}, () => {
+            test(
+                {args: [{a: 1}]},
+            )
+        })
     })
 
-    describe('#revalue', () => {
-
-        def(objects.revalue, [{skip: true, desc: 'TODO...'}])
+    def(objects.lget, () => {
+        test(
+            {exp: 'A', args: [new (class A{}), 'constructor.name']}
+        )
     })
 
-    describe('#valuesHash', () => {
+    def(objects.lset, {oper: 'deep.equal'}, () => {
+        test(
 
-        def(objects.valuesHash, [{skip: true, desc: 'TODO...'}])
+        )
+        def({expg: ({args}) => args[0], desca: 'modify the object'}, () => {
+            test(
+                
+            )
+        })
     })
 
-    describe('#update', () => {
+    def(objects.rekey, {oper: 'deep.equal'}, () => {
+        test(
 
-        def(objects.update, [{skip: true, desc: 'TODO...'}])
+        )
+        def({expg: ({args}) => args[0], desca: 'not modify the object'}, () => {
+            test(
+                
+            )
+        })
     })
+
+    def(objects.revalue, {oper: 'deep.equal'}, () => {
+        test(
+
+        )
+        def({expg: ({args}) => args[0], desca: 'not modify the object'}, () => {
+            test(
+                
+            )
+        })
+    })
+
+    def(objects.valuesHash, {oper: 'deep.equal'}, () => {
+        test(
+
+        )
+    })
+
+    def(objects.update, {oper: 'deep.equal'}, () => {
+        test(
+
+        )
+        def({expg: ({args}) => args[0], desca: 'modify the object'}, () => {
+            test(
+                
+            )
+        })
+    })
+
 })
