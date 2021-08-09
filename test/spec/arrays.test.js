@@ -23,9 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, def} = require('../helpers/index.js')
-
-const {test, set} = def
+const {ger, def, def: {set, test}} = require('../helpers/index.js')
 
 const {arrays} = require('../../index.js')
 
@@ -34,12 +32,14 @@ describe('arrays', () => {
     def(arrays.append, () => {
 
         def('errors', {json: 'args'}, () => {
-            test({err: TypeError, args: []})
+            test({err: 'ArgumentError', args: []})
         })
 
         def({oper: 'deep.equal', json: true}, () => {
 
-            test({exp: [1,3,4], args: [[1], [3,4]]})
+            test(
+                {exp: [1,3,4], args: [[1], [3,4]]},
+            )
 
             def(() => {
                 set({
@@ -57,8 +57,11 @@ describe('arrays', () => {
     def(arrays.sum, {json: 'args'}, () => {
 
         test(
-            {err: TypeError, args: []},
-            {exp: 8, args: [[1,3,4]]},
+            {err: 'ArgumentError', args: []},
+            {exp:  8, args: [[1,3,4]]},
+            {exp:  3, args: [[1,2]]},
+            {exp:  0, args: [[]]},
+            {exp: 10, args: [[5,5]]},
         )
     })
 })

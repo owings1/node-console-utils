@@ -23,9 +23,10 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, def, def: {test}} = require('../helpers/index.js')
+const {ger, def, def: {test}, MockOutput} = require('../helpers/index.js')
 
 const {types} = require('../../index.js')
+
 
 describe('types', () => {
 
@@ -33,25 +34,40 @@ describe('types', () => {
 
     })
 
-    describe('#typeOf', () => {
 
-        def(types.typeOf, [
-            {exp: 'string', args: 'foo'}
-        ])
-
-        it('should ...')
-        it('todo', function () {
-            
-        })
+    def(types.typeOf, () => {
+        test(
+            {exp: 'array',    args: [ [] ]},
+            {exp: 'buffer',   args: [ Buffer.alloc(0) ]},
+            {exp: 'class',    args: [ class A{} ]},
+            {exp: 'function', args: [ function(){} ]},
+            {exp: 'null',     args: [ null ]},
+            {exp: 'number',   args: [ 1 ]},
+            {exp: 'number',   args: [ NaN ]},
+            {exp: 'object',   args: [ {} ]},
+            {exp: 'regex',    args: [ /a/ ]},
+            {exp: 'stream',   args: [ new MockOutput ]},
+            {exp: 'string',   args: [ 'foo' ]},
+            {exp: 'symbol',   args: [ Symbol('foo') ]},
+        )
     })
 
     describe('Cast', () => {
 
-        describe('#toArray', () => {
+        def(types.castToArray, {oper: 'deep.equal'}, () => {
 
-            it('should ...')
-            it('todo', function () {
-                
+            test(
+                {exp: [1]    , args: [1]},
+                {exp: []     , args: [undefined]},
+                {exp: []     , args: [null]},
+                {exp: [false], args: [false]},
+                {exp: [0]    , args: [0]},
+            )
+
+            def({expg: ({args: [arr]}) => arr, desca: 'return input array'}, () => {
+                test(
+                    {exp: [1], args: [[1]]},
+                )
             })
         })
     })
@@ -143,12 +159,14 @@ describe('types', () => {
 
             def({exp: true}, () => {
                 test(
-                    
+                    {args: [function foo(){}]},
+                    {args: [() => {}]},
+                    {args: [Error]},
                 )
             })
             def({exp: false}, () => {
                 test(
-                    
+                    {args: [{call: ()=>{}}]},
                 )
             })
         })
@@ -170,16 +188,36 @@ describe('types', () => {
             })
         })
 
-        def(Is.Object, () => {
+        def(Is.Number, () => {
 
             def({exp: true}, () => {
                 test(
-                    
+                    {args: [1]},
+                    {args: [Infinity]},
+                    {args: [-Infinity]},
+                    {args: [NaN]},
                 )
             })
             def({exp: false}, () => {
                 test(
-                    
+                    {args: ['1']},
+                    {args: ['Infinity']},
+                    {args: [{}]},
+                )
+            })
+        })
+
+        def(Is.Object, () => {
+
+            def({exp: true}, () => {
+                test(
+                    {args: [{}]},
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    {args: [null]},
+                    {args: [function(){}]},
                 )
             })
         })
@@ -216,7 +254,19 @@ describe('types', () => {
             })
         })
 
-        
+        def(Is.Regex, () => {
+
+            def({exp: true}, () => {
+                test(
+
+                )
+            })
+            def({exp: false}, () => {
+                test(
+
+                )
+            })
+        })
 
         def(Is.String, () => {
 
