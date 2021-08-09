@@ -22,35 +22,55 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+const {isArray} = require('./types.js')
+const {ArgumentError} = require('../errors.js')
+
+function checkArray(arg, name = 'arr') {
+    if (!isArray(arg)) {
+        throw new ArgumentError(`Argument (${arg}) not an array`)
+    }
+}
+
 const arrays = {
 
     /**
      * Append all values to an array.
      *
-     * @throws {TypeError}
+     * @throws {ArgumentError}
      *
      * @param {array} The array to push to
      * @param {array} The values to push
      * @return {array} The input array
      */
     append: function arrayAppend(arr, values) {
+        checkArray(arr)
         values.forEach(value => arr.push(value))
         return arr
     },
 
+    /**
+     * Get the last element of an array.
+     *
+     * @throws {ArgumentError}
+     *
+     * @param {array} The array
+     * @return {*} The last element or undefined.
+     */
     last: function arrayLast(arr) {
+        checkArray(arr)
         return arr[arr.length - 1]
     },
 
     /**
      * Sum all numbers in the array.
      *
-     * @throws {TypeError}
+     * @throws {ArgumentError}
      *
      * @param {array} The input array
      * @return {integer} The result sum
      */
     sum: function arraySum(arr) {
+        checkArray(arr)
         return arr.reduce((acc, cur) => acc + cur, 0)
     },
 }
