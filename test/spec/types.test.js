@@ -188,12 +188,16 @@ describe('types', () => {
 
             def({exp: true}, () => {
                 test(
-                    
+                    {args: [{}]},
+                    {args: [{constructor: function(){}}]},
                 )
             })
             def({exp: false}, () => {
                 test(
-                    
+                    {args: [function(){}]},
+                    {args: [new (class A{})]},
+                    {args: [true]},
+                    {args: [null]},
                 )
             })
         })

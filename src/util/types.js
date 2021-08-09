@@ -23,45 +23,61 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /**
- * Contains code copied directly and repacked (with minor style adjustment)
- * from is-plain-object
- *
+ * Contains code copied and modified from *is-plain-object*:
  * - https://www.npmjs.com/package/is-plain-object
  * - https://github.com/jonschlinkert/is-plain-object/blob/0a47f0f6/is-plain-object.js
+ * Methods `isObject()` and `isPlainObject()`.
+ * ----------------------
+ * The MIT License (MIT)
  *
- * Methods Is.Object() and Is.PlainObject()
+ * Copyright (c) 2014-2017, Jon Schlinkert.
  *
- * The is-plain-object license is as follows:
- * ----------------------------------
- *
- * MIT License
- * 
- * Copyright (c) 2015 Olivier Tassinari
- * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * ----------------------
+ * See file NOTICE.md for full license details.
+ * ----------------------
+ */
+/**
+ * Contains code copied and modified from *lodash*:
+ *  - https://www.npmjs.com/package/lodash
+ *  - https://github.com/lodash/lodash/blob/2da024c3/isPlainObject.js
+ * Method `isPlainObject()`
+ * ----------------------
+ * The MIT License
+ *
+ * Copyright JS Foundation and other contributors <https://js.foundation/>
+ *
+ * Based on Underscore.js, copyright Jeremy Ashkenas,
+ * DocumentCloud and Investigative Reporters & Editors <http://underscorejs.org/>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * ----------------------
+ * See file NOTICE.md for full license details.
+ * ----------------------
  */
 const {EventEmitter} = require('events')
 
 /**
  * Returns a useful type value for the parameter. The default is to return the
  * value of `typeof arg`, else one of the following: 'array', 'buffer', 'class',
- * 'object', 'null', or 'stream'.
+ * 'object', 'null', 'regex', or 'stream'.
  *
  * @param {*} The parameter to check
  * @return {string} The type
@@ -205,16 +221,21 @@ const Is = {
     Number: function isNumber(arg) {
         return typeof arg === 'number'
     },
+
     /**
      * Whether the parameter is an object.
      *
      * Returns false for: buffer, null, function, new String/Boolean
      * Returns true for: stream
      *
-     * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+     * From:
      *
+     * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+     * https://github.com/jonschlinkert/is-plain-object/blob/0a47f0f6/is-plain-object.js
      * Copyright (c) 2014-2017, Jon Schlinkert.
      * Released under the MIT License.
+     *
+     * See file NOTICE.md for full license details.
      *
      * @param {*} The parameter to check
      * @return {boolean} The result
@@ -226,17 +247,30 @@ const Is = {
     /**
      * Whether the parameter is probably a "plain" object.
      *
-     * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+     * Portions from:
      *
+     * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+     * https://github.com/jonschlinkert/is-plain-object/blob/0a47f0f6/is-plain-object.js
      * Copyright (c) 2014-2017, Jon Schlinkert.
      * Released under the MIT License.
+     *
+     * Portions from:
+     *
+     * lodash <https://github.com/lodash/lodash>
+     * https://github.com/lodash/lodash/blob/2da024c3/isPlainObject.js
+     * Copyright JS Foundation and other contributors <https://js.foundation/>
+     * Release under the MIT License.
+     *
+     * See file NOTICE.md for full license details.
      *
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
     PlainObject: function isPlainObject(o) {
+        /* begin is-plain-object code: */
         let ctor
-        let prot
+        let proto
+        
         if (Is.Object(o) === false) {
             return false
         }
@@ -245,17 +279,36 @@ const Is = {
         if (ctor === undefined) {
             return true
         }
-        // If has modified prototype
-        prot = ctor.prototype
-        if (Is.Object(prot) === false) {
-            return false
+        /* end is-plain-object code: */
+
+        /* The is-plain-object code continues similarly:
+
+            // If has modified prototype
+            proto = ctor.prototype
+            if (Is.Object(prot) === false) {
+                return false
+            }
+            // If constructor does not have an Object-specific method
+            if (prot.hasOwnProperty('isPrototypeOf') === false) {
+                return false
+            }
+            // Most likely a plain Object
+            return true
+
+        However, this returns false:
+
+            var o = { constructor: function(){} }
+            isPlainObject(o) // false!
+
+        The lodash code does its initial object check, then proceeds as follows: */
+
+        /* begin lodash code */
+        proto = o
+        while (Object.getPrototypeOf(proto) !== null) {
+            proto = Object.getPrototypeOf(proto)
         }
-        // If constructor does not have an Object-specific method
-        if (prot.hasOwnProperty('isPrototypeOf') === false) {
-            return false
-        }
-        // Most likely a plain Object
-        return true
+        return Object.getPrototypeOf(o) === proto
+        /* end lodash code */
     },
 
     /**
