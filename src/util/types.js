@@ -205,42 +205,14 @@ const Is = {
     },
 }
 
-const getProto = Object.getPrototypeOf
 
-const Class = {
-
-    ancestors: function classAncestors(arg) {
-        const ancs = []
-        if (Is.Class(arg) === false) {
-            return ancs
-        }
-        for (let cls = getProto(arg); cls && cls.name; cls = getProto(cls)) {
-            ancs.push(cls)
-        }
-        return ancs
-    },
-
-    inherits: function classInherits(arg, check) {
-        if (Is.Class(arg) === false || Is.Class(check) === false) {
-            return false
-        }
-        for (let cls = getProto(arg); cls && cls.name; cls = getProto(cls)) {
-            if (cls === check) {
-                return true
-            }
-        }
-        return false
-    },
-}
 
 module.exports = {
     typeOf,
     Cast,
     Is,
-    Class,
     ...namedf(Cast),
     ...namedf(Is),
-    ...namedf(Class),
 }
 
 function namedf(obj) {

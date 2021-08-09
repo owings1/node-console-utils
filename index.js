@@ -7,6 +7,7 @@ const pkg = module.exports = {
     get arrays()  { return require('./src/util/arrays.js')  },
     get buffers() { return require('./src/util/buffers.js') },
     get chars()   { return require('./src/util/chars.js')   },
+    get classes() { return require('./src/util/classes.js') },
     get colors()  { return require('./src/util/colors.js')  },
     get errors()  { return require('./src/util/errors.js')  },
     get merging() { return require('./src/util/merging.js') },
