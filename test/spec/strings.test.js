@@ -25,8 +25,7 @@
 const {expect} = require('chai')
 const {ger, def, def: {test, set}} = require('../helpers/index.js')
 
-
-const {strings} = require('../../index.js')
+const {strings, colors: {Chalk}} = require('../../index.js')
 
 describe('strings', () => {
 
@@ -99,5 +98,74 @@ describe('strings', () => {
             {exp: '1foo', args: '1foo'},
             {exp: '', args: ''},
         )
+    })
+
+    def(strings.breakLine, () => {
+
+        const {breakLine} = strings
+        const chalk = new Chalk({level: 2})
+
+        def('Chinese characters', () => {
+
+            def('string width 76', () => {
+
+                const str = '\x1B[36m❯\x1B[32m◉\x1B[39m\x1B[36m 选项选项选项选项选项选项选项选项选项选项选项\x1B[34m选项选项选\x1B[39m\x1B[36m项选项选项选项选项1\x1B[39m'
+
+                set({oper: 'length', run: breakLine.bind(null, str)})
+
+                test(
+                    {exp: 1, args: [76]},
+                    {exp: 2, args: [75]},
+                    {exp: 3, args: [26]},
+                )
+
+                it('should equal original input when lines are joined', function () {
+                    const lines = breakLine(str, 10)
+                    expect(lines.join('')).to.equal(str)
+                })
+            })
+        })
+
+        def('Korean characters', () => {
+
+            def('string width 94', () => {
+
+                const str = '\x1B[32m정당해산의\x1B[39m 결정 또는 헌법소원에 관한 인용결정을 할 때에는 재판관 6인 이상의 찬성이 있어야 한다'
+
+                set({oper: 'length', run: breakLine.bind(null, str)})
+
+                test(
+                    {exp: 1, args: [94]},
+                    {exp: 2, args: [93]},
+                    {exp: 4, args: [31]},
+                )
+
+                it('should equal original input when lines are joined', function () {
+                    const lines = breakLine(str, 10)
+                    expect(lines.join('')).to.equal(str)
+                })
+            })
+        })
+
+        def('Latin characters', () => {
+
+            def('string width 50', () => {
+
+                const str = 'This is one line that is ' + chalk.green('fifty') + ' characters in width'
+
+                set({oper: 'length', run: breakLine.bind(null, str)})
+
+                test(
+                    {exp: 1, args: [50]},
+                    {exp: 2, args: [49]},
+                    {exp: 4, args: [14]},
+                )
+
+                it('should equal original str when lines are joined', function () {
+                    const lines = breakLine(str, 14)
+                    expect(lines.join('')).to.equal(str)
+                })
+            })
+        })
     })
 })

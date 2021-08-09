@@ -6,7 +6,8 @@
   "scripts": {
     "test": "nyc --reporter=text-summary mocha test/spec/** && nyc report --reporter=lcov",
     "co": "open coverage/lcov-report/index.html",
-    "tu": "node test/scripts/tests-update.js"
+    "tu": "node test/scripts/tests-update.js",
+    "emoji": "node scripts/build-emoji-regex.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,13 @@
   "bugs": {
     "url": "https://github.com/owings1/node-utils-h/issues"
   },
+  "files": [
+    "src",
+    "index.js",
+    "LICENSE.txt",
+    "NOTICE.md",
+    "README.md"
+  ],
   "homepage": "https://github.com/owings1/node-utils-h#readme",
   "dependencies": {
     "chalk": "^4.1.2",
