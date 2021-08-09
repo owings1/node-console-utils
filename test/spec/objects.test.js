@@ -116,9 +116,10 @@ describe('objects', () => {
         })
     })
 
-    def(objects.valuesHash, {oper: 'deep.equal'}, () => {
+    def(objects.valueHash, {oper: 'deep.equal'}, () => {
         test(
-
+            {exp: {a:true, b:true}, args: [['a', 'b']]},
+            {exp: {a:true, b:true}, args: [{x: 'a', y: 'b'}]},
         )
     })
 

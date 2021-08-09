@@ -101,12 +101,17 @@ const objects = {
         )
     },
 
-    valuesHash: function valuesHash(...args) {
-        return Object.fromEntries(
-            args.map(Object.values).flat().map(value =>
-                [value, true]
-            )
-        )
+    /**
+     * Return a object with the input's values as key, with `true` as all values.
+     *
+     * @throws {TypeError}
+     *
+     * @param {object|array} The input object
+     * @return {object} The result object
+     */
+    valueHash: function valueHash(obj) {
+        const values = Is.Array(obj) ? obj : Object.values(obj)
+        return Object.fromEntries(values.map(value => [value, true]))
     },
 
     /**
