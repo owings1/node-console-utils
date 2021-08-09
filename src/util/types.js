@@ -98,6 +98,9 @@ function typeOf(arg) {
     if (Is.Class(arg)) {
         return 'class'
     }
+    if (Is.Regex(arg)) {
+        return 'regex'
+    }
     if (Is.Object(arg)) {
         return 'object'
     }
@@ -361,6 +364,16 @@ const Is = {
      */
     ReadableStream: function isReadableStream(arg) {
         return arg instanceof EventEmitter && Is.Function(arg.read)
+    },
+
+    /**
+     * Whether the parameter is a RegExp.
+     *
+     * @param {*} The parameter to check
+     * @return {boolean} The result
+     */
+    Regex: function isRegex(arg) {
+        return arg instanceof RegExp
     },
 
     /**
