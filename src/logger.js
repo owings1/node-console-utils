@@ -53,6 +53,10 @@ const Defaults = {}
 
 Defaults.stdout = process.stdout
 Defaults.stderr = process.stderr
+/**
+ * Whether to write only to stdout
+ */
+Defaults.oneout = false
 
 /**
  * The default log level. If the `DEBUG` environment variable is set, then the
@@ -292,6 +296,9 @@ module.exports = class Logger {
     }
 
     get stderr() {
+        if (this.opts.oneout) {
+            return this.opts.stdout
+        }
         return this.opts.stderr
     }
 
