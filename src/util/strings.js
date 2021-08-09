@@ -1,5 +1,5 @@
 /**
- * node-console-utils - Logger
+ * node-utils-h - string utils
  *
  * Copyright (C) 2021 Doug Owings
  * 
@@ -23,11 +23,10 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /**
- * Regex.Ansi copied from ansi-regex:
- *
+ * Regex.Ansi copied from *ansi-regex*:
  *  - https://github.com/chalk/ansi-regex/blob/c1b5e45f/index.js
  *  - https://www.npmjs.com/package/ansi-regex
- *
+ * ----------------------
  * MIT License
  * 
  * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
@@ -41,23 +40,22 @@
  * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * ----------------------
+ * See file NOTICE.md for full license details.
+ * ----------------------
  */
 const Regex = {
-    // From: https://github.com/chalk/ansi-regex/blob/c1b5e45f/index.js
+    /**
+     * From: https://github.com/chalk/ansi-regex/blob/c1b5e45f/index.js
+     */
     Ansi: new RegExp([
         '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
         '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))',
     ].join('|'), 'g'),
 
-    // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#using_special_characters
+    /**
+     * See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#using_special_characters
+     */
     Regex: /[.*+?^${}()|[\]\\]/g,
 }
 

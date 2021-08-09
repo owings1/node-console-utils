@@ -1,5 +1,5 @@
 /**
- * node-console-utils - Type checking/casting utils
+ * node-utils-h - Type checking/casting utils
  *
  * Copyright (C) 2021 Doug Owings
  * 
@@ -125,6 +125,48 @@ const Cast = {
         }
         return arr
     },
+    ///**
+    // * Induce a boolean value.
+    // *
+    // * @param {*} The value to examine
+    // * @param {boolean} (optional) The default value
+    // * @return {boolean} The induced value
+    // */
+    //static induceBool(value, def = false) {
+    //    if (typeof value == 'boolean') {
+    //        return value
+    //    }
+    //    if (value != null) {
+    //        value = String(value).toLowerCase()
+    //        if (def) {
+    //            // Default is true, so check for explicit false.
+    //            return ['0', 'false', 'no', 'n', 'off'].indexOf(value) < 0
+    //        }
+    //        // Default is false, so check for explicit true.
+    //        return ['1', 'true', 'yes', 'y', 'on'].indexOf(value) > -1
+    //    }
+    //    return Boolean(def)
+    //}
+
+    ///**
+    // * Induce an integer value.
+    // *
+    // * @param {*} The value to examine
+    // * @param {integer} (optional) The default value
+    // * @return {integer} The induced value
+    // */
+    //static induceInt(value, def = 0) {
+    //    if (Number.isInteger(value)) {
+    //        return value
+    //    }
+    //    if (!Number.isInteger(def)) {
+    //        def = 0
+    //    }
+    //    if (value != null) {
+    //        return parseInt(value) || def
+    //    }
+    //    return def
+    //}
 }
 
 const Is = {
