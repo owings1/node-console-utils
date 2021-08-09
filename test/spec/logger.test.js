@@ -72,6 +72,28 @@ describe('Logger', () => {
             const err = ger(() => this.create({stderr}))
             expect(err).erri('Argument')
         })
+
+        it('should set stderr to stdout with oneout', function () {
+            const out = new MockOutput
+            const opts = {stdout: out, oneout: true}
+            const logger = this.create(opts)
+            expect(logger.stdout).to.equal(out)
+            expect(logger.stderr).to.equal(out)
+        })
+
+        it('should link stderr to stdout with oneout=true after construct', function () {
+            const logger = this.create()
+            logger.opts.oneout = true
+            expect(logger.stderr).to.equal(this.stdout)
+        })
+
+        it('should unlink stderr from stdout with oneout=false after construct', function () {
+            const logger = this.create({oneout: true})
+            expect(logger.stderr).to.equal(this.stdout)
+            logger.opts.oneout = false
+            expect(logger.stderr).to.equal(this.stderr)
+        })
+
         it('should not use prefix when prefix=null', function () {
             this.create({prefix: null}).info('x')
             expect(this.stdout.raw.trim()).to.equal('x')

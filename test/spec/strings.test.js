@@ -30,7 +30,7 @@ const {strings} = require('../../index.js')
 
 describe('strings', () => {
 
-    def(strings.cat, {json: 'args'}, () => {
+    def(strings.cat, () => {
         test(
             {exp: 'abc', args: ['a','b','c']},
             {exp: 'abc', args: [['a','b','c']]},

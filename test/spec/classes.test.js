@@ -1,5 +1,5 @@
 /**
- * node-utils-h - </name> tests
+ * node-utils-h - buffers tests
  *
  * Copyright (C) 2021 Doug Owings
  *
@@ -25,13 +25,38 @@
 const {expect} = require('chai')
 const {ger, def, def: {test}} = require('../helpers/index.js')
 
-const {</name>} = require('../../index.js')
+const {classes} = require('../../index.js')
 
-describe('</name>', () => {
+describe('classes', () => {
 
-    beforeEach(function () {
+    describe('A > B > C, R > S, R > T', () => {
 
+        class A {}
+        class B extends A {}
+        class C extends B {}
+
+        class R {}
+        class S extends R {}
+        class T extends R {}
+
+        def(classes.inherits, () => {
+        
+            def({exp: true}, () => {
+                test(
+                    {args: [TypeError, Error]},
+                    {args: [B, A]},
+                    {args: [C, B]},
+                    {args: [C, A]},
+                )
+            })
+
+            def({exp: false}, () => {
+                test(
+                    {args: [T, S]},
+                    {args: [T, B]},
+                    {args: [A, A]},
+                )
+            })
+        })
     })
-
-</specContent>
 })

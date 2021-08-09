@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, def} = require('../helpers/index.js')
+const {ger, def, def: {test}} = require('../helpers/index.js')
 
 const {types} = require('../../index.js')
 
@@ -56,102 +56,241 @@ describe('types', () => {
         })
     })
 
-    describe('Is', () => {
+    def('Is', () => {
 
-        describe('#Array', () => {
+        const {Is} = types
 
-            it('should ...')
-            it('todo', function () {
-                
+        def(Is.Array, () => {
+            def({exp: true}, () => {
+                test(
+                    {args: [[]]},
+                    {args: [[1]]},
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    {args: [{length: 1}]},
+                    {args: ['Array']},
+                )
             })
         })
 
-        describe('#Error', () => {
+        def(Is.Boolean, () => {
 
-            it('should ...')
-            it('todo', function () {
-                
+            def({exp: true}, () => {
+                test(
+                    {args: [true]},
+                    {args: [false]},
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    {args: ['true']},
+                    {args: ['false']},
+                    {args: ['']},
+                    {args: [1]},
+                    {args: [0]},
+                    {args: [null]},
+                    {args: [undefined]},
+                    {args: [new Boolean], argsstr: 'new Boolean'},
+                )
             })
         })
 
-        describe('#Buffer', () => {
+        def(Is.Buffer, () => {
 
-            it('should ...')
-            it('todo', function () {
-                
+            def({exp: true}, () => {
+                test(
+                    {args: Buffer.alloc(0), argsstr_: 'Buffer'}
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    {args: {type:"Buffer", data:[]}}
+                )
             })
         })
 
-        describe('#Object', () => {
+        def(Is.Class, () => {
 
-            it('should ...')
-            it('todo', function () {
-                
+            def({exp: true}, () => {
+                test(
+                    {args: [class A{}]},
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    {args: [function() {}]},
+                )
             })
         })
 
-        describe('#Stream', () => {
+        def(Is.Error, () => {
 
-            it('should ...')
-            it('todo', function () {
-                
+            def({exp: true}, () => {
+                test(
+                    {args: [new Error], argsstr: 'new Error'},
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    {args: [Error]}
+                )
             })
         })
 
-        describe('#String', () => {
+        def(Is.Function, () => {
 
-            it('should ...')
-            it('todo', function () {
-                
+            def({exp: true}, () => {
+                test(
+                    
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    
+                )
             })
         })
 
-        describe('#Function', () => {
+        def(Is.Iterable, () => {
 
-            it('should ...')
-            it('todo', function () {
-                
+            def({exp: true}, () => {
+                test(
+                    {args: [[]]},
+                    {args: ['']},
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    {args: [1]},
+                    {args: [null]},
+                    {args: [{}]},
+                )
             })
         })
 
-        describe('#Iterable', () => {
+        def(Is.Object, () => {
 
-            it('should ...')
-            it('todo', function () {
-                
+            def({exp: true}, () => {
+                test(
+                    
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    
+                )
             })
         })
 
-        describe('#PlainObject', () => {
+        def(Is.PlainObject, () => {
 
-            it('should ...')
-            it('todo', function () {
-                
+            def({exp: true}, () => {
+                test(
+                    
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    
+                )
             })
         })
 
-        describe('#ReadableStream', () => {
+        def(Is.ReadableStream, () => {
 
-            it('should ...')
-            it('todo', function () {
-                
+            def({exp: true}, () => {
+                test(
+                    
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    
+                )
             })
         })
 
-        describe('#WritableStream', () => {
+        
 
-            it('should ...')
-            it('todo', function () {
-                
+        def(Is.String, () => {
+
+            def({exp: true}, () => {
+                test(
+                    {args: ['']}
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    {args: [new String('')]},
+                )
             })
         })
 
-        describe('#WriteableStream', () => {
+        def(Is.Symbol, () => {
 
-            it('should ...')
-            it('todo', function () {
-                
+            def({exp: true}, () => {
+                test(
+                    {args: [Symbol()]},
+                    {args: [Symbol.iterator]},
+                )
+            })
+            def({exp: false}, () => {
+                test(
+                    {args: [new (class Symbol{})]},
+                    {args: [Symbol]},
+                )
             })
         })
+
+        def('Stream', () => {
+
+            const fakew = {write: () => {}, end: () => {}}
+
+            def(Is.Stream, () => {
+
+                def({exp: true}, () => {
+                    test(
+                    
+                    )
+                })
+                def({exp: false}, () => {
+                    test(
+                    
+                    )
+                })
+            })
+            def(Is.WritableStream, () => {
+
+                def({exp: true}, () => {
+                    test(
+                        {args: [process.stdout], argsstr: 'process.stdout'},
+                        {args: [process.stderr], argsstr: 'process.stderr'},
+                    )
+                })
+                def({exp: false}, () => {
+                    test(
+                        {args: [fakew]},
+                    )
+                })
+            })
+
+            def(Is.WriteableStream, {json: false}, () => {
+
+                def({exp: true}, () => {
+                    test(
+                        {args: [process.stdout], argsstr: 'process.stdout'},
+                        {args: [process.stderr], argsstr: 'process.stderr'},
+                    )
+                })
+                def({exp: false}, () => {
+                    test(
+                        {args: [fakew]},
+                    )
+                })
+            })
+        })
+        
     })
 })

@@ -1,10 +1,22 @@
 const {expect} = require('chai')
 const assert = require('assert')
-const util = require('util')
+const {formatWithOptions: formato} = require('util')
 const {ger, TestError} = require('./errors.js')
 const {
+    typeOf,
     Cast: {toArray},
-    types: {isFunction: isFunc, isString, isArray, isObject},
+    types: {
+        isArray,
+        isBoolean: isBool,
+        isClass,
+        isFunction: isFunc,
+        isNumber: isNum,
+        isObject,
+        isPlainObject: isPlain,
+        isString,
+        isSymbol,
+    },
+    classes: {inherits},
     objects: {lget, lset, update},
     merging: {spread, merge},
     arrays: {last},
@@ -14,9 +26,27 @@ const {log, error: logerr, warn} = console
 
 const DefaultUnaryOperator = 'equal'
 const DefaultUnaryErrorOperator = 'erri'
+const MaxArgDescLength = 40
+const MaxDescLength = 120
 
 const s_ = Symbol('self')
 
+/**
+ * allowed:
+ *   with cb (new ok):
+ *     1. def([title,] [run,] [...opts,] cb)
+ *
+ *   without cb:
+ *     4. new def()
+ *     5. new def([run,] ...opts)
+ *
+ * not allowed (thinks run is cb):
+ *   a. def(run)
+ *   b. new def(run)
+ *
+ * noop (won't affect opts, use new instead):
+ *   c. def([title,] [...opts])
+ */
 function def(...args) {
 
     let title, opts, cb
@@ -45,6 +75,21 @@ function def(...args) {
             test: test.bind(self),
             set : set.bind(self),
         })
+        const mkeys = ['debug', 'only', 'skip']
+        for (const key of mkeys) {
+            const ins = lset({}, key, true)
+            const dmod = defmod.bind(self, ins)
+            const tmod = testmod.bind(self, ins)
+            self.def[key] = dmod
+            self.def.test[key] = tmod
+            for (const keyr of mkeys) {
+                const insr = spread(ins, lset({}, keyr, true))
+                if (keyr !== key) {
+                    self.def[key][keyr] = defmod.bind(self, insr)
+                    self.def.test[key][keyr] = testmod.bind(self, insr)
+                }
+            }
+        }
     }
     if (cb) {
         const save = self.track.slice(0)
@@ -59,13 +104,33 @@ function def(...args) {
     return self.def
 }
 
+function defmod(ins, ...args) {
+    args.splice(args.length - isFunc(last(args)), 0, ins)
+    return def.apply(this, args)
+}
+
 function test(...args) {
-    const opts = isFunc(args[0]) ? {run: args.shift()} : {}
-    const tests = args.flat().map(test =>
-        spread(this.opts, ...this.track, opts, test)
-    )
+    let opts = isFunc(args[0]) ? {run: args.shift()} : {}
+    opts = spread(this.opts, ...this.track, opts)
+    if (!args.length) {
+        const todo = {skip: true, descb: 'TODO:'}
+        if (opts.descb) {
+            todo.descb += ' ' + opts.descb
+        }
+        if (!opts.args) {
+            todo.args = ['...']
+        }
+        args.push(todo)
+    }
+    const tests = args.flat().map(test => spread(opts, test))
     createTests(tests)
     return this.def
+}
+
+function testmod(ins, ...args) {
+    return test.apply(this, args.flat().map(arg =>
+        isObject(arg) ? spread(arg, ins) : arg
+    ))
 }
 
 function set(...args) {
@@ -112,8 +177,12 @@ const createTests = tests => tests.forEach((opts, i) => {
         const should = expect(test.result)
         lget(should, test.oper).call(should, test.exp)
     }
+    let {desc} = test
+    if (desc.length > MaxDescLength) {
+        desc = desc.substring(0, MaxDescLength - 3) + '...'
+    }
     const that = getit(it, opts)
-    that.call(that, test.desc, testCase)
+    that.call(that, desc, testCase)
 })
 
 const getit = (it, opts) => opts.skip ? it.skip : (opts.only ? it.only : it)
@@ -141,10 +210,16 @@ function createCase(opts) {
     }
     opts.oper = toArray(opts.oper)
     if (!opts.desc) {
+        if (opts.skip && opts.args.length === 1 && opts.args[0] === '...' && opts.argsstr == null) {
+            opts.argsstr = opts.args[0]
+        }
         opts.desc = buildDesciption(opts)
     }
     if (opts.desca) {
         opts.desc += `, and ${opts.desca}`
+    }
+    if (opts.descb) {
+        opts.desc = opts.descb + ' ' + opts.desc
     }
     return opts
 }
@@ -160,20 +235,31 @@ function getUnaryOperator(opts, val) {
 }
 
 function buildDesciption(opts) {
-    const {exp, args, json} = opts
+    const {exp, args, err, json} = opts
     const [expstr, argstr] = ['exp', 'args'].map(key => {
         const strkey = key + 'str'
         if (opts[strkey]) {
             return opts[strkey]
         }
+        if (err && key === 'exp') {
+            if (exp === Error || inherits(exp, Error)) {
+                return exp.name
+            }
+            if (isString(exp)) {
+                return exp
+            }
+        }
+        if (key === 'args' && args.length === 0) {
+            return 'no arguments'
+        }
         const stringer = [true, key].includes(json)
             ? tojson
             : stringly
-        const val = key === 'exp' ? [opts[key]] : opts[key]
-        const str = val.map(stringer)
-        return val.length === 1 ? str : `(${str})`
+        const vals = key === 'exp' ? [opts[key]] : opts[key]
+        const str = vals.map(stringer)
+        return vals.length === 1 ? str : `(${str})`
     })
-    const {err, oper} = opts
+    const {oper} = opts
     let {retstr} = opts
     if (!retstr) {
         if (err) {
@@ -182,26 +268,50 @@ function buildDesciption(opts) {
             retstr = oper.join(' ')
         }
     }
-    return `should ${retstr} ${expstr} for ${argstr}`
+    const prep = args.length === 0 ? 'with' : 'for'
+    return `should ${retstr} ${expstr} ${prep} ${argstr}`
 }
 
 function stringly(arg) {
-    if (isFunc(arg)) {
-        return arg.name
+    let str
+    let type = typeOf(arg)
+    if (isBool(arg) || isNum(arg) || isSymbol(arg)) {
+        // booleans, numbers, and strings have a constructor
+        str = String(arg)
+    } else if (isString(arg)) {
+        str = "'" + String(arg) + "'"
+    } else if (isFunc(arg)) {
+        str = `<${type} ${arg.name || 'anon'}>`
+    } else if (isPlain(arg) || isArray(arg)) {
+        str = formato({colors: false}, arg)
+    } else if (type === 'buffer') {
+        str = `${type}(${arg.length})`
+    } else if (arg && arg.constructor && arg.constructor.name) {
+        if (isClass(arg.constructor)) {
+            str = `<<class ${arg.constructor.name}>()>`
+        } else {
+            str = `<${arg.constructor.name}()>`
+        }
+    } else if (isObject(arg)) {
+        str = `<${type}()>`
+    } else if (isString(arg)) {
+        str = "'" + String(arg) + "'"
+    } else {
+        str = String(arg)
     }
-    let str = String(arg)
-    return isString(arg) ? `'${str}'` : str
+    if (str.length > MaxArgDescLength) {
+        str = str.substring(0, MaxArgDescLength - 3) + '...'
+    }
+    return str
 }
-/*
-From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify:
-If you return a Number, String, Boolean, or null, the stringified version of that value is used as the property's value.
-If you return a Function, Symbol, or undefined, the property is not included in the output.
-If you return any other object, the object is recursively stringified, calling the replacer function on each property.
-*/
+
 function tojson(arg) {
     return JSON.stringify(arg, (key, value) => {
         if (isFunc(value)) {
             return value.name ?? '(function)'
+        }
+        if (isSymbol(value)) {
+            return value.toString()
         }
         return value
     })
