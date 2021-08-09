@@ -11,13 +11,13 @@ const objects = {
 
     /**
      * Check whether an object is empty. Returns false if the parameter is not
-     * iterable.
+     * an object.
      * @see {isNullOrEmpty}
      * @param {*} The input to check
      * @return {boolean}
      */
     isEmpty: function isEmptyObject(obj) {
-        if (!Is.Iterable(obj)) {
+        if (!Is.Object(obj)) {
             return false
         }
         for (const k in obj) {
@@ -27,7 +27,7 @@ const objects = {
     },
 
     isNullOrEmpty: function isNullOrEmptyObject(arg) {
-        return !Is.Iterable(arg) || objects.isEmpty(arg)
+        return arg === null || typeof arg === 'undefined' || objects.isEmpty(arg)
     },
 
     keyPath: function getKeyPath(kpath) {
