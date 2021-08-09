@@ -325,7 +325,6 @@ const Is = {
 }
 
 
-
 module.exports = {
     typeOf,
     Cast,

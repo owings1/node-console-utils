@@ -47,7 +47,7 @@ const objects = {
         }
         let base = obj
         for (let i = 0; i < keyPath.length; ++i) {
-            if (!Is.Object(base)) {
+            if (!Is.Object(base) && !Is.Function(base)) {
                 return dflt
             }
             if (!(keyPath[i] in base)) {

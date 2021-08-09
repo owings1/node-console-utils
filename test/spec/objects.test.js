@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, def} = require('../helpers/index.js')
+const {ger, def, def: {test}} = require('../helpers/index.js')
 
 const {objects} = require('../../index.js')
 
@@ -45,7 +45,13 @@ describe('objects', () => {
 
     describe('#lget', () => {
 
-        def(objects.lget, [{skip: true, desc: 'TODO...'}])
+        const {lget} = objects
+
+        def(objects.lget, () => {
+            test(
+                {exp: 'A', args: [new (class A{}), 'constructor.name']}
+            )
+        })
     })
 
     describe('#lset', () => {
