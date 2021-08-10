@@ -30,9 +30,9 @@ const {formatWithOptions} = require('util')
 const {Cast, Is}   = require('./util/types.js')
 const {Caret}      = require('./util/chars.js')
 const {cat}        = require('./util/strings.js')
-const {merge}      = require('./util/merging.js')
+const {merge, spread} = require('./util/merging.js')
 const {parseStack} = require('./util/errors.js')
-const {revalue}    = require('./util/objects.js')
+const {isEmptyObject, revalue}    = require('./util/objects.js')
 
 const HashProxy       = require('./hash-proxy.js')
 const {ArgumentError} = require('./errors.js')
@@ -81,6 +81,7 @@ Defaults.logLevel = getLevelNumber(Defaults.logLevel)
  */
 Defaults.colors = DefaultColor
 
+Defaults.formatting = {}
 /**
  * The chalk color styles to use.
  */
@@ -91,28 +92,50 @@ Defaults.styles = {
         prefix  : 'red',
         string  : '#884444',
         file    : 'yellow',
-        name    : 'bgRedBright.bold.black',
-        message : '#884444',
-        stack   : 'grey',
+        error : {
+            name    : 'bgRedBright.bold.black',
+            message : '#884444',
+            stack   : 'grey',
+        },
     },
     warn: {
         prefix : 'yellow',
         string : 'chalk',
         file   : 'yellow',
+        error : {
+            name    : 'yellow.bold.italic',
+            message : 'chalk',
+            stack   : 'grey',
+        },
     },
     info: {
         prefix : 'grey',
         string : 'chalk',
         file   : 'cyan',
+        error : {
+            name    : 'yellow.bold.italic',
+            message : 'chalk',
+            stack   : 'grey',
+        },
     },
     log: {
         prefix : 'grey',
         string : 'chalk',
         file   : 'cyan',
+        error : {
+            name    : 'yellow.bold.italic',
+            message : 'chalk',
+            stack   : 'grey',
+        },
     },
     debug: {
         prefix : 'blue',
         string : 'chalk',
+        error : {
+            name    : 'yellow.bold.italic',
+            message : 'chalk',
+            stack   : 'grey',
+        },
     },
 }
 
@@ -152,7 +175,8 @@ Defaults.prelog = function (level, args) {
         }
         if (Is.Error(arg)) {
             hasError = true
-            return this.formatError(arg, args.some(arg => arg && arg.throwing))
+            const isThrowing = args.some(arg => arg && arg.throwing)
+            return formatError.call(this, level, arg, isThrowing)
         }
         if (Is.PlainObject(arg)) {
             // Handle special keys.
@@ -180,7 +204,8 @@ Defaults.prelog = function (level, args) {
  */
 Defaults.format = function (args) {
     const {colors} = this.opts
-    return formatWithOptions({colors}, ...args)
+    const opts = spread({colors}, this.opts.formatting)
+    return formatWithOptions(opts, ...args)
 }
 
 /**
@@ -225,6 +250,10 @@ module.exports = class Logger {
      */
     constructor(opts) {
         opts = merge(Defaults, opts)
+        if (Is.Object(opts.format)) {
+            opts.formatting = merge(Defaults.formatting, opts.formatting)
+            opts.format = Defaults.format
+        }
         checkWriteStream(opts.stdout, 'opts.stdout')
         checkWriteStream(opts.stderr, 'opts.stderr')
         const chalk = new Chalk({
@@ -313,20 +342,25 @@ module.exports = class Logger {
     set logLevel(n) {
         this.opts.logLevel = n
     }
+}
 
-    formatError(err, isSkipStack = false) {
-        const chlk = this.chalks.error
-        const {stack, rawMessage} = parseStack(err)
-        const name = err.name || err.constructor.name
-        const lines = []
-        lines.push(
-            [chlk.name(name), chlk.message(rawMessage)].join(': ')
-        )
-        if (!isSkipStack) {
-            lines.push(chlk.stack(stack))
-        }
-        return lines.join('\n')
+function formatError(level, err, isThrowing = false) {
+    const levelNum = getLevelNumber(level)
+    level = LevelNames[levelNum]
+    const chlk = this.chalks[level].error
+    const {stack, rawMessage} = parseStack(err)
+    const name = err.name || err.constructor.name
+    const lines = []
+    lines.push(
+        [chlk.name(name), chlk.message(rawMessage)].join(': ')
+    )
+    const isPrintStack = this.logLevel > 3 || (
+        levelNum < 1 && !isThrowing
+    )
+    if (isPrintStack) {
+        lines.push(chlk.stack(stack))
     }
+    return lines.join('\n')
 }
 
 function getLevelNumber(value) {

@@ -348,6 +348,8 @@ const strings = {
 
 module.exports = {
     regex,
+    codes,
+    ...namedf(codes),
     ...strings,
     ...namedf(strings),
 }
