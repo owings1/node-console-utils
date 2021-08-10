@@ -27,12 +27,12 @@ const chalkPipe = require('chalk-pipe')
 
 const {formatWithOptions} = require('util')
 
-const {Cast, Is}   = require('./util/types.js')
-const {Caret}      = require('./util/chars.js')
-const {cat}        = require('./util/strings.js')
+const {Cast, Is} = require('./util/types.js')
+const {Caret}    = require('./util/chars.js')
+const {cat}      = require('./util/strings.js')
 const {merge, spread} = require('./util/merging.js')
-const {parseStack} = require('./util/errors.js')
-const {isEmptyObject, revalue}    = require('./util/objects.js')
+const {parseStack}    = require('./util/errors.js')
+const {isEmptyObject, revalue} = require('./util/objects.js')
 
 const HashProxy       = require('./hash-proxy.js')
 const {ArgumentError} = require('./errors.js')
