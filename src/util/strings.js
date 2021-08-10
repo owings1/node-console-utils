@@ -23,13 +23,19 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /**
- * regex.ansi copied from *ansi-regex*:
+ * regex.ansiGlobal copied from *ansi-regex*:
  *  - https://github.com/chalk/ansi-regex/blob/c1b5e45f/index.js
  *  - https://www.npmjs.com/package/ansi-regex
  * ----------------------
  * stringWidth copied from string-width:
  * - https://www.npmjs.com/package/string-width
  * - https://github.com/sindresorhus/string-width
+ * portions extracted to isCombiningCharCodePoint, isControlCharCodePoint,
+ * and isSurrogateCodePoint.
+ * ----------------------
+ * isFullwidthCodePoint copied from is-fullwidth-code-point:
+ * - https://www.npmjs.com/package/is-fullwidth-code-point
+ * - https://github.com/sindresorhus/is-fullwidth-code-point/blob/27f57288/index.js
  * ----------------------
  * MIT License
  * 
@@ -48,53 +54,81 @@
  * See file NOTICE.md for full license details.
  * ----------------------
  */
-//const isFullwidth = require('../lib/fullwidth.js')
 
 const regex = {
 
     /**
      * From: https://github.com/chalk/ansi-regex/blob/c1b5e45f/index.js
      */
-    ansig: /[\u001B\u009B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\u0007)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]))/g,
+    ansiGlobal: /[\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\u0007)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]))/g,
+
+    /*
+     * No global flag.
+     */
+    ansiPlain: /[\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\u0007)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]))/,
 
     /**
      * Matches all consecutive ANSI sequences from the beginning of the string.
      */
-    ansis1: /^([\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~])))+/,
+    ansiStart: /^([\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~])))+/,
 
     //ansis2: /^(\x1B([[0-9;]*m)?)+/,
+
     /**
      * Source from: https://github.com/mathiasbynens/emoji-regex
+     * Copyright Mathias Bynens <https://mathiasbynens.be/>
+     * MIT License.
      */
-    emoji: require('../lib/emoji-regex.js'),
-    emojing1: new RegExp(require('../lib/emoji-regex.js').source),
+    emojiGlobal: require('../lib/emoji-regex.js'),
+
+    /**
+     * No global flag.
+     */
+    emojiPlain: new RegExp(require('../lib/emoji-regex.js').source),
 
     /**
      * See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#using_special_characters
      */
-    regex: /[.*+?^${}()|[\]\\]/g,
+    special: /[.*+?^${}()|[\]\\]/g,
 }
 
 const codes = {
 
-    // in Unicode, diacritics are always added after the main character
+    /**
+     * Diacritics are always added after the main character.
+     * Code extracted from string-width, (C) Sindre Sorhus, MIT License.
+     */
     isCombining: function isCombiningCharCodePoint(cp) {
         return Number.isInteger(cp) && cp >= 0x300 && cp <= 0x36F
     },
 
+    /**
+     * Control codes are not visually represented.
+     * Code extracted from string-width, (C) Sindre Sorhus, MIT License.
+     */
     isControl: function isControlCharCodePoint(cp) {
         return Number.isInteger(cp) && (cp <= 0x1F || (cp >= 0x7F && cp <= 0x9F))
     },
 
+    /**
+     * Surrogates come in pairs, e.g. emojis.
+     * Code extracted from string-width, (C) Sindre Sorhus, MIT License.
+     */
+    isSurrogate: function isSurrogateCodePoint(cp) {
+        return Number.isInteger(cp) && cp > 0xFFFF
+    },
+
+    /**
+     * from is-fullwidth-code-point:
+     * - https://www.npmjs.com/package/is-fullwidth-code-point
+     * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+     * MIT License
+     * ------------
+     * Code points are derived from:
+     * https://unicode.org/Public/UNIDATA/EastAsianWidth.txt
+     */
     isFullwidth: function isFullwidthCodePoint(cp) {
-
-        if (!Number.isInteger(cp)) {
-            return false
-        }
-
-        // Code points are derived from:
-        // https://unicode.org/Public/UNIDATA/EastAsianWidth.txt
-        return cp >= 0x1100 && (
+        return Number.isInteger(cp) && cp >= 0x1100 && (
             cp <= 0x115F || // Hangul Jamo
             cp === 0x2329 || // LEFT-POINTING ANGLE BRACKET
             cp === 0x232A || // RIGHT-POINTING ANGLE BRACKET
@@ -125,11 +159,8 @@ const codes = {
             (0x20000 <= cp && cp <= 0x3FFFD)
         )
     },
-
-    isSurrogate: function isSurrogateCodePoint(cp) {
-        return Number.isInteger(cp) && cp > 0xFFFF
-    },
 }
+
 const strings = module.exports = {
 
     regex,
@@ -149,28 +180,31 @@ const strings = module.exports = {
             // Allow for width Infinity, protect againt NaN or < 1.
             return [str]
         }
-        const ansiRegex_s = regex.ansis1
-        const emojiRegex_ng = regex.emojing1
+        
         const lines = []
         let thisLine = ''
         let thisWidth = 0
-        let emojiMatch = str.match(emojiRegex_ng)
-        let emojiIndex = emojiMatch ? emojiMatch.index : -1
+        //let emojiMatch = str.match(regex.emojiPlain)
+        //let emojiIndex = emojiMatch ? emojiMatch.index : null
         for (let i = 0; i < str.length; ++i) {
-            // Match all consecutive ANSI sequences from the beginning of the string.
-            const ansiMatch = str.substr(i).match(ansiRegex_s)
-            if (ansiMatch) {
-                console.log({ansiMatch})
-                // Add all consecutive ANSI controls, since they do not increase the
-                // width. This also prevents an extra line at the end if it is just a
-                // closing color code.
-                const ansiLength = ansiMatch[0].length
-                thisLine += str.substr(i, ansiLength)
-                i += ansiLength
-            }
 
+            let code = str.codePointAt(i)
+
+            if (code === 0x1B || code === 0x9B) {
+                // Match all consecutive ANSI sequences from the beginning of the string.
+                const ansiMatch = str.substr(i).match(regex.ansiStart)
+                if (ansiMatch) {
+                    // Add all consecutive ANSI controls, since they do not increase the
+                    // width. This also prevents an extra line at the end if it is just a
+                    // closing color code.
+                    const ansiLength = ansiMatch[0].length
+                    thisLine += str.substr(i, ansiLength)
+                    i += ansiLength
+                    code = str.codePointAt(i)
+                }
+            }
+            /*
             if (emojiMatch && emojiIndex === i) {
-                console.log({emojiMatch})
                 const [emoji] = emojiMatch
                 if (thisWidth + emoji.length > width) {
                     lines.push(thisLine)
@@ -180,19 +214,17 @@ const strings = module.exports = {
                 thisLine += emoji
                 thisWidth += emoji.length
                 i += emoji.length - 1
-                emojiMatch = str.substr(i).match(emojiRegex_ng)
-                emojiIndex = emojiMatch ? emojiMatch.index + i : -1
+                emojiMatch = str.substr(i).match(regex.emojiPlain)
+                emojiIndex = emojiMatch ? emojiMatch.index + i : null
                 continue
             }
+            */
 
             if (i === str.length) {
                 break
             }
 
-            const code = str.codePointAt(i)
-            
             if (codes.isCombining(code) || codes.isControl(code)) {
-                console.log('isCombining||isControl')
                 // Diacritics are always added after the main character, so they
                 // do not increase the width. Control characters have no spatial
                 // representation.
@@ -204,14 +236,14 @@ const strings = module.exports = {
 
             let nextWidth
             if (codes.isSurrogate(code)) {
-                console.log('isSurrogate')
-                // Surrogates, like socks, come in pairs. The width would increase by 2.
+                // Surrogates come in pairs. The width increases by 2.
                 nextSegment += str[++i]
                 nextWidth = 2
             } else if (codes.isFullwidth(code)) {
-                console.log('isFullwidth')
+                // Full with character.
                 nextWidth = 2
             } else {
+                // Single width character.
                 nextWidth = 1
             }
 
@@ -250,7 +282,7 @@ const strings = module.exports = {
      * @return {string} The escaped string
      */
     escapeRegex: function escapeRegex(str) {
-        return str.replace(regex.regex, '\\$&')
+        return str.replace(regex.special, '\\$&')
     },
 
     /**
@@ -275,7 +307,7 @@ const strings = module.exports = {
      * @return {string} The result string
      */
     stripAnsi: function stripAnsi(str) {
-        return str.replace(regex.ansig, '')
+        return str.replace(regex.ansiGlobal, '')
     },
 
     /**
@@ -297,6 +329,7 @@ const strings = module.exports = {
      * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
      * MIT License
      * See file NOTICE.md for full license details.
+     * Portions abstracted to separate codepoint methods.
      *
      * Get the visual width of a string
      *
@@ -311,20 +344,20 @@ const strings = module.exports = {
         if (str.length === 0) {
             return 0
         }
-        str = str.replace(regex.emoji, '  ')
+        str = str.replace(regex.emojiGlobal, '  ')
         let width = 0
         for (let index = 0; index < str.length; ++index) {
             const codePoint = str.codePointAt(index)
             // Ignore control characters
-            if (codePoint <= 0x1F || (codePoint >= 0x7F && codePoint <= 0x9F)) {
+            if (codes.isControl(codePoint)) {
                 continue
             }
             // Ignore combining characters
-            if (codePoint >= 0x300 && codePoint <= 0x36F) {
+            if (codes.isCombining(codePoint)) {
                 continue
             }
             // Surrogates
-            if (codePoint > 0xFFFF) {
+            if (codes.isSurrogate(codePoint)) {
                 index++
             }
             width += codes.isFullwidth(codePoint) ? 2 : 1
