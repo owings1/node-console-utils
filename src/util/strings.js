@@ -158,7 +158,7 @@ const codes = {
     },
 }
 
-const strings = module.exports = {
+const strings = {
 
     regex,
 
@@ -189,8 +189,8 @@ const strings = module.exports = {
         for (let index = 0; index < str.length; ++index) {
 
             if (ansiIndex === index) {
-                // ANSI segment has no width. Add the match to the line and
-                // advance the indes.
+                // ANSI segments have no width. Add the match to the line and
+                // advance the index.
                 line += ansiMatch[0]
                 index += ansiMatch[0].length
                 if (index === str.length) {
@@ -236,6 +236,10 @@ const strings = module.exports = {
             lines.push(line)
         }
         return lines
+    },
+
+    breakLines: function breakLines(lines, width) {
+        return lines.map(line => string.breakLine(line, width))
     },
 
     /**
@@ -340,4 +344,16 @@ const strings = module.exports = {
         }
         return width
     },
+}
+
+module.exports = {
+    regex,
+    ...strings,
+    ...namedf(strings),
+}
+
+function namedf(obj) {
+    return Object.fromEntries(
+        Object.values(obj).map(f => [f.name, f])
+    )
 }
