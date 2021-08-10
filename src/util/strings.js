@@ -57,36 +57,33 @@
 
 const regex = {
 
-    /**
-     * From: https://github.com/chalk/ansi-regex/blob/c1b5e45f/index.js
-     */
-    ansiGlobal: /[\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\u0007)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]))/g,
+    ansi: {
+        /**
+         * Base regex (global) from:
+         *   - https://github.com/chalk/ansi-regex/blob/c1b5e45f/index.js
+         */
+        global :  /[\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]))/g,
+        plain  :  /[\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]))/,
+        // Matches all consecutive sequences.
+        consec : /([\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~])))+/,
+        // Matches all consecutive sequences from the start of the string.
+        start  :/^([\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~])))+/,
+        // Match (limited) consecutive sequences from the start.
+        limited : /^(\x1B([[0-9;]*m)?)+/
+    },
 
-    /*
-     * No global flag.
-     */
-    ansiPlain: /[\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\u0007)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]))/,
-
-    /**
-     * Matches all consecutive ANSI sequences from the beginning of the string.
-     */
-    ansiStart: /^([\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~])))+/,
-
-    //ansis2: /^(\x1B([[0-9;]*m)?)+/,
-
-    /**
-     * Source from: https://github.com/mathiasbynens/emoji-regex
-     * Copyright Mathias Bynens <https://mathiasbynens.be/>
-     * MIT License.
-     */
-    emojiGlobal: require('../lib/emoji-regex.js'),
-
-    /**
-     * No global flag.
-     */
-    emojiPlain: new RegExp(require('../lib/emoji-regex.js').source),
+    emoji: {
+        /**
+         * Source from: https://github.com/mathiasbynens/emoji-regex
+         * Copyright Mathias Bynens <https://mathiasbynens.be/>
+         * MIT License.
+         */
+        global: require('../lib/emoji-regex.js'),
+        plain : new RegExp(require('../lib/emoji-regex.js').source),
+    },
 
     /**
+     * Regex special chars.
      * See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#using_special_characters
      */
     special: /[.*+?^${}()|[\]\\]/g,
@@ -175,89 +172,68 @@ const strings = module.exports = {
      * @param {integer} The max width
      * @return {array} The lines
      */
-    breakLine: function breakLine(str, width) {
-        if (!Number.isInteger(width) || width < 2) {
+    breakLine: function breakLine(str, maxWidth) {
+        if (!Number.isInteger(maxWidth) || maxWidth < 2) {
             // Allow for width Infinity, protect againt NaN or < 1.
             return [str]
         }
-        
+
         const lines = []
-        let thisLine = ''
-        let thisWidth = 0
-        //let emojiMatch = str.match(regex.emojiPlain)
-        //let emojiIndex = emojiMatch ? emojiMatch.index : null
-        for (let i = 0; i < str.length; ++i) {
 
-            let code = str.codePointAt(i)
+        // Prime the first ANSI match. When a match fails, don't check the
+        // regex again.
+        let ansiMatch = str.match(regex.ansi.consec)
+        let ansiIndex = ansiMatch ? ansiMatch.index : null
 
-            if (code === 0x1B || code === 0x9B) {
-                // Match all consecutive ANSI sequences from the beginning of the string.
-                const ansiMatch = str.substr(i).match(regex.ansiStart)
-                if (ansiMatch) {
-                    // Add all consecutive ANSI controls, since they do not increase the
-                    // width. This also prevents an extra line at the end if it is just a
-                    // closing color code.
-                    const ansiLength = ansiMatch[0].length
-                    thisLine += str.substr(i, ansiLength)
-                    i += ansiLength
-                    code = str.codePointAt(i)
+        let line = '', lineWidth = 0
+        for (let index = 0; index < str.length; ++index) {
+
+            if (ansiIndex === index) {
+                // ANSI segment has no width. Add the match to the line and
+                // advance the indes.
+                line += ansiMatch[0]
+                index += ansiMatch[0].length
+                if (index === str.length) {
+                    break
                 }
-            }
-            /*
-            if (emojiMatch && emojiIndex === i) {
-                const [emoji] = emojiMatch
-                if (thisWidth + emoji.length > width) {
-                    lines.push(thisLine)
-                    thisLine = 0
-                    thisWidth = 0
-                }
-                thisLine += emoji
-                thisWidth += emoji.length
-                i += emoji.length - 1
-                emojiMatch = str.substr(i).match(regex.emojiPlain)
-                emojiIndex = emojiMatch ? emojiMatch.index + i : null
-                continue
-            }
-            */
-
-            if (i === str.length) {
-                break
+                // Prime the next ANSI match.
+                ansiMatch = str.substr(index).match(regex.ansi.consec)
+                ansiIndex = ansiMatch ? ansiMatch.index + index : null
             }
 
-            if (codes.isCombining(code) || codes.isControl(code)) {
+            const code = str.codePointAt(index)
+            let segment = str[index], segmentWidth
+
+            if (codes.isSurrogate(code)) {
+                // Surrogates come in pairs and the width will be 2. Add the
+                // next char to the segment and advance the index.
+                segmentWidth = 2
+                segment += str[++index]
+            } else if (codes.isCombining(code) || codes.isControl(code)) {
                 // Diacritics are always added after the main character, so they
                 // do not increase the width. Control characters have no spatial
                 // representation.
-                thisLine += str[i]
-                continue
-            }
-
-            let nextSegment = str[i]
-
-            let nextWidth
-            if (codes.isSurrogate(code)) {
-                // Surrogates come in pairs. The width increases by 2.
-                nextSegment += str[++i]
-                nextWidth = 2
+                segmentWidth = 0
             } else if (codes.isFullwidth(code)) {
-                // Full with character.
-                nextWidth = 2
+                // Full (double) with character.
+                segmentWidth = 2
             } else {
                 // Single width character.
-                nextWidth = 1
+                segmentWidth = 1
             }
 
-            if (thisWidth + nextWidth > width) {
-                lines.push(thisLine)
-                thisLine = ''
-                thisWidth = 0
+            if (lineWidth + segmentWidth > maxWidth) {
+                // Break the line and reset.
+                lines.push(line)
+                lineWidth = 0
+                line = ''
             }
-
-            thisLine += nextSegment
-            thisWidth += nextWidth
+            // Add the segment to the line and update the width.
+            lineWidth += segmentWidth
+            line += segment
         }
-        if (thisLine) {
-            lines.push(thisLine)
+        if (line) {
+            lines.push(line)
         }
         return lines
     },
@@ -307,7 +283,7 @@ const strings = module.exports = {
      * @return {string} The result string
      */
     stripAnsi: function stripAnsi(str) {
-        return str.replace(regex.ansiGlobal, '')
+        return str.replace(regex.ansi.global, '')
     },
 
     /**
@@ -344,7 +320,7 @@ const strings = module.exports = {
         if (str.length === 0) {
             return 0
         }
-        str = str.replace(regex.emojiGlobal, '  ')
+        str = str.replace(regex.emoji.global, '  ')
         let width = 0
         for (let index = 0; index < str.length; ++index) {
             const codePoint = str.codePointAt(index)

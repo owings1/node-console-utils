@@ -114,7 +114,7 @@ describe('strings', () => {
                 set(breakLine.bind(null, str))
 
                 test(
-                    {exp: 1, args: [77]},
+                    {exp: 1, args: [77], only:false},
                     {exp: 1, args: [76]},
                     {exp: 2, args: [75]},
                     {exp: 3, args: [26]},
