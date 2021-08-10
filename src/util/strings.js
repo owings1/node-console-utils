@@ -239,7 +239,7 @@ const strings = {
     },
 
     breakLines: function breakLines(lines, width) {
-        return lines.map(line => string.breakLine(line, width))
+        return lines.map(line => strings.breakLine(line, width))
     },
 
     /**
