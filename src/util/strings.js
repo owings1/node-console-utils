@@ -160,12 +160,6 @@ const codes = {
 
 const strings = {
 
-    regex,
-
-    cat: function cat(...args) {
-        return args.flat().join('')
-    },
-
     /**
      *
      * @param {str} The line to break
@@ -173,7 +167,7 @@ const strings = {
      * @return {array} The lines
      */
     breakLine: function breakLine(str, maxWidth) {
-        if (!Number.isInteger(maxWidth) || maxWidth < 2) {
+        if (!str || !Number.isInteger(maxWidth) || maxWidth < 2) {
             // Allow for width Infinity, protect againt NaN or < 1.
             return [str]
         }
@@ -232,14 +226,16 @@ const strings = {
             lineWidth += segmentWidth
             line += segment
         }
-        if (line) {
-            lines.push(line)
-        }
+        lines.push(line)
         return lines
     },
 
     breakLines: function breakLines(lines, width) {
         return lines.map(line => strings.breakLine(line, width))
+    },
+
+    cat: function cat(...args) {
+        return args.flat().join('')
     },
 
     /**

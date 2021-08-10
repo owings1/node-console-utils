@@ -105,6 +105,11 @@ describe('strings', () => {
         const {breakLine} = strings
         const chalk = new Chalk({level: 2})
 
+        it('should return singleton empty string for empty string', function () {
+            const res = breakLine('', 10)
+            expect(res).to.deep.equal([''])
+        })
+
         def('Chinese characters', () => {
 
             def('string width 76 with ending ansi', () => {
@@ -239,7 +244,7 @@ describe('strings', () => {
                 test(
                     {exp: 1, args: [27]},
                     {exp: 1, args: [26]},
-                    {exp: 2, args: [25], only: false, debug: true},
+                    {exp: 2, args: [25], only: false, debug: false},
                     {exp: 5, args: [6]},
                 )
             })
