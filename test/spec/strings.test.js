@@ -100,20 +100,21 @@ describe('strings', () => {
         )
     })
 
-    def(strings.breakLine, () => {
+    def(strings.breakLine, {oper: 'have.length'}, () => {
 
         const {breakLine} = strings
         const chalk = new Chalk({level: 2})
 
         def('Chinese characters', () => {
 
-            def('string width 76', () => {
+            def('string width 76 with ending ansi', () => {
 
                 const str = '\x1B[36m❯\x1B[32m◉\x1B[39m\x1B[36m 选项选项选项选项选项选项选项选项选项选项选项\x1B[34m选项选项选\x1B[39m\x1B[36m项选项选项选项选项1\x1B[39m'
 
-                set({oper: 'length', run: breakLine.bind(null, str)})
+                set(breakLine.bind(null, str))
 
                 test(
+                    {exp: 1, args: [77]},
                     {exp: 1, args: [76]},
                     {exp: 2, args: [75]},
                     {exp: 3, args: [26]},
@@ -124,6 +125,49 @@ describe('strings', () => {
                     expect(lines.join('')).to.equal(str)
                 })
             })
+
+            def('string width 40 with emoji', () => {
+
+                const strs = [
+                    '项选项选项选项项选项选项\x1B[33m\x1B[34m\x1B[33m项选项选项\x1B[39m\x1B[39m\x1B[39m💋💋\x1B[34m💋\x1B[39m',
+                    '项选项选项选项项选项选项' + chalk.yellow.blue.yellow('项选项选项') + '💋💋💋',
+                    '项选x项选项选项项选项选项\x1B[33m\x1B[34m\x1B[33m项选项选项\x1B[39m\x1B[39m\x1B[39m💋💋s',
+                ]
+
+                strs.forEach((str, i) => {
+
+                    set(breakLine.bind(null, str))
+
+                    def(`case ${i+1}`, () => {
+
+                        test(
+                            {exp: 1, args: [40]},
+                            {exp: 2, args: [39]},
+                        )
+
+                        it('should equal original input when lines are joined', function () {
+                            const lines = breakLine(str, 10)
+                            expect(lines.join('')).to.equal(str)
+                        })
+                    })
+                })
+            })
+        })
+
+        def('Japanese characters', () => {
+
+            def('string width 48', () => {
+
+                const str = '外紙回ヨル設解オ送会シネエソ債楽ばづだラ時不メヨ'
+
+                set(breakLine.bind(null, str))
+
+                test(
+                    {exp: 1, args: [49]},
+                    {exp: 1, args: [48]},
+                    {exp: 2, args: [47]},
+                )
+            })
         })
 
         def('Korean characters', () => {
@@ -132,7 +176,7 @@ describe('strings', () => {
 
                 const str = '\x1B[32m정당해산의\x1B[39m 결정 또는 헌법소원에 관한 인용결정을 할 때에는 재판관 6인 이상의 찬성이 있어야 한다'
 
-                set({oper: 'length', run: breakLine.bind(null, str)})
+                set(breakLine.bind(null, str))
 
                 test(
                     {exp: 1, args: [94]},
@@ -153,7 +197,7 @@ describe('strings', () => {
 
                 const str = 'This is one line that is ' + chalk.green('fifty') + ' characters in width'
 
-                set({oper: 'length', run: breakLine.bind(null, str)})
+                set(breakLine.bind(null, str))
 
                 test(
                     {exp: 1, args: [50]},
@@ -166,6 +210,40 @@ describe('strings', () => {
                     expect(lines.join('')).to.equal(str)
                 })
             })
+
+            def('diacritics width 35', () => {
+                const str = 'sautée enchant💋é catch an über àåå'
+                             
+                set(breakLine.bind(null, str))
+                test(
+                    {exp: 1, args: [36]},
+                    {exp: 1, args: [35]},
+                    {exp: 2, args: [34]},
+                    {exp: 4, args: [10]},
+                )
+            })
+
+            def('diacritics at end of break, width 10', () => {
+                const str = 'êêêêêêêêêê'
+                set(breakLine.bind(null, str))
+                test(
+                    {exp: 1, args: [10]},
+                    {exp: 2, args: [9]},
+                    {exp: 5, args: [2]},
+                )
+            })
+
+            def('emojis at end of break, width 26', () => {
+                const str = '💋💋💋💋💋💋💋💋💋👩‍👩‍💋'
+                set(breakLine.bind(null, str))
+                test(
+                    {exp: 1, args: [27]},
+                    {exp: 1, args: [26]},
+                    {exp: 2, args: [25], only: false, debug: true},
+                    {exp: 5, args: [6]},
+                )
+            })
         })
+
     })
 })
