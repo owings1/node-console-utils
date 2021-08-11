@@ -80,7 +80,7 @@ const objects = {
         let base = obj
         for (let i = 0; i < keyPath.length - 1; ++i) {
             const key = keyPath[i]
-            if (!Is.Object(base[key])) {
+            if (!isObject(base[key])) {
                 base[key] = {}
             }
             base = base[key]
