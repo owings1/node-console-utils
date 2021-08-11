@@ -316,7 +316,7 @@ function stringly(arg) {
 function tojson(arg) {
     return JSON.stringify(arg, (key, value) => {
         if (isFunc(value)) {
-            return value.name ?? '(function)'
+            return value.name || '(function)'
         }
         if (isSymbol(value)) {
             return value.toString()
