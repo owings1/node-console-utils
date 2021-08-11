@@ -30,8 +30,9 @@ const util = {
     formatWithOptions,
 } = require('util')
 
-const {Caret}    = require('./util/chars.js')
-const {cat}      = require('./util/strings.js')
+const {Caret} = require('./util/chars.js')
+const {cat}   = require('./util/strings.js')
+const HashProxy = require('./hash-proxy.js')
 const {parseStack}    = require('./util/errors.js')
 const {merge, spread} = require('./util/merging.js')
 const {
@@ -48,8 +49,6 @@ const {
     isString,
     isWriteableStream,
 } = require('./util/types.js')
-
-const HashProxy       = require('./hash-proxy.js')
 
 const LevelNums = {
     error : 0,
@@ -454,6 +453,7 @@ function getLevelNumber (value) {
 function getLevelName (value) {
     return LevelNames[getLevelNumber(value)]
 }
+
 function getOptColorLevel (value) {
     if (value === 'force') {
         return Defaults.colors || 1
