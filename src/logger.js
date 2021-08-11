@@ -398,6 +398,7 @@ function preformat (level, args) {
             if (entries.length) {
                 newArgs.push(Object.fromEntries(entries))
             }
+            return
         }
         newArgs.push(arg)
     })
