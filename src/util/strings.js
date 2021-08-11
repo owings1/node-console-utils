@@ -170,9 +170,7 @@ const strings = {
         // Routine to close any unclosed backround styles, push and reset
         // the line with the open sequences (if any), and reset the lineWidth.
         const push = () => {
-            for (let i = 0; i < bgUnclosed.length; ++i) {
-                line += '\x1B[49m'
-            }
+            line += new Array(bgUnclosed.length).join('\x1B[49m')
             lines.push(line)
             line = bgUnclosed.join('')
             lineWidth = 0
@@ -208,9 +206,9 @@ const strings = {
                     }
                     // TODO:
                     // Find a generic way to track other appearance modifiers
-                    // so that we can close and them in the right order, e.g.
-                    // italics, which print a trailing artefact on an unterminated
-                    // line break.
+                    // so that we can close and reopen them in the right order,
+                    // e.g. underline, which can print a trailing artefact on
+                    // an unterminated line break.
                 }
                 // Prime the next ANSI match.
                 ansiMatch = str.substr(index).match(regex.ansi.consec)
