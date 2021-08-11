@@ -54,7 +54,6 @@
  * See file NOTICE.md for full license details.
  * ----------------------
  */
-
 const regex = {
 
     ansi: {
@@ -68,21 +67,17 @@ const regex = {
         consec : /([\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~])))+/,
         // Matches all consecutive sequences from the start of the string.
         start  :/^([\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~])))+/,
+        // Match all background sequences, open or close.
+        bgGlobal: /\x1B\[4[0-9]([0-9;]*m)?/g,
+        // Match all background open sequences.
+        bgOpenGlobal : /\x1B\[4[0-8]([0-9;]*m)?/g,
+        // Match all background close sequences.
+        bgCloseGlobal : /\x1B\[49m?/g,
+        // Test whether a string is a background close sequence.
+        bgCloseTest : /^\x1B\[49m?/,
         // Match (limited) consecutive sequences from the start.
         limited : /^(\x1B([[0-9;]*m)?)+/
     },
-
-    /*
-    emoji: {
-    */  /**
-         * Source from: https://github.com/mathiasbynens/emoji-regex
-         * Copyright Mathias Bynens <https://mathiasbynens.be/>
-         * MIT License.
-         */
-    /*  global: require('../lib/emoji-regex.js'),
-        plain : new RegExp(require('../lib/emoji-regex.js').source),
-    },
-    */
 
     /**
      * Regex special chars.
@@ -161,10 +156,9 @@ const codes = {
 }
 
 const strings = {
-
     /**
      *
-     * @param {str} The line to break
+     * @param {string} The line to break
      * @param {integer} The max width
      * @return {array} The lines
      */
@@ -173,33 +167,62 @@ const strings = {
             // Allow for width Infinity, protect againt NaN or < 1.
             return [str]
         }
-
-        const lines = []
-
+        // Routine to close any unclosed backround styles, push and reset
+        // the line with the open sequences (if any), and reset the lineWidth.
+        const push = () => {
+            for (let i = 0; i < bgUnclosed.length; ++i) {
+                line += '\x1B[49m'
+            }
+            lines.push(line)
+            line = bgUnclosed.join('')
+            lineWidth = 0
+        }
+        // Normalize line breaks.
+        str = str.replace(/\r\n/g, '\n')
+        const lines = [], bgUnclosed = []
+        let line = '', lineWidth = 0
         // Prime the first ANSI match. When a match fails, don't check the
         // regex again.
         let ansiMatch = str.match(regex.ansi.consec)
         let ansiIndex = ansiMatch ? ansiMatch.index : null
-
-        let line = '', lineWidth = 0
-        for (let index = 0; index < str.length; ++index) {
-
+        for (let index = 0; index < str.length; ++index) {            
             if (ansiIndex === index) {
                 // ANSI segments have no width. Add the match to the line and
                 // advance the index.
-                line += ansiMatch[0]
-                index += ansiMatch[0].length
+                const [ansi] = ansiMatch
+                line += ansi
+                index += ansi.length
                 if (index === str.length) {
                     break
+                }
+                // Track background open sequences so we can close and reopen
+                // them on break.
+                const bgs = ansi.match(regex.ansi.bgGlobal)
+                if (bgs) {
+                    for (let i = 0; i < bgs.length; ++i) {
+                        if (regex.ansi.bgCloseTest.test(bgs[i])) {
+                            bgUnclosed.pop()
+                        } else {
+                            bgUnclosed.push(bgs[i])
+                        }
+                    }
+                    // TODO:
+                    // Find a generic way to track other appearance modifiers
+                    // so that we can close and them in the right order, e.g.
+                    // italics, which print a trailing artefact on an unterminated
+                    // line break.
                 }
                 // Prime the next ANSI match.
                 ansiMatch = str.substr(index).match(regex.ansi.consec)
                 ansiIndex = ansiMatch ? ansiMatch.index + index : null
             }
-
             const code = str.codePointAt(index)
+            if (code === 0x0A) {
+                // Line break.
+                push()
+                continue
+            }
             let segment = str[index], segmentWidth
-
             if (codes.isSurrogate(code)) {
                 // Surrogates come in pairs and the width will be 2. Add the
                 // next char to the segment and advance the index.
@@ -217,18 +240,14 @@ const strings = {
                 // Single width character.
                 segmentWidth = 1
             }
-
             if (lineWidth + segmentWidth > maxWidth) {
-                // Break the line and reset.
-                lines.push(line)
-                lineWidth = 0
-                line = ''
+                push()
             }
             // Add the segment to the line and update the width.
             lineWidth += segmentWidth
             line += segment
         }
-        lines.push(line)
+        push()
         return lines
     },
 
