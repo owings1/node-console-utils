@@ -286,7 +286,7 @@ module.exports = class Logger {
     }
     
     get name() {
-        return this.opts.name ?? 'Logger'
+        return this.opts.name || 'Logger'
     }
 
     set name(name) {
