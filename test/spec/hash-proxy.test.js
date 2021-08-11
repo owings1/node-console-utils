@@ -16,26 +16,26 @@ describe('HashProxy', () => {
 
         it('should fail for empty args', function () {
             const err = ger(() => this.create())
-            expect(err).erri('Argument')
+            expect(err).erri('TypeError')
         })
 
         it('should fail for second arg that is not a object', function () {
             const err = ger(() => this.create({}, true))
-            expect(err).erri('Argument')
+            expect(err).erri('TypeError')
         })
 
         it('should fail for transformer that is not a function', function () {
             const transform = 1
             const filter = noop
             const err = ger(() => this.create({}, {transform, filter}))
-            expect(err).erri('Argument')
+            expect(err).erri('TypeError')
         })
 
         it('should fail for filter that is not a function', function () {
             const transform = noop
             const filter = 1
             const err = ger(() => this.create({}, {transform, filter}))
-            expect(err).erri('Argument')
+            expect(err).erri('TypeError')
         })
 
         it('should pass for empty source and noop transform', function () {

@@ -72,15 +72,17 @@ const regex = {
         limited : /^(\x1B([[0-9;]*m)?)+/
     },
 
+    /*
     emoji: {
-        /**
+    */  /**
          * Source from: https://github.com/mathiasbynens/emoji-regex
          * Copyright Mathias Bynens <https://mathiasbynens.be/>
          * MIT License.
          */
-        global: require('../lib/emoji-regex.js'),
+    /*  global: require('../lib/emoji-regex.js'),
         plain : new RegExp(require('../lib/emoji-regex.js').source),
     },
+    */
 
     /**
      * Regex special chars.
@@ -305,7 +307,9 @@ const strings = {
      * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
      * MIT License
      * See file NOTICE.md for full license details.
-     * Portions abstracted to separate codepoint methods.
+     *
+     * - Portions abstracted to separate codepoint methods.
+     * - Code modified to avoid emoji regex.
      *
      * Get the visual width of a string
      *
@@ -320,7 +324,7 @@ const strings = {
         if (str.length === 0) {
             return 0
         }
-        str = str.replace(regex.emoji.global, '  ')
+        //str = str.replace(regex.emoji.global, '  ')
         let width = 0
         for (let index = 0; index < str.length; ++index) {
             const codePoint = str.codePointAt(index)
@@ -335,6 +339,9 @@ const strings = {
             // Surrogates
             if (codes.isSurrogate(codePoint)) {
                 index++
+                // Modification: avoid using emoji regex, and assume a surrogate
+                // pair consumes width 2.
+                width += 1
             }
             width += codes.isFullwidth(codePoint) ? 2 : 1
         }

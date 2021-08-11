@@ -23,11 +23,10 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {isArray} = require('./types.js')
-const {ArgumentError} = require('../errors.js')
 
 function checkArray(arg, name = 'arr') {
     if (!isArray(arg)) {
-        throw new ArgumentError(`Argument (${arg}) not an array`)
+        throw new TypeError(`Argument (${arg}) not an array`)
     }
 }
 
@@ -36,7 +35,7 @@ const arrays = {
     /**
      * Append all values to an array.
      *
-     * @throws {ArgumentError}
+     * @throws {TypeError}
      *
      * @param {array} The array to push to
      * @param {array} The values to push
@@ -51,7 +50,7 @@ const arrays = {
     /**
      * Get the last element of an array.
      *
-     * @throws {ArgumentError}
+     * @throws {TypeError}
      *
      * @param {array} The array
      * @return {*} The last element or undefined.
@@ -64,7 +63,7 @@ const arrays = {
     /**
      * Sum all numbers in the array.
      *
-     * @throws {ArgumentError}
+     * @throws {TypeError}
      *
      * @param {array} The input array
      * @return {integer} The result sum

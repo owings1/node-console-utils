@@ -20,7 +20,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-const {ArgumentError} = require('./errors.js')
+const {KeyExistsError, ValueError} = require('./errors.js')
 const {isObject, isFunction: isFunc} = require('./util/types.js')
 const {hasKey, keyPath, lget, lset} = require('./util/objects.js')
 
@@ -54,7 +54,7 @@ class HashProxy {
 
     constructor(source, target, ingress, opts) {
         if (target[CrtKey] !== true) {
-            throw new ArgumentError(`Must use static ${this.constructor.name} create method`)
+            throw new TypeError(`Must use static ${this.constructor.name} create method`)
         }
         // todo defineprop
         this.source = source
@@ -67,7 +67,7 @@ class HashProxy {
         checkEntry(kpath, value)
         kpath = keyPath(kpath)
         if (hasKey(this.source, kpath)) {
-            throw new ArgumentError(`Key exists: ${kpath.join('.')}`)
+            throw new KeyExistsError(`Key exists: ${kpath.join('.')}`)
         }
         const {opts} = this
         const leafKey = kpath.pop()
@@ -105,7 +105,7 @@ class HashProxy {
             return this.createEntry(kpath, value)
         }
         if (isObject(lget(this.source, kpath))) {
-            throw new ArgumentError(`Cannot overwrite an object value`)
+            throw new ValueError(`Cannot overwrite an object value`)
         }
         lset(this.ingress, kpath, value)
     }
@@ -194,16 +194,16 @@ function truth() {
 
 function checkArg(value, name, desc, check) {
     if (!check(value)) {
-        throw new ArgumentError(`Argument (${name}) a ${desc}`)
+        throw new TypeError(`Argument (${name}) a ${desc}`)
     }
 }
 
 function checkEntry(kpath, value) {
     kpath = keyPath(kpath)
     if (!kpath) {
-        throw new ArgumentError(`Bad keypath ${kpath}`)
+        throw new TypeError(`Bad keypath ${kpath}`)
     }
     if (isObject(value)) {
-        throw new ArgumentError('Value cannot be an object.')
+        throw new TypeError('Value cannot be an object.')
     }
 }

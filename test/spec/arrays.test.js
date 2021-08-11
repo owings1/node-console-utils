@@ -32,7 +32,7 @@ describe('arrays', () => {
     def(arrays.append, () => {
 
         def('errors', {json: 'args'}, () => {
-            test({err: 'ArgumentError', args: []})
+            test({err: TypeError, args: []})
         })
 
         def({oper: 'deep.equal', json: true}, () => {
@@ -57,7 +57,7 @@ describe('arrays', () => {
     def(arrays.sum, {json: 'args'}, () => {
 
         test(
-            {err: 'ArgumentError', args: []},
+            {err: TypeError, args: []},
             {exp:  8, args: [[1,3,4]]},
             {exp:  3, args: [[1,2]]},
             {exp:  0, args: [[]]},

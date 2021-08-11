@@ -25,17 +25,31 @@
 const {Instance: Chalk, level: DefaultColor} = require('chalk')
 const chalkPipe = require('chalk-pipe')
 
-const {formatWithOptions} = require('util')
+const util = {
+    format,
+    formatWithOptions,
+} = require('util')
 
-const {Cast, Is} = require('./util/types.js')
 const {Caret}    = require('./util/chars.js')
 const {cat}      = require('./util/strings.js')
-const {merge, spread} = require('./util/merging.js')
 const {parseStack}    = require('./util/errors.js')
-const {isEmptyObject, revalue} = require('./util/objects.js')
+const {merge, spread} = require('./util/merging.js')
+const {
+    isEmptyObject,
+    lget,
+    lset,
+    revalue,
+} = require('./util/objects.js')
+const {
+    castToArray,
+    isError,
+    isFunction,
+    isPlainObject,
+    isString,
+    isWriteableStream,
+} = require('./util/types.js')
 
 const HashProxy       = require('./hash-proxy.js')
-const {ArgumentError} = require('./errors.js')
 
 const LevelNums = {
     error : 0,
@@ -81,19 +95,41 @@ Defaults.logLevel = getLevelNumber(Defaults.logLevel)
  */
 Defaults.colors = DefaultColor
 
-Defaults.formatting = {}
+/**
+ * Options to pass to `util.formatWithOptions()`. By default, the `colors`
+ * option is set to `opts.colors`.
+ *
+ * See: https://nodejs.org/api/util.html#util_util_inspect_object_showhidden_depth_colors
+ *
+ * {object}
+ */
+Defaults.inspect = {}
+
+/**
+ * Whether to format keywords.
+ *
+ * {boolean}
+ */
+Defaults.keywords = true
+
 /**
  * The chalk color styles to use.
  */
 Defaults.styles = {
     default : 'chalk',
     brace   : 'grey',
+    keywords: {
+        file: {
+            default : 'cyan',
+            error   : 'yellow',
+            warn    : 'yellow',
+        },
+    },
     error: {
         prefix  : 'red',
         string  : '#884444',
-        file    : 'yellow',
         error : {
-            name    : 'bgRedBright.bold.black',
+            name    : 'bgRed.black',
             message : '#884444',
             stack   : 'grey',
         },
@@ -101,8 +137,7 @@ Defaults.styles = {
     warn: {
         prefix : 'yellow',
         string : 'chalk',
-        file   : 'yellow',
-        error : {
+        error  : {
             name    : 'yellow.bold.italic',
             message : 'chalk',
             stack   : 'grey',
@@ -111,7 +146,6 @@ Defaults.styles = {
     info: {
         prefix : 'grey',
         string : 'chalk',
-        file   : 'cyan',
         error : {
             name    : 'yellow.bold.italic',
             message : 'chalk',
@@ -121,7 +155,6 @@ Defaults.styles = {
     log: {
         prefix : 'grey',
         string : 'chalk',
-        file   : 'cyan',
         error : {
             name    : 'yellow.bold.italic',
             message : 'chalk',
@@ -158,87 +191,19 @@ Defaults.prefix = function (level) {
 }
 
 /**
- * Pre-process/filter arguments before they are formatted and logged.
- * This is only for calls to log methods, and not general formatting
- * methods.
- *
- * @param {string} The log level, error, warn, info, log, or debug.
- * @param {array} The arguments of any type.
- * @return {string|array} The processed/filtered arguments of any type.
- */
-Defaults.prelog = function (level, args) {
-    const chlk = this.chalks[level]
-    let hasError = false
-    return args.map(arg => {
-        if (Is.String(arg)) {
-            return chlk.string(arg)
-        }
-        if (Is.Error(arg)) {
-            hasError = true
-            const isThrowing = args.some(arg => arg && arg.throwing)
-            return formatError.call(this, level, arg, isThrowing)
-        }
-        if (Is.PlainObject(arg)) {
-            // Handle special keys.
-            const entries = Object.entries(arg)
-            if (entries.length == 1) {
-                const [key, value] = entries[0]
-                if (key === 'throwing' && hasError) {
-                    return null
-                }
-                if (key in chlk && Is.String(value)) {
-                    return chlk.string(`${key}: ` + chlk[key](value))
-                }
-            }
-        }
-        return arg
-    }).filter(arg => arg != null)
-}
-
-/**
  * Format arguments to a string. This is called for prefixing, logging,
  * and the general format() method.
  *
+ * @param {string} The level. Calls to logger.format() will be 'info'. Calls to
+ *        logger.eformat() will be 'error'.
  * @param {array} The arguments of any type.
  * @return {string} The formatted message string.
  */
-Defaults.format = function (args) {
+Defaults.format = function (level, args) {
+    args = preformat.call(this, level, args)
     const {colors} = this.opts
-    const opts = spread({colors}, this.opts.formatting)
-    return formatWithOptions(opts, ...args)
-}
-
-/**
- * The main logging function, bound to individual methods in the constructor.
- *
- * @param {string} The level, 'info', 'warn', etc.
- * @param {...*} The arguments
- * @return {undefined}
- */
-function log(level, ...args) {
-    level = getLevelNumber(level)
-    if (level > this.logLevel) {
-        return
-    }
-    const method = level < 2 ? 'ewrite' : 'write'
-    const levelName = LevelNames[level]
-    const {opts} = this
-    if (Is.Function(opts.prelog)) {
-        const result = opts.prelog.call(this, levelName, args)
-        // If the prelog function did not return anything, then we assume
-        // that it modified in place. Otherwise we take the return value,
-        // where null is cast to empty string.
-        if (result !== undefined) {
-            args = Cast.toArray(result)
-        }
-    }
-    const prefixes = Cast.toArray(getOrCall(opts.prefix, this, levelName))
-    const prefix = prefixes.length ? this.format(...prefixes) : null
-    const body = args.length ? this.format(...args) : ''
-    if (prefix) {
-        this[method](prefix + (body ? ' ' : ''))
-    }
-    this[method](body + '\n')
+    const opts = spread({colors}, this.opts.inspect)
+    return util.formatWithOptions(opts, ...args)
 }
 
 const SymHp = Symbol('hp')
@@ -246,14 +211,10 @@ const SymHp = Symbol('hp')
 module.exports = class Logger {
 
     /**
-     * @throws {ArgumentError}
+     * @throws {TypeError}
      */
     constructor(opts) {
         opts = merge(Defaults, opts)
-        if (Is.Object(opts.format)) {
-            opts.formatting = merge(Defaults.formatting, opts.formatting)
-            opts.format = Defaults.format
-        }
         checkWriteStream(opts.stdout, 'opts.stdout')
         checkWriteStream(opts.stderr, 'opts.stderr')
         const chalk = new Chalk({
@@ -261,7 +222,7 @@ module.exports = class Logger {
         })
         //this._styles = opts.styles
         const chalkp = HashProxy.create(opts.styles, {
-            filter     : Is.String,
+            filter     : isString,
             transform  : style => chalkPipe(style, chalk),
             enumerable : true,
         })
@@ -288,26 +249,43 @@ module.exports = class Logger {
         this[SymHp].upsertEntry(k, v)
     }
 
-    write(data) {
-        this.stdout.write(data)
+    format(...args) {
+        return this.lformat('info', ...args)
     }
 
-    ewrite(data) {
-        this.stderr.write(data)
+    eformat(...args) {
+        return this.lformat('error', ...args)
+    }
+
+    lformat(level, ...args) {
+        return this.opts.format.call(this, getLevelName(level), args)
     }
 
     print(...args) {
-        this.write(this.format(...args) + '\n')
+        this.lprint('info', ...args)
     }
 
     eprint(...args) {
-        this.ewrite(this.format(...args) + '\n')
+        this.lprint('error', ...args)
     }
 
-    format(...args) {
-        return this.opts.format.call(this, args)
+    lprint(level, ...args) {
+        this.lwrite(level, this.lformat(level, ...args) + '\n')
     }
 
+    write(data) {
+        this.lwrite('info', data)
+    }
+
+    ewrite(data) {
+        this.lwrite('error', data)
+    }
+
+    lwrite(level, data) {
+        const strm = getLevelNumber(level) < 2 ? this.stderr : this.stdout
+        strm.write(data)
+    }
+    
     get name() {
         return this.opts.name ?? 'Logger'
     }
@@ -321,6 +299,7 @@ module.exports = class Logger {
     }
 
     set stdout(stdout) {
+        checkWriteStream(stdout, 'stdout')
         this.opts.stdout = stdout
     }
 
@@ -332,6 +311,7 @@ module.exports = class Logger {
     }
 
     set stderr(stderr) {
+        checkWriteStream(stderr, 'stderr')
         this.opts.stderr = stderr
     }
 
@@ -344,7 +324,98 @@ module.exports = class Logger {
     }
 }
 
-function formatError(level, err, isThrowing = false) {
+/**
+ * The main logging function, bound to individual methods in the constructor.
+ *
+ * @param {string} The level, 'info', 'warn', etc.
+ * @param {...*} The arguments
+ * @return {undefined}
+ */
+function log (level, ...args) {
+    level = getLevelNumber(level)
+    if (level > this.logLevel) {
+        return
+    }
+    const method = level < 2 ? 'ewrite' : 'write'
+    const levelName = LevelNames[level]
+    const {opts} = this
+    const prefix = getPrefix.call(this, levelName)
+    const body = this.opts.format.call(this, levelName, args)
+    if (prefix) {
+        this[method](prefix + (body ? ' ' : ''))
+    }
+    this[method](body + '\n')
+}
+
+function getPrefix (level) {
+    const {opts} = this
+    let prefix
+    if (isFunction(opts.prefix)) {
+        prefix = opts.prefix.call(this, level)
+    } else if (isString(opts.prefix)) {
+        prefix = opts.prefix
+    } else if (opts.prefix === true) {
+        prefix = Defaults.prefix.call(this, level)
+    }
+    return castToArray(prefix).join(' ')
+}
+
+/**
+ * Pre-process/filter arguments before they are formatted.
+ *
+ * @param {string} The log level, error, warn, info, log, or debug.
+ * @param {array} The arguments of any type.
+ * @return {array} The processed/filtered arguments of any type.
+ */
+function preformat (level, args) {
+    const {chalks} = this
+    const {keywords} = this.opts
+    const hasError = args.some(isError)
+    const isThrowing = hasError && args.some(arg => arg && arg.throwing)
+    const newArgs = []
+    args.forEach(arg => {
+        if (isString(arg)) {
+            newArgs.push(chalks[level].string(arg))
+            return
+        }
+        if (isError(arg)) {
+            newArgs.push(formatError.call(this, level, arg, isThrowing))
+            return
+        }
+        if (isPlainObject(arg)) {
+            // Handle special keys.
+            const entries = []
+            Object.entries(arg).forEach(([key, value]) => {
+                if (hasError && key === 'throwing') {
+                    return
+                }
+                if (keywords && chalks.keywords[key]) {
+                    newArgs.push(formatKeyword.call(this, level, key, value))
+                    return
+                }
+                entries.push([key, value])
+            })
+            if (entries.length) {
+                newArgs.push(Object.fromEntries(entries))
+            }
+        }
+        newArgs.push(arg)
+    })
+    return newArgs
+}
+
+function formatKeyword (level, key, value) {
+    const {chalks} = this
+    const valueChalk = chalks.keywords[key] && lget(
+        chalks.keywords[key], level, lget(chalks.keywords[key], 'default')
+    )
+    return [
+        chalks[level].string(key),
+        valueChalk ? valueChalk(value) : value,
+    ].join(' ')
+}
+
+function formatError (level, err, isThrowing = false) {
     const levelNum = getLevelNumber(level)
     level = LevelNames[levelNum]
     const chlk = this.chalks[level].error
@@ -363,8 +434,8 @@ function formatError(level, err, isThrowing = false) {
     return lines.join('\n')
 }
 
-function getLevelNumber(value) {
-    if (Is.String(value)) {
+function getLevelNumber (value) {
+    if (isString(value)) {
         value = value.toLowerCase()
     }
     if (value in LevelNums) {
@@ -379,19 +450,22 @@ function getLevelNumber(value) {
     return Defaults.logLevel
 }
 
-function getOptColorLevel(value) {
+function getLevelName (value) {
+    return LevelNames[getLevelNumber(value)]
+}
+function getOptColorLevel (value) {
     if (value === 'force') {
         return Defaults.colors || 1
     }
     return value ? Defaults.colors : 0
 }
 
-function checkWriteStream(arg, name) {
-    if (!Is.WriteableStream(arg)) {
-        throw new ArgumentError(`Argument ${name} is not a writeable stream`)
+function checkWriteStream (arg, name) {
+    if (!isWriteableStream(arg)) {
+        throw new TypeError(`Argument ${name} is not a writeable stream`)
     }
 }
 
-function getOrCall(thing, ...args) {
-    return Is.Function(thing) ? thing.call(...args) : thing
+function getOrCall (thing, ...args) {
+    return isFunction(thing) ? thing.call(...args) : thing
 }

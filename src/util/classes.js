@@ -1,11 +1,12 @@
-const {Is} = require('./types.js')
+const {isFunction} = require('./types.js')
+
 const getProto = Object.getPrototypeOf
 
 const classes = {
 
     ancestors: function classAncestors(arg) {
         const ancs = []
-        if (Is.Function(arg) === false) {
+        if (isFunction(arg) === false) {
             return ancs
         }
         for (let cls = getProto(arg); cls && cls.name; cls = getProto(cls)) {
@@ -15,7 +16,7 @@ const classes = {
     },
 
     inherits: function classInherits(arg, check) {
-        if (Is.Function(arg) === false || Is.Function(check) === false) {
+        if (isFunction(arg) === false || isFunction(check) === false) {
             return false
         }
         for (let cls = getProto(arg); cls && cls.name; cls = getProto(cls)) {

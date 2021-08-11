@@ -27,9 +27,11 @@ class BaseError extends Error {
     }
 }
 
-class ArgumentError extends BaseError {}
+class KeyExistsError extends BaseError {}
+class ValueError extends BaseError {}
 
 module.exports = {
-    ArgumentError,
     BaseError,
+    KeyExistsError,
+    ValueError,
 }

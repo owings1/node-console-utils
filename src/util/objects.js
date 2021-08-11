@@ -1,5 +1,9 @@
-const {Is} = require('./types')
-const {ArgumentError} = require('../errors')
+const {
+    isArray,
+    isFunction,
+    isObject,
+    isSymbol,
+} = require('./types')
 
 const SymNoKey = Symbol('NoKey')
 
@@ -17,7 +21,7 @@ const objects = {
      * @return {boolean}
      */
     isEmpty: function isEmptyObject(obj) {
-        if (Is.Object(obj) === false) {
+        if (isObject(obj) === false) {
             return false
         }
         for (const k in obj) {
@@ -27,7 +31,7 @@ const objects = {
     },
 
     isNonEmpty: function isNonEmptyObject(obj) {
-        if (Is.Object(obj) === false) {
+        if (isObject(obj) === false) {
             return false
         }
         for (const k in obj) {
@@ -41,10 +45,10 @@ const objects = {
     },
 
     keyPath: function getKeyPath(kpath) {
-        if (Is.Array(kpath)) {
+        if (isArray(kpath)) {
             return kpath
         }
-        if (Is.Symbol(kpath)) {
+        if (isSymbol(kpath)) {
             return [kpath]
         }
         return String(kpath).split('.')
@@ -57,7 +61,7 @@ const objects = {
         }
         let base = obj
         for (let i = 0; i < keyPath.length; ++i) {
-            if (!Is.Object(base) && !Is.Function(base)) {
+            if (!isObject(base) && !isFunction(base)) {
                 return dflt
             }
             if (!(keyPath[i] in base)) {
@@ -69,8 +73,8 @@ const objects = {
     },
 
     lset: function lset(obj, keyPath, value) {
-        if (!Is.Object(obj)) {
-            throw new ArgumentError(`Argument (obj) must be an object.`)
+        if (!isObject(obj)) {
+            throw new TypeError(`Argument (obj) must be an object.`)
         }
         keyPath = objects.keyPath(keyPath)
         let base = obj
@@ -110,7 +114,7 @@ const objects = {
      * @return {object} The result object
      */
     valueHash: function valueHash(obj) {
-        const values = Is.Array(obj) ? obj : Object.values(obj)
+        const values = isArray(obj) ? obj : Object.values(obj)
         return Object.fromEntries(values.map(value => [value, true]))
     },
 

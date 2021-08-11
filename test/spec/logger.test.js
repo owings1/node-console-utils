@@ -70,7 +70,7 @@ describe('Logger', () => {
         it('should fail on stderr without events', function () {
             const stderr = {write: () => {}, end: () => {}}
             const err = ger(() => this.create({stderr}))
-            expect(err).erri('Argument')
+            expect(err).erri('TypeError')
         })
 
         it('should set stderr to stdout with oneout', function () {
@@ -113,7 +113,7 @@ describe('Logger', () => {
         })
 
         it('should use custom format function', function () {
-            this.opts.format = function(args) {
+            this.opts.format = function(level, args) {
                 args[0] += 6
                 return  args.join('__')
             }
@@ -123,7 +123,7 @@ describe('Logger', () => {
 
         it('should bind logger in custom format function', function () {
             const exp = Symbol()
-            this.opts.format = function (args) {
+            this.opts.format = function () {
                 this[exp] = exp
                 return ''
             }
@@ -165,7 +165,7 @@ describe('Logger', () => {
         })
 
         it('should not log with color when colors set after constructor', function () {
-            this.opts.format = function (args) {
+            this.opts.format = function () {
                 return this.chalk.red('abc')
             }
             const logger = this.create({colors: 'force', prefix: null})
@@ -176,7 +176,7 @@ describe('Logger', () => {
 
         it('should log with color when colors set to force after constructor', function () {
             const exp = '\x1B[31mabc\x1B[39m'
-            this.opts.prelog = function (level, args) {
+            this.opts.format = function (level, args) {
                 return this.chalks.default.red('abc')
             }
             const logger = this.create({colors: false, prefix: null})

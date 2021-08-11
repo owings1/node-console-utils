@@ -1,10 +1,10 @@
 const deepmerge = require('deepmerge')
-const {Is : {PlainObject: isPlain}, isObject} = require('./types.js')
+const {isPlainObject, isObject} = require('./types.js')
 
 const merging = {
     plain: function mergePlain(...args) {
-        return deepmerge.all(args.filter(isPlain), {
-            isMergeableObject: isPlain,
+        return deepmerge.all(args.filter(isPlainObject), {
+            isMergeableObject: isPlainObject,
         })
     },
     spread: function spreadMerge(...args) {
@@ -40,7 +40,7 @@ function namedf(obj) {
             ...opts
         }
         if (opts.ignoreKeys && opts.customMerge) {
-            throw new ArgumentError(`Cannot specify both ignoreKeys and customMerge`)
+            throw new TypeError(`Cannot specify both ignoreKeys and customMerge`)
         }
         checkArg(
             opts.argFilter,         'argFilter',         'function|null',

@@ -1,4 +1,4 @@
-const {Is} = require('./types.js')
+const {isFunction} = require('./types.js')
 
 const buffers = {
     /**
@@ -8,10 +8,10 @@ const buffers = {
      * @return {boolean}
      */
     equal: function buffersEqual(a, b) {
-        if (Is.Function(a.equals)) {
+        if (isFunction(a.equals)) {
             return a.equals(b)
         }
-        if (Is.Function(a.compare)) {
+        if (isFunction(a.compare)) {
             return a.compare(b) == 0
         }
         const len = a.length
