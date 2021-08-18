@@ -87,7 +87,7 @@ describe('objects', () => {
         test(
 
         )
-        def({expg: ({args}) => args[0], desca: 'modify the object'}, () => {
+        def({resg: ({args}) => args[0], desca: 'modify the object'}, () => {
             test(
                 
             )
@@ -98,7 +98,7 @@ describe('objects', () => {
         test(
 
         )
-        def({expg: ({args}) => args[0], desca: 'not modify the object'}, () => {
+        def({resg: ({args}) => args[0], desca: 'not modify the object'}, () => {
             test(
                 
             )
@@ -106,28 +106,59 @@ describe('objects', () => {
     })
 
     def(objects.revalue, {oper: 'deep.equal'}, () => {
-        test(
 
+        function addOne(n) { return n + 1 }
+
+        test(
+            {exp: {a:2, b:3}, args: [{a:1, b:2}, addOne]},
+            {exp: {a:2, b:3}, args: [{a:1, b:2}, null, addOne]},
         )
-        def({expg: ({args}) => args[0], desca: 'not modify the object'}, () => {
+        def({resg: ({args}) => args[0], desca: 'not modify the object'}, () => {
             test(
-                
+                {exp: {a:1, b:2}, args: [{a:1, b:2}, addOne]},
             )
+        })
+
+        it('should create object with null prototype', function () {
+            const input = {a:1, b:2}
+            const obj = objects.revalue(input, null, addOne)
+            expect(obj.constructor).to.equal(undefined)
+        })
+
+        it('should create object with Object.prototype', function () {
+            const input = {a:1, b:2}
+            const obj = objects.revalue(input, Object.prototype, addOne)
+            expect(obj.constructor.prototype).to.equal(Object.prototype)
         })
     })
 
     def(objects.valueHash, {oper: 'deep.equal'}, () => {
         test(
             {exp: {a:true, b:true}, args: [['a', 'b']]},
+            {exp: {a:true, b:true}, args: [['a', 'b'], null]},
             {exp: {a:true, b:true}, args: [{x: 'a', y: 'b'}]},
         )
+
+        it('should create object with null prototype', function () {
+            const input = [1, 2, 3]
+            const obj = objects.valueHash(input, null)
+            expect(obj).to.deep.equal({1: true, 2: true, 3: true})
+            expect(obj.constructor).to.equal(undefined)
+        })
+
+        it('should create object with Object.prototype', function () {
+            const input = [1, 2, 3]
+            const obj = objects.valueHash(input)
+            expect(obj).to.deep.equal({1: true, 2: true, 3: true})
+            expect(obj.constructor.prototype).to.equal(Object.prototype)
+        })
     })
 
     def(objects.update, {oper: 'deep.equal'}, () => {
         test(
 
         )
-        def({expg: ({args}) => args[0], desca: 'modify the object'}, () => {
+        def({resg: ({args}) => args[0], desca: 'modify the object'}, () => {
             test(
                 
             )

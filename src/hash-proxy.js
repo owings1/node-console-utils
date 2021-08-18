@@ -47,6 +47,11 @@ class HashProxy {
         } else {
             opts.filter = truth
         }
+        if (opts.proto) {
+            checkArg(opts.proto, 'proto', 'object', isObject)
+        } else {
+            opts.proto = (source.constructor && source.constructor.prototype) || null
+        }
         const {ingress, target} = build(source, opts)
         Object.defineProperty(target, CrtKey, {value: true})
         return new HashProxy(source, target, ingress, opts)//{ingress, target}
@@ -75,15 +80,15 @@ class HashProxy {
         for (let i = 0; i < kpath.length; ++i) {
             const key = kpath[i]
             if (!isObject(target[key])) {
-                const tobj = {}
+                const tobj = Object.create(this.opts.proto)
                 const tgtProp = getTargetNodeProp(tobj)
                 Object.defineProperty(target, key, tgtProp)
             }
             if (!isObject(source[key])) {
-                source[key] = {}
+                source[key] = Object.create(this.opts.proto)
             }
             if (!isObject(ingress[key])) {
-                const iobj = {}
+                const iobj = Object.create(this.opts.proto)
                 const inProp = getIngressNodeProp(source[key], iobj, opts)
                 Object.defineProperty(ingress, key, inProp)
             }
@@ -114,7 +119,8 @@ class HashProxy {
 module.exports = HashProxy
 
 function build(source, opts) {
-    const ingress = {}, target = {}
+    const ingress = Object.create(opts.proto)
+    const target = Object.create(opts.proto)
     Object.keys(source).forEach(key => {
         let inProp, tgtProp
         if (isObject(source[key])) {

@@ -72,7 +72,7 @@ const objects = {
         return base
     },
 
-    lset: function lset(obj, keyPath, value) {
+    lset: function lset(obj, keyPath, value, proto = Object.prototype) {
         if (!isObject(obj)) {
             throw new TypeError(`Argument (obj) must be an object.`)
         }
@@ -81,7 +81,7 @@ const objects = {
         for (let i = 0; i < keyPath.length - 1; ++i) {
             const key = keyPath[i]
             if (!isObject(base[key])) {
-                base[key] = {}
+                base[key] = Object.create(proto)
             }
             base = base[key]
         }
@@ -89,20 +89,54 @@ const objects = {
         return obj
     },
 
-    rekey: function rekey(obj, cb) {
+    /**
+     * @throws {TypeError}
+     *
+     * @param {object} Source object
+     * @param {object|null} (optional) The prototype for the new object
+     * @param {function} The callback, receives `key`, `index`
+     * @return {object} The new object
+     */
+    rekey: function rekey(obj, ...args) {
+        const cb = args.pop()
+        const proto = args.length === 1 ? args[0] : Object.prototype
+        const ret = Object.create(proto)
+        Object.entries(obj).forEach(([key, value], i) =>
+            ret[cb(key, i)] = value
+        )
+        return ret
+        /*
         return Object.fromEntries(
             Object.entries(obj).map(([key, value], i) =>
                 [cb(key, i), value]
             )
         )
+        */
     },
 
-    revalue: function revalue(obj, cb) {
+    /**
+     * @throws {TypeError}
+     *
+     * @param {object} Source object
+     * @param {object|null} (optional) The prototype for the new object
+     * @param {function} The callback, receives `value`, `index`
+     * @return {object} The new object
+     */
+    revalue: function revalue(obj, ...args) {
+        const cb = args.pop()
+        const proto = args.length === 1 ? args[0] : Object.prototype
+        const ret = Object.create(proto)
+        Object.entries(obj).forEach(([key, value], i) =>
+            ret[key] = cb(value, i)
+        )
+        return ret
+        /*
         return Object.fromEntries(
             Object.entries(obj).map(([key, value], i) =>
                 [key, cb(value, i)]
             )
         )
+        */
     },
 
     /**
@@ -111,11 +145,15 @@ const objects = {
      * @throws {TypeError}
      *
      * @param {object|array} The input object
+     * @param {object|null} (optional) The prototype of the hash object.
+     *        Default is Object.prototype
      * @return {object} The result object
      */
-    valueHash: function valueHash(obj) {
+    valueHash: function valueHash(obj, proto = Object.prototype) {
         const values = isArray(obj) ? obj : Object.values(obj)
-        return Object.fromEntries(values.map(value => [value, true]))
+        const ret = Object.create(proto)
+        values.forEach(value => ret[value] = true)
+        return ret
     },
 
     /**
