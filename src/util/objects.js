@@ -105,13 +105,6 @@ const objects = {
             ret[cb(key, i)] = value
         )
         return ret
-        /*
-        return Object.fromEntries(
-            Object.entries(obj).map(([key, value], i) =>
-                [cb(key, i), value]
-            )
-        )
-        */
     },
 
     /**
@@ -130,13 +123,6 @@ const objects = {
             ret[key] = cb(value, i)
         )
         return ret
-        /*
-        return Object.fromEntries(
-            Object.entries(obj).map(([key, value], i) =>
-                [key, cb(value, i)]
-            )
-        )
-        */
     },
 
     /**
