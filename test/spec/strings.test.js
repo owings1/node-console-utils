@@ -250,5 +250,23 @@ describe('strings', () => {
             })
         })
 
+        def('background closing', () => {
+            test(
+                {
+                    desc: 'should close and reopen nested background sequences',
+                    oper: 'deep.equal',
+                    exp: [
+                        '\x1B[41m\x1B[30m0123\x1B[49m',
+                        '\x1B[41m456\x1B[44m7\x1B[49m',
+                        '\x1B[41m\x1B[44m89\x1B[49m\x1B[41mAB\x1B[49m',
+                        '\x1B[41m\x1B[44m\x1B[41mCDEF\x1B[39m\x1B[49m',
+                    ],
+                    args: [
+                        chalk.bgRed.black('0123456' + chalk.bgBlue('789') + 'ABCDEF'),
+                        4,
+                    ]
+                },
+            )
+        })
     })
 })

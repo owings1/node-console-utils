@@ -61,13 +61,13 @@ const errors = {
      * @return {string} The normalized message
      */
     getRawMessage: function getRawErrorMessage(err) {
-        let raw = ''
         if (isFunction(err.inspect)) {
-            raw += err.inspect()
-        } else if (err.message && isFunction(err.message.toString)) {
-            raw += err.message
+            return err.inspect()
         }
-        return raw
+        if (err.message && isFunction(err.message.toString)) {
+            return err.message.toString()
+        }
+        return ''
     },
 
     /**

@@ -8,10 +8,12 @@ const pkg = module.exports = {
     get buffers() { return require('./src/util/buffers.js') },
     get chars()   { return require('./src/util/chars.js')   },
     get classes() { return require('./src/util/classes.js') },
+    get codes()   { return require('./src/util/codes.js')   },
     get colors()  { return require('./src/util/colors.js')  },
     get errors()  { return require('./src/util/errors.js')  },
     get merging() { return require('./src/util/merging.js') },
     get objects() { return require('./src/util/objects.js') },
+    get regexes() { return require('./src/util/regexes.js') },
     get strings() { return require('./src/util/strings.js') },
     get types()   { return require('./src/util/types.js')   },
     // shortcuts
