@@ -21,8 +21,8 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {KeyExistsError, ValueError} = require('./errors.js')
-const {isObject, isFunction: isFunc} = require('./util/types.js')
-const {hasKey, keyPath, lget, lset} = require('./util/objects.js')
+const {isObject, isFunction: isFunc} = require('../util/types.js')
+const {hasKey, keyPath, lget, lset} = require('../util/objects.js')
 
 const SrcKey = Symbol('source')
 const IngKey = Symbol('ingress')

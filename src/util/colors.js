@@ -1,4 +1,5 @@
-const {Instance: Chalk, level: DefaultColor} = require('chalk')
+const Chalk = require('../classes/chalk.js')
+const {level: DefaultLevel} = require('chalk')
 const chalkPipe = require('chalk-pipe')
 
 const colors = {
@@ -6,6 +7,15 @@ const colors = {
     chalk: new Chalk,
 }
 
+Object.defineProperty(colors, 'DefaultLevel', {
+    value      : DefaultLevel,
+    enumerable : true,
+    writable   : false,
+})
+Object.defineProperty(colors, 'DefaultColorLevel', {
+    get        : () => colors.DefaultLevel,
+    enumerable : true,
+})
 module.exports = {
     ...colors,
     ...namedf(colors),
