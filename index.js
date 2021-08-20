@@ -1,9 +1,11 @@
 const pkg = module.exports = {
     // classes
-    get Logger()    { return require('./src/classes/logger.js'     )},
-    get HashProxy() { return require('./src/classes/hash-proxy.js' )},
     get Errors()    { return require('./src/classes/errors.js'     )},
+    get HashProxy() { return require('./src/classes/hash-proxy.js' )},
+    get Logger()    { return require('./src/classes/logger.js'     )},
+    get Screen()    { return require('./src/classes/screen.js'     )},
     // utils
+    get ansi()    { return require('./src/util/ansi.js'    )},
     get arrays()  { return require('./src/util/arrays.js'  )},
     get buffers() { return require('./src/util/buffers.js' )},
     get chars()   { return require('./src/util/chars.js'   )},
