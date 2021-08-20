@@ -1,4 +1,3 @@
-
 # Third-Party Notices
 
 ## ansi-regex
@@ -42,8 +41,8 @@ SOFTWARE.
 
 ### Files
 
-- [src/util/strings.js](src/util/strings.js)
-  - `AnsiRegex` copied and formatted.
+- [src/util/regexes.js](src/util/strings.js)
+  - `ansi.global` copied and formatted.
     [source link](https://github.com/chalk/ansi-regex/blob/c1b5e45f/index.js)
 
 -------------
@@ -89,7 +88,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### Files
 
-- [src/lib/emoji-regex.js](src/lib/emoji-regex.js) Regex generated from source
+- [src/lib/emoji-regex.js (removed)](src/lib/emoji-regex.js) Regex generated from source
     <!--ersrc-->[source link](https://github.com/mathiasbynens/emoji-regex/blob/0ffa466d/index.js)</a><!--endersrc-->
 
 -------------
@@ -134,7 +133,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### Files
 
-- [src/lib/fullwidth.js](src/lib/fullwidth.js) copied and formatted
+- [src/util/codes.js](src/util/codes.js)
+  - `isFullwidthCodePoint` copied and modified.
     [source link](https://github.com/sindresorhus/is-fullwidth-code-point/blob/27f57288/index.js)
 
 -------------
@@ -344,6 +344,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### Files
 
+- [src/util/codes.js](src/util/codes.js)
+  - `isCombiningCodePoint`, `isControlCodePoint`, and `isSurrogateCodePoint`.
+      code extracted.
+      [source link](https://github.com/sindresorhus/string-width/blob/89eb79aa/index.js)
 - [src/util/strings.js](src/util/strings.js)
   - `stringWidth()`. Code copied and formatted.
       [source link](https://github.com/sindresorhus/string-width/blob/89eb79aa/index.js)
