@@ -200,7 +200,7 @@ function truth() {
 
 function checkArg(value, name, desc, check) {
     if (!check(value)) {
-        throw new TypeError(`Argument (${name}) a ${desc}`)
+        throw new TypeError(`Argument (${name}) must be a ${desc}`)
     }
 }
 
