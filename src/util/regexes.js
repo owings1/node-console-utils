@@ -73,7 +73,7 @@ const regexes = module.exports = {
         /**
          * See: https://unicode.org/reports/tr29/
          */
-        global: /\r?\n|[\xOB\x0C\x85\u2028\u2029]/g,
+        global: /\r?\n|[\x0B\x0C\x85\u2028\u2029]/g,
     },
 
     /**

@@ -62,7 +62,7 @@ const strings = {
             return [str]
         }
         // Normalize line breaks.
-        str = str.replace(/*regexes.lineBreak.global*//\r\n/g, '\n')
+        str = str.replace(regexes.lineBreak.global, '\n')
         // Initialize variables.
         const lines = [], bgUnclosed = []
         let line = '', lineWidth = 0, index = 0, ansiMatch, ansiIndex
