@@ -23,23 +23,23 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, def} = require('../helpers/index.js')
+const {ger, def, def: {set, test}} = require('../helpers/index.js')
 
 const {errors} = require('../../index.js')
 
 describe('errors', () => {
 
-    beforeEach(function () {
-
+    def(errors.getRawMessage, () => {
+        test(
+            {exp: 'foo', args: [{inspect: () => 'foo'}]},
+            {oper: 'contain', exp: 'test-message', args: [new Error('test-message')]},
+        )
     })
 
-    describe('#getRawMessage', () => {
-
-        def(errors.getRawMessage, [{skip: true, desc: 'TODO...'}])
-    })
-
-    describe('#parseStack', () => {
-
-        def(errors.parseStack, [{skip: true, desc: 'TODO...'}])
+    def(errors.parseStack, () => {
+        it('should return object with rawMessage, message, stack', function () {
+            const res = errors.parseStack(new Error('test'))
+            expect(Object.keys(res).sort()).to.deep.equal(['message', 'rawMessage', 'stack'])
+        })
     })
 })

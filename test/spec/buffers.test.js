@@ -23,18 +23,43 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, def} = require('../helpers/index.js')
+const {ger, def, def: {set, test}} = require('../helpers/index.js')
 
 const {buffers} = require('../../index.js')
 
 describe('buffers', () => {
 
-    beforeEach(function () {
+    def(buffers.equal, () => {
+        test(
+            {exp: true  , args: [Buffer.from('a'), Buffer.from('a')]},
+            {exp: false , args: [Buffer.from('a'), Buffer.from('b')]},
+            {exp: false , args: [[1], [1,2]]},
+        )
 
-    })
+        it('should accept buffer with null equals', function () {
+            const a = Buffer.from('a')
+            const b = Buffer.from('a')
+            a.equals = b.equals = null
+            const res = buffers.equal(a, b)
+            expect(res).to.equal(true)
+        })
 
-    describe('#equal', () => {
+        it('should return true for buffer with null equals,compare', function () {
+            const a = Buffer.from('a')
+            const b = Buffer.from('a')
+            a.equals = b.equals = null
+            a.compare = b.compare = null
+            const res = buffers.equal(a, b)
+            expect(res).to.equal(true)
+        })
 
-        def(buffers.equal, [{skip: true, desc: 'TODO...'}])
+        it('should return false for buffer with null equals,compare', function () {
+            const a = Buffer.from('a')
+            const b = Buffer.from('b')
+            a.equals = b.equals = null
+            a.compare = b.compare = null
+            const res = buffers.equal(a, b)
+            expect(res).to.equal(false)
+        })
     })
 })

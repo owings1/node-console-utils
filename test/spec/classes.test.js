@@ -58,5 +58,11 @@ describe('classes', () => {
                 )
             })
         })
+
+        def(classes.ancestors, {oper: 'deep.equal'}, () => {
+            test(
+                {exp: [B, A], args: [C]},
+            )
+        })
     })
 })
