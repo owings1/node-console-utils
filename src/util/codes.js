@@ -163,6 +163,73 @@ const codes = {
             (0x20000 <= cp && cp <= 0x3FFFD)
         )
     },
+
+    /**
+     * See: https://unicode.org/reports/tr29/
+     */
+    isWordBreaking: function isWordBreakingCodePoint(cp) {
+        return (
+            codes.isBreakingSpace(cp) ||
+            codes.isBreakingDash(cp)
+        )
+    },
+
+    /**
+     * See: https://www.compart.com/en/unicode/category/Pd
+     */
+    isBreakingDash: function isBreakingDashCodePoint(cp) {
+        return Number.isInteger(cp) && (
+            // hyphen-minus
+            cp === 0x2D ||
+            // Argumenian hyphen
+            cp === 0x58A ||
+            // Hebrew punctuation maqaf
+            cp === 0x5BE ||
+            // Canadian syllabics hyphen
+            cp === 0x1400 ||
+            // Mongolian todo soft hyphen
+            cp === 0x1806 ||
+            (0x2010 <= cp && cp <= 0x30A0 && (
+                // hyphen
+                cp === 0x2010 ||
+                // 0x2012: figure dash
+                // 0x2013: en dash
+                // 0x2014: em dash
+                // 0x2015: horizontal bar
+                (0x2012 <= cp && cp <= 0x2015) ||
+                // double oblique hyphen
+                cp === 0x2E17 ||
+                // hyphen with diaeresis
+                cp === 0x2E1A ||
+                // two-em dash
+                cp === 0x2E3A ||
+                // three-em dash
+                cp === 0x2E3B ||
+                // double hyphen
+                cp === 0x2E40 ||
+                // wave dash
+                cp === 0x301C ||
+                // wavy dash
+                cp === 0x3030 ||
+                // Katakana-Hiragana double hyphen
+                cp === 0x30A0
+            )) ||
+            (0xFE31 <= cp && cp <= 0xFF0D && (
+                // presentation form for vertical em dash
+                cp === 0xFE31 ||
+                // presentation form for vertical en dash
+                cp === 0xFE32 ||
+                // small em dash
+                cp === 0xFE58 ||
+                // small hyphen-minus
+                cp === 0xFE63 ||
+                // fullwidth hyphen-minus
+                cp === 0xFF0D
+            )) ||
+            // Yezidi hyphenation mark
+            cp === 0x10EAD
+        )
+    },
 }
 
 module.exports = {

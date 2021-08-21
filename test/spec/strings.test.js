@@ -251,6 +251,10 @@ describe('strings', () => {
         })
 
         def('background closing', () => {
+
+            const str = chalk.bgRed.black('0123456' + chalk.bgBlue('789') + 'ABCDEF')
+            set(breakLine.bind(null, str))
+
             test(
                 {
                     desc: 'should close and reopen nested background sequences',
@@ -261,10 +265,28 @@ describe('strings', () => {
                         '\x1B[41m\x1B[44m89\x1B[49m\x1B[41mAB\x1B[49m',
                         '\x1B[41m\x1B[44m\x1B[41mCDEF\x1B[39m\x1B[49m',
                     ],
-                    args: [
-                        chalk.bgRed.black('0123456' + chalk.bgBlue('789') + 'ABCDEF'),
-                        4,
-                    ]
+                    args: [4]
+                },
+            )
+        })
+
+        def('dash break', () => {
+
+            const str = '\x1B[41m\x1B[30m 1234 56\x1B[44m789\x1B[49m\x1B[41mAB CDEF G HIJKL-MN\x1B[39m\x1B[49m'
+            set(breakLine.bind(null, str))
+
+            test(
+                {
+                    oper: 'deep.equal',
+                    expstr: 'expected',
+                    exp: [
+                        '\x1B[41m\x1B[30m 1234\x1B[49m',
+                        '\x1B[41m56\x1B[44m789\x1B[49m\x1B[41mAB\x1B[49m',
+                        '\x1B[41m\x1B[44m\x1B[41mCDEF G\x1B[49m',
+                        '\x1B[41m\x1B[44m\x1B[41mHIJKL-\x1B[49m',
+                        '\x1B[41m\x1B[44m\x1B[41mMN\x1B[39m\x1B[49m',
+                    ],
+                    args: [5, {tolerance: 2, trimBreak: true}],
                 },
             )
         })

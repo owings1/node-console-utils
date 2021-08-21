@@ -54,20 +54,22 @@ const strings = {
      *
      * @param {string} The line to break
      * @param {integer} The max width
+     * @param {object} (optional) The options {tolerance=0, trimBreak=false}
      * @return {array} The lines
      */
-    breakLine: function breakLine(str, maxWidth, {tolerance = 0} = {}) {
+    breakLine: function breakLine(str, maxWidth, opts = {}) {
         if (!str || !Number.isInteger(maxWidth) || maxWidth < 2) {
             // Allow for width Infinity, protect againt NaN or < 1.
             return [str]
         }
+        const {tolerance = 0, trimBreak = false} = opts
         // Normalize line breaks.
         str = str.replace(regexes.lineBreak.global, '\n')
         // Initialize variables.
         const lines = [], bgUnclosed = []
         let line = '', lineWidth = 0, index = 0, ansiMatch, ansiIndex
         // Routine to close background style if needed, push and reset the line
-        // with the open sequences (if any), and reset the lineWidth.
+        // with the open sequences (if any), and reset lineWidth.
         const push = () => {
             line += bgUnclosed.length ? BG_CLOSE : ''
             lines.push(line)
@@ -106,6 +108,8 @@ const strings = {
                     }
                 }
                 if (index === str.length) {
+                    // Don't close background if it never closed in the input.
+                    bgUnclosed.splice(0)
                     break
                 }
                 // Prime the next ANSI match.
@@ -122,7 +126,7 @@ const strings = {
             //      a. the next char
             //      b. the next two chars, in the case of a surrogate
             //      c. empty string, in the case of a breaking space, when we
-            //         are at maxWidth
+            //         are at maxWidth, and trimBreak=true.
             let segment = str[index], segmentWidth
             if (codes.isSurrogate(code)) {
                 // Surrogates come in pairs and the width will be 2. Add the
@@ -142,12 +146,26 @@ const strings = {
                 segmentWidth = 1
             }
             // Determine whether to break.
-            if (lineWidth + segmentWidth > maxWidth + tolerance) {
-                push()
+            const thisWidth = lineWidth + segmentWidth
+            if (thisWidth > maxWidth) {
+                const isBreakSpace = codes.isBreakingSpace(code)
+                if (trimBreak && isBreakSpace) {
+                    segment = ''
+                    segmentWidth = 0
+                }
+                if (isBreakSpace || thisWidth > maxWidth + tolerance) {
+                    push()
+                }
             }
             // Add the segment to the line and update the width.
             lineWidth += segmentWidth
             line += segment
+            if (lineWidth >= maxWidth && index < str.length - 1) {
+                // Breaking dash.
+                if (codes.isBreakingDash(code)) {
+                    push()
+                }
+            }
         }
         push()
         return lines
