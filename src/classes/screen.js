@@ -65,11 +65,11 @@ const Screen = module.exports = class Screen {
     }
 
     get height() {
-        return this.output.rows ?? 64
+        return this.output.rows || 64
     }
 
     get width() {
-        return this.output.columns ?? 256
+        return this.output.columns || 256
     }
 
     noCursor(cb) {
