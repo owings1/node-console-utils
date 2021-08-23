@@ -74,10 +74,9 @@ const Screen = module.exports = class Screen {
 
     noCursor(cb) {
         let isAsync = false
-        let ret
         try {
             this.hideCursor()
-            ret = cb()
+            const ret = cb()
             isAsync = ret instanceof Promise
             if (isAsync) {
                 return ret.finally(() => this.showCursor())
@@ -97,4 +96,5 @@ Object.entries(ansi).forEach(([method, func]) => {
         }
         return this
     }
+    Object.defineProperty(Screen.prototype[method], 'name', {value: method})
 })
