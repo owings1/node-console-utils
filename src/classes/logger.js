@@ -132,7 +132,7 @@ Defaults.styles = {
         string  : '#884444',
         error : {
             name    : 'bgRed.black',
-            message : '#884444',
+            message : 'red',
             stack   : 'grey',
         },
     },
