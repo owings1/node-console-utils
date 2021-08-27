@@ -1,14 +1,45 @@
+/**
+ * node-utils-h - object utils
+ *
+ * Copyright (C) 2021 Doug Owings
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 const {
     isArray,
     isFunction,
     isObject,
     isSymbol,
-} = require('./types')
+} = require('./types.js')
 
 const SymNoKey = Symbol('NoKey')
 
 const objects = {
 
+    /**
+     * Check whether the key path exists.
+     *
+     * @param {object} The object
+     * @param {string|array|symbol} The key path
+     * @return {boolean}
+     */
     hasKey: function hasKey(obj, key) {
         return objects.lget(obj, key, SymNoKey) !== SymNoKey
     },
@@ -30,20 +61,26 @@ const objects = {
         return true
     },
 
+    /**
+     * @param {object}
+     * @return {boolean}
+     */
     isNonEmpty: function isNonEmptyObject(obj) {
-        if (isObject(obj) === false) {
-            return false
-        }
-        for (const k in obj) {
-            return true
-        }
-        return false
+        return isObject(obj) && !objects.isEmpty(obj)
     },
 
+    /**
+     * @param {object}
+     * @return {boolean}
+     */
     isNullOrEmpty: function isNullOrEmptyObject(arg) {
         return arg === null || typeof arg === 'undefined' || objects.isEmpty(arg)
     },
 
+    /**
+     * @param {string|array|symbol}
+     * @return {array}
+     */
     keyPath: function getKeyPath(kpath) {
         if (isArray(kpath)) {
             return kpath
@@ -72,6 +109,17 @@ const objects = {
         return base
     },
 
+    /**
+     *
+     * @throws {TypeError}
+     *
+     * @param {object} The object to set
+     * @param {string|array|symbol} The key path
+     * @param {*} The value
+     * @param {object|null} (optional) Prototype for creating new objects,
+              default is `Object.prototype`.
+     * @return {object}
+     */
     lset: function lset(obj, keyPath, value, proto = Object.prototype) {
         if (!isObject(obj)) {
             throw new TypeError(`Argument (obj) must be an object.`)
