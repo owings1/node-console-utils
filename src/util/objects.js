@@ -34,6 +34,20 @@ const SymNoKey = Symbol('NoKey')
 const objects = {
 
     /**
+     * Get entries, including symbols.
+     *
+     * @see `objectKeys()`
+     * @throws {TypeError}
+     *
+     * @param {object} The object
+     * @param {boolean} (optional) Include non-enumerable keys, default `false`
+     * @return {array} The entries
+     */
+    entries: function objectEntries(obj, isAll = false) {
+        return objects.keys(obj, isAll).map(key => [key, obj[key]])
+    },
+
+    /**
      * Check whether the key path exists.
      *
      * @param {object} The object
@@ -45,9 +59,11 @@ const objects = {
     },
 
     /**
-     * Check whether an object is empty. Returns false if the parameter is not
-     * an object.
-     * @see {isNullOrEmpty}
+     * Check whether an object is empty. Returns `false` if the parameter is
+     * not an object. All enumerable properties are checked, including symbols.
+     *
+     * @see `isNullOrEmpty()`
+     *
      * @param {*} The input to check
      * @return {boolean}
      */
@@ -58,7 +74,9 @@ const objects = {
         for (const k in obj) {
             return false
         }
-        return true
+        return !Object.getOwnPropertySymbols(obj).some(sym =>
+            Object.propertyIsEnumerable.call(obj, sym)
+        )
     },
 
     /**
@@ -91,6 +109,38 @@ const objects = {
         return String(kpath).split('.')
     },
 
+    /**
+     * Get keys, including symbols.
+     *
+     * @throws {TypeError}
+     *
+     * @param {object} The object
+     * @param {boolean} (optional) Include non-enumerable keys, default `false`
+     * @return {array} The keys
+     */
+    keys: function objectKeys(obj, isAll = false) {
+        const keys = []
+        Object.getOwnPropertyNames(obj).forEach(key => {
+            if (isAll || Object.propertyIsEnumerable.call(obj, key)) {
+                keys.push(key)
+            }
+        })
+        Object.getOwnPropertySymbols(obj).forEach(key => {
+            if (isAll || Object.propertyIsEnumerable.call(obj, key)) {
+                keys.push(key)
+            }
+        })
+        return keys
+    },
+
+    /**
+     * @throws {TypeError}
+     *
+     * @param {object} The object to query.
+     * @param {string|array|symbol} The key path.
+     * @param {*} (optional) The value to return if not found.
+     * @return {*} The value, default value, or undefined.
+     */
     lget: function lget(obj, keyPath, dflt) {
         keyPath = objects.keyPath(keyPath)
         if (keyPath.length === 0) {
@@ -138,6 +188,9 @@ const objects = {
     },
 
     /**
+     * Create a new object with the same values and different keys. All own and
+     * enumerable properties will be iterated, including symbols.
+     * 
      * @throws {TypeError}
      *
      * @param {object} Source object
@@ -149,13 +202,16 @@ const objects = {
         const cb = args.pop()
         const proto = args.length === 1 ? args[0] : Object.prototype
         const ret = Object.create(proto)
-        Object.entries(obj).forEach(([key, value], i) =>
+        objects.entries(obj).forEach(([key, value], i) =>
             ret[cb(key, i)] = value
         )
         return ret
     },
 
     /**
+     * Create a new object with the same key and different values. All own and
+     * enumerable properties will be iterated, including symbols.
+     *
      * @throws {TypeError}
      *
      * @param {object} Source object
@@ -167,7 +223,7 @@ const objects = {
         const cb = args.pop()
         const proto = args.length === 1 ? args[0] : Object.prototype
         const ret = Object.create(proto)
-        Object.entries(obj).forEach(([key, value], i) =>
+        objects.entries(obj).forEach(([key, value], i) =>
             ret[key] = cb(value, i)
         )
         return ret
@@ -175,6 +231,7 @@ const objects = {
 
     /**
      * Return a object with the input's values as key, with `true` as all values.
+     * All own and enumerable properties will be iterated, including symbols.
      *
      * @throws {TypeError}
      *
@@ -184,14 +241,31 @@ const objects = {
      * @return {object} The result object
      */
     valueHash: function valueHash(obj, proto = Object.prototype) {
-        const values = isArray(obj) ? obj : Object.values(obj)
+        const values = isArray(obj) ? obj : objects.values(obj)
         const ret = Object.create(proto)
         values.forEach(value => ret[value] = true)
         return ret
     },
 
     /**
-     * Update an object with new values.
+     * Get values, including symbols.
+     *
+     * @see `objectKeys()`
+     * @throws {TypeError}
+     *
+     * @param {object} The object
+     * @param {boolean} (optional) Include non-enumerable keys, default `false`
+     * @return {array} The values
+     */
+    values: function objectValues(obj, isAll = false) {
+        return objects.keys(obj, isAll).map(key => obj[key])
+    },
+
+    /**
+     * Update an object with new values. All own and enumerable properties
+     * will be iterated, including symbols.
+     *
+     * @throws {TypeError}
      *
      * @param {object} The target object to update
      * @param {object} The source object with the new values
@@ -225,7 +299,7 @@ const objects = {
 
         With keys: {'9': undefined, a: 1}
         */
-        Object.entries(source).forEach(([key, value]) => {
+        objects.entries(source).forEach(([key, value]) => {
             target[key] = value
         })
         return target

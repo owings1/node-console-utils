@@ -27,22 +27,53 @@ const {ger, def, def: {test}} = require('../helpers/index.js')
 
 const {objects} = require('../../index.js')
 
+const defprop = Object.defineProperty
+
 describe('objects', () => {
 
     beforeEach(function () {
 
     })
 
+    def(objects.entries, {oper: 'deep.equal'}, () => {
+        const s1 = Symbol()
+        test(
+            {exp: [['a',1]], args: [{a: 1}]},
+            {exp: [['a',1]], args: [defprop({a: 1}, 'b', {value: 2})]},
+            {
+                exp: [['a',1],['b',2]],
+                args: [defprop({a: 1}, 'b', {value: 2}), true],
+            },
+            {
+                exp: [['a',1],['b',2]],
+                args: [defprop({a: 1}, 'b', {value: 2, enumerable: true})],
+            },
+            {
+                exp: [['a',1],[s1,2]],
+                args: [defprop({a: 1}, s1, {value: 2, enumerable: true})],
+            },
+            {
+                exp: [['a',1],[s1,2]],
+                args: [defprop({a: 1}, s1, {value: 2}), true],
+            },
+        )
+    })
+
     def(objects.isEmpty, () => {
         def({exp: true}, () => {
             test(
                 {args: [{}]},
+                {args: [defprop({}, 'a', {value: 1})]},
+                {args: [defprop({}, Symbol(), {value: 1})]},
             )
         })
         def({exp: false}, () => {
             test(
+                {args: []},
                 {args: [{a: 1}]},
                 {args: [Object.fromEntries([[undefined, undefined]])]},
+                {args: [defprop({}, 'a', {value: 1, enumerable: true})]},
+                {args: [defprop({}, Symbol(), {value: 1, enumerable: true})]},
             )
         })
     })
@@ -77,9 +108,37 @@ describe('objects', () => {
         })
     })
 
-    def(objects.lget, () => {
+    def(objects.keys, {oper: 'deep.equal'}, () => {
+        const s1 = Symbol()
         test(
-            {exp: 'A', args: [new (class A{}), 'constructor.name']}
+            {exp: ['a'], args: [{a: 1}]},
+            {exp: ['a'], args: [defprop({a: 1}, 'b', {value: 2})]},
+            {
+                exp: ['a','b'],
+                args: [defprop({a: 1}, 'b', {value: 2}), true]
+            },
+            {
+                exp: ['a','b'],
+                args: [defprop({a: 1}, 'b', {value: 2, enumerable: true})],
+            },
+            {exp: ['a'], args: [defprop({a: 1}, s1, {value: 2})]},
+            {exp: ['a',s1], args: [defprop({a: 1}, s1, {value: 2}), true]},
+            {
+                exp: ['a',s1],
+                args: [defprop({a: 1}, s1, {value: 2, enumerable: true})],
+            },
+        )
+    })
+
+    def(objects.lget, () => {
+        const s1 = Symbol()
+        test(
+            {exp: 'A', args: [new (class A{}), 'constructor.name']},
+            {exp: s1, args: [{}, 'a', s1]},
+            {exp: 1, args: [defprop({}, s1, {value: 1, enumerable: true}), s1]},
+            {exp: 1, args: [defprop({}, s1, {value: 1, enumerable: true}), [s1]]},
+            {exp: 1, args: [{}, [], 1]},
+            {exp: undefined, args: [{a: 1}, 'a.b']},
         )
     })
 
