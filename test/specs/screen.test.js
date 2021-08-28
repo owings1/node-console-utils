@@ -1,5 +1,5 @@
 /**
- * @quale/util - Screen tests.
+ * @quale/core - Screen tests.
  *
  * Copyright (C) 2021 Doug Owings
  * 

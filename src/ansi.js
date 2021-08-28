@@ -1,5 +1,5 @@
 /**
- * @quale/util - ANSI sequences
+ * @quale/core - ANSI sequences
  *
  * Copyright (C) 2021 Doug Owings
  * 

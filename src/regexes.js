@@ -1,5 +1,5 @@
 /**
- * @quale/util - regexes
+ * @quale/core - regexes
  *
  * Copyright (C) 2021 Doug Owings
  * 

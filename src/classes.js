@@ -1,5 +1,5 @@
 /**
- * @quale/util - class utils
+ * @quale/core - class utils
  *
  * Copyright (C) 2021 Doug Owings
  * 

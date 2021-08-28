@@ -1,5 +1,5 @@
 /**
- * @quale/util - types tests
+ * @quale/core - types tests
  *
  * Copyright (C) 2021 Doug Owings
  *

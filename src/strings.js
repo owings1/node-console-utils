@@ -1,5 +1,5 @@
 /**
- * @quale/util - string utils
+ * @quale/core - string utils
  *
  * Copyright (C) 2021 Doug Owings
  * 

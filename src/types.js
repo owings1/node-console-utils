@@ -1,5 +1,5 @@
 /**
- * @quale/util - Type checking/casting utils
+ * @quale/core - Type checking/casting utils
  *
  * Copyright (C) 2021 Doug Owings
  * 

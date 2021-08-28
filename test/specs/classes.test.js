@@ -1,5 +1,5 @@
 /**
- * @quale/util - buffers tests
+ * @quale/core - buffers tests
  *
  * Copyright (C) 2021 Doug Owings
  *

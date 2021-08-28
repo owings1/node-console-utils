@@ -1,1 +1,1 @@
-# @quale/util
+# @quale/core

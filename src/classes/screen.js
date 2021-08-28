@@ -1,5 +1,5 @@
 /**
- * @quale/util - ANSI screen helper
+ * @quale/core - ANSI screen helper
  *
  * Copyright (C) 2021 Doug Owings
  * 

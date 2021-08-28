@@ -1,5 +1,5 @@
 /**
- * @quale/util - array utils
+ * @quale/core - array utils
  *
  * Copyright (C) 2021 Doug Owings
  * 

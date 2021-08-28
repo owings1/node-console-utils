@@ -1,5 +1,5 @@
 /**
- * @quale/util - code point utils
+ * @quale/core - code point utils
  *
  * Copyright (C) 2021 Doug Owings
  * 

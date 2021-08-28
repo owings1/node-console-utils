@@ -1,5 +1,5 @@
 /**
- * @quale/util - objects tests
+ * @quale/core - objects tests
  *
  * Copyright (C) 2021 Doug Owings
  *

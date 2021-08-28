@@ -1,5 +1,5 @@
 /**
- * @quale/util - arrays tests
+ * @quale/core - arrays tests
  *
  * Copyright (C) 2021 Doug Owings
  *

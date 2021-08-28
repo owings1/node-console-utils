@@ -1,5 +1,5 @@
 /**
- * @quale/util - buffer utils
+ * @quale/core - buffer utils
  *
  * Copyright (C) 2021 Doug Owings
  * 

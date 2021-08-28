@@ -1,5 +1,5 @@
 /**
- * @quale/util - errors tests
+ * @quale/core - errors tests
  *
  * Copyright (C) 2021 Doug Owings
  *
