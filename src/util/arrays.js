@@ -47,6 +47,15 @@ const arrays = {
         return arr
     },
 
+    bisect: function arrayBisect(arr, filter) {
+        checkArray(arr)
+        const result = [[], []]
+        arr.forEach(value => {
+            result[Number(Boolean(filter(value)))].push(value)
+        })
+        return result
+    },
+
     /**
      * Get the last element of an array.
      *
