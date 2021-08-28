@@ -8,11 +8,14 @@
   "main": "index.js",
   "scripts": {
     "test": "nyc --reporter=text-summary mocha test/spec/** && nyc report --reporter=lcov",
-    "clean": "rm -rf .nyc_output coverage node_modules",
+    "clean": "npm run cl && rm -rf node_modules",
     "cl": "rm -rf .nyc_output coverage",
     "co": "open coverage/lcov-report/index.html",
     "tu": "node test/scripts/tests-update.js",
-    "emoji": "node scripts/build-emoji-regex.js"
+    "emoji": "node scripts/build-emoji-regex.js",
+    "preversion": "npm run clean && npm i && npm t",
+    "version": "echo no version script to run",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
