@@ -3,8 +3,6 @@ const opts = {
     isPrint : Boolean(process.env.IS_PRINT),
 }
 const {
-    Logger,
-    merging : {spread},
     objects : {lset, revalue},
     strings : {endsWith},
     types   : {isFunction, isObject, isString, typeOf},
@@ -19,7 +17,7 @@ const srcDir = abspath('src')
 const specsDir = abspath('test/specs')
 const templateFile = abspath('test/templates/spec.template')
 
-const logger = new Logger
+const logger = console
 
 function render(template, vars) {
     Object.entries(vars).forEach(([name, value]) => {

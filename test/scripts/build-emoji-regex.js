@@ -1,17 +1,17 @@
-const {Logger} = require('..')
 const assert = require('assert')
 const chproc = require('child_process')
 const path = {resolve} = require('path')
 const fs = require('fs')
 const vm = require('vm')
 
-const baseDir = resolve(__dirname, '..')
+const baseDir = resolve(__dirname, '../..')
 const targetfile = resolve(baseDir, 'src/lib/emoji-regex.js')
+const targetdir = path.dirname(targetfile)
 const noticefile = resolve(baseDir, 'NOTICE.md')
-const template = fs.readFileSync(resolve(baseDir, 'scripts/emoji-regex.template'), 'utf-8')
+const template = fs.readFileSync(resolve(baseDir, 'test/templates/emoji-regex.template'), 'utf-8')
 const pkgname = 'emoji-regex'
 
-const log = new Logger
+const log = console
 
 log.info('getting package info')
 const {
@@ -62,6 +62,10 @@ assert(actual.flags === exp.flags)
 log.info('sanity check')
 assert(actual.test('\u{1F1FA}\u{1F1F8}'))
 
+if (!fs.existsSync(targetdir)) {
+    log.info('Creating dir', path.relative(baseDir, targetdir))
+    fs.mkdirSync(targetdir, {recursive: true})
+}
 log.info('writing', {file: path.relative(baseDir, targetfile)})
 fs.writeFileSync(targetfile, rendered)
 
