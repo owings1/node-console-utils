@@ -86,28 +86,31 @@ function typeOf(arg) {
     if (arg === null) {
         return 'null'
     }
-    if (Is.Array(arg)) {
+    if (is.array(arg)) {
         return 'array'
     }
-    if (Is.Buffer(arg)) {
+    if (is.buffer(arg)) {
         return 'buffer'
     }
-    if (Is.Stream(arg)) {
+    if (is.stream(arg)) {
         return 'stream'
     }
-    if (Is.Class(arg)) {
+    if (is.class(arg)) {
         return 'class'
     }
-    if (Is.Regex(arg)) {
+    if (is.regex(arg)) {
         return 'regex'
     }
-    if (Is.Object(arg)) {
+    if (is.promise(arg)) {
+        return 'promise'
+    }
+    if (is.object(arg)) {
         return 'object'
     }
     return typeof arg
 }
 
-const Cast = {
+const cast = {
 
     /**
      * Cast a parameter to an array. If the parameter is an array, the parameter
@@ -119,7 +122,7 @@ const Cast = {
      * @return {array} The parameter if it is an array, or a new array
      */
     toArray: function castToArray(val) {
-        if (Is.Array(val)) {
+        if (is.array(val)) {
             return val
         }
         const arr = []
@@ -172,7 +175,7 @@ const Cast = {
     //}
 }
 
-const Is = {
+const is = {
 
     /**
      * Whether the parameter is an array.
@@ -180,7 +183,7 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    Array: function isArray(arg) {
+    array: function isArray(arg) {
         return Array.isArray(arg)
     },
 
@@ -191,7 +194,7 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    Boolean: function isBoolean(arg) {
+    boolean: function isBoolean(arg) {
         return arg === true || arg === false
     },
 
@@ -201,7 +204,7 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    Buffer: function isBuffer(arg) {
+    buffer: function isBuffer(arg) {
         return Buffer.isBuffer(arg)
     },
 
@@ -212,8 +215,8 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    Class: function isClass(arg) {
-        if (Is.Function(arg) === false) {
+    class: function isClass(arg) {
+        if (is.function(arg) === false) {
             return false
         }
         const str = Function.prototype.toString.call(arg)
@@ -221,10 +224,10 @@ const Is = {
             return true
         }
         // See: https://babeljs.io/docs/en/babel-plugin-transform-classes
-        if (str.indexOf('classCallCheck') > -1) {
+        if (str.includes('classCallCheck')) {
             return true
         }
-        return str.indexOf('Cannot call a class as a function') > -1
+        return str.includes('Cannot call a class as a function')
     },
 
     /**
@@ -233,7 +236,7 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    Error: function isError(arg) {
+    error: function isError(arg) {
         return arg instanceof Error
     },
 
@@ -243,7 +246,7 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    Function: function isFunction(arg) {
+    function: function isFunction(arg) {
         return typeof arg === 'function'
     },
 
@@ -253,8 +256,8 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    Iterable: function isIterable(arg) {
-        return arg != null && Is.Function(arg[Symbol.iterator])
+    iterable: function isIterable(arg) {
+        return arg != null && is.function(arg[Symbol.iterator])
     },
 
     /**
@@ -263,7 +266,7 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    Number: function isNumber(arg) {
+    number: function isNumber(arg) {
         return typeof arg === 'number'
     },
 
@@ -285,7 +288,7 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    Object: function isObject(arg) {
+    object: function isObject(arg) {
         return Object.prototype.toString.call(arg) === '[object Object]'
     },
 
@@ -311,12 +314,12 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    PlainObject: function isPlainObject(o) {
+    plainObject: function isPlainObject(o) {
         /* begin is-plain-object code: */
         let ctor
         let proto
         
-        if (Is.Object(o) === false) {
+        if (is.object(o) === false) {
             return false
         }
         // If has modified constructor
@@ -330,7 +333,7 @@ const Is = {
 
             // If has modified prototype
             proto = ctor.prototype
-            if (Is.Object(prot) === false) {
+            if (is.Object(prot) === false) {
                 return false
             }
             // If constructor does not have an Object-specific method
@@ -356,14 +359,18 @@ const Is = {
         /* end lodash code */
     },
 
+    promise: function isPromise(arg) {
+        return arg instanceof Promise
+    },
+
     /**
      * Whether the parameter is a readable stream.
      *
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    ReadableStream: function isReadableStream(arg) {
-        return arg instanceof EventEmitter && Is.Function(arg.read)
+    readableStream: function isReadableStream(arg) {
+        return arg instanceof EventEmitter && is.function(arg.read)
     },
 
     /**
@@ -372,7 +379,7 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    Regex: function isRegex(arg) {
+    regex: function isRegex(arg) {
         return arg instanceof RegExp
     },
 
@@ -382,8 +389,8 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    Stream: function isStream(arg) {
-        return Is.ReadableStream(arg) || Is.WriteableStream(arg)
+    stream: function isStream(arg) {
+        return is.readableStream(arg) || is.writeableStream(arg)
     },
 
     /**
@@ -393,7 +400,7 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    String: function isString(arg) {
+    string: function isString(arg) {
         return typeof arg === 'string'
     },
 
@@ -403,7 +410,7 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    Symbol: function isSymbol(arg) {
+    symbol: function isSymbol(arg) {
         return typeof arg === 'symbol'
     },
 
@@ -413,8 +420,8 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    WritableStream: function isWritableStream(arg) {
-        return Is.WriteableStream(arg)
+    writableStream: function isWritableStream(arg) {
+        return is.writeableStream(arg)
     },
 
     /**
@@ -423,22 +430,21 @@ const Is = {
      * @param {*} The parameter to check
      * @return {boolean} The result
      */
-    WriteableStream: function isWriteableStream(arg) {
+    writeableStream: function isWriteableStream(arg) {
         return (
             arg instanceof EventEmitter &&
-            Is.Function(arg.write) &&
-            Is.Function(arg.end)
+            is.function(arg.write) &&
+            is.function(arg.end)
         )
     },
 }
 
-
 module.exports = {
     typeOf,
-    Cast,
-    Is,
-    ...namedf(Cast),
-    ...namedf(Is),
+    cast,
+    is,
+    ...namedf(cast),
+    ...namedf(is),
 }
 
 function namedf(obj) {
