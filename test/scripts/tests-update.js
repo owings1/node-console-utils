@@ -1,15 +1,19 @@
 const {
     Logger,
-    objects: {lset, revalue},
-    strings: {endsWith},
-    types: {isFunction, isObject, isString, typeOf},
+    objects : {lset, revalue},
+    strings : {endsWith},
+    types   : {isFunction, isObject, isString, typeOf},
 } = require('../../index.js')
+
 const fs = require('fs')
-const path = require('path')
-const {resolve, basename} = path
+const path = {resolve, relative, basename} = require('path')
 const BaseDir = resolve(__dirname, '../..')
-const abspath = (...args) => path.resolve(BaseDir, ...args)
-const relpath = (...args) => path.relative(BaseDir, ...args)
+const abspath = (...args) => resolve(BaseDir, ...args)
+const relpath = (...args) => relative(BaseDir, ...args)
+const srcDir = abspath('src')
+const specsDir = abspath('test/specs')
+const templateFile = abspath('test/templates/spec.template')
+
 const logger = new Logger
 
 function render(template, vars) {
@@ -30,19 +34,15 @@ function specOpen (name, value) {
 }
 
 function createUtilsSpecs() {
-
-    const srcDir = abspath('src')
-    const specDir = abspath('test/spec')
-    const template = fs.readFileSync(relpath('test/templates/spec.template'), 'utf-8')
+    const template = fs.readFileSync(templateFile, 'utf-8')
     const bnames = fs.readdirSync(srcDir)
-
     bnames.forEach(bname => {
         if (!endsWith(bname, '.js')) {
             logger.info('Skipping', bname)
             return
         }
         const name = bname.split('.').slice(0, -1).join('-')
-        const specFile = resolve(specDir, name + '.test.js')
+        const specFile = resolve(specsDir, name + '.test.js')
         const srcFile = resolve(srcDir, bname)
         const srcRel = relpath(srcFile)
         const specRel = relpath(specFile)
@@ -53,7 +53,7 @@ function createUtilsSpecs() {
         logger.info('Creating spec for', logger.chalk.yellow(name), {file: specRel})
         const mod = require(srcFile)
         const rootOrder = revalue(mod, (v, i) => i)
-        const nameHash = {}
+        const nameHash = Object.create(null)
         let spec = {}
         let count = 0
         function addSpec(obj, keyPath = []) {

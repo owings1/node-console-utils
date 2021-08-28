@@ -7,7 +7,7 @@
   "description": "core js utils",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=text-summary mocha test/spec/** && nyc report --reporter=lcov",
+    "test": "nyc --reporter=text-summary mocha test/specs/** && nyc report --reporter=lcov",
     "clean": "npm run cl && rm -rf node_modules",
     "cl": "rm -rf .nyc_output coverage",
     "co": "open coverage/lcov-report/index.html",
