@@ -1,5 +1,5 @@
 /**
- * node-console-utils - Screen tests.
+ * @quale/util - Screen tests.
  *
  * Copyright (C) 2021 Doug Owings
  * 
@@ -24,7 +24,7 @@
  */
 const {expect} = require('chai')
 const {ger, MockOutput} = require('../helpers/index.js')
-const {merge, Screen} = require('../../index.js')
+const {merging: {merge}, Screen} = require('../../index.js')
 
 describe('Screen', () => {
 

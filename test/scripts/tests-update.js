@@ -1,7 +1,12 @@
+const {
+    Logger,
+    objects: {lset, revalue},
+    strings: {endsWith},
+    types: {isFunction, isObject, isString, typeOf},
+} = require('../../index.js')
 const fs = require('fs')
 const path = require('path')
 const {resolve, basename} = path
-const {strings: {endsWith}, objects: {lset, revalue}, Logger, Is, typeOf} = require('../../index.js')
 const BaseDir = resolve(__dirname, '../..')
 const abspath = (...args) => path.resolve(BaseDir, ...args)
 const relpath = (...args) => path.relative(BaseDir, ...args)
@@ -16,7 +21,7 @@ function render(template, vars) {
 
 function specOpen (name, value) {
     let prefix = ''
-    if (Is.String(value)) {
+    if (isString(value)) {
         if (value === 'function') {
             prefix = '#'
         }
@@ -26,9 +31,9 @@ function specOpen (name, value) {
 
 function createUtilsSpecs() {
 
-    const srcDir = abspath('src/util')
+    const srcDir = abspath('src')
     const specDir = abspath('test/spec')
-    const template = fs.readFileSync(relpath('test/templates/util.spec.template'), 'utf-8')
+    const template = fs.readFileSync(relpath('test/templates/spec.template'), 'utf-8')
     const bnames = fs.readdirSync(srcDir)
 
     bnames.forEach(bname => {
@@ -56,11 +61,11 @@ function createUtilsSpecs() {
                 .sort((a, b) => a[0].length - b[0].length)
                 .forEach(([key, value]) => {
                 const thisPath = keyPath.concat([key])
-                if (Is.Object(value)) {
+                if (isObject(value)) {
                     addSpec(value, thisPath)
                     return
                 }
-                const name = Is.Function(value) ? value.name : key
+                const name = isFunction(value) ? value.name : key
                 const type = typeOf(value)
                 if (nameHash[name]) {
                     logger.info('Skipping duplicate', {type, name})
@@ -87,7 +92,7 @@ function createUtilsSpecs() {
                 const thisPath = namePath.concat([name])
                 lines.push(spaces(indent) + specOpen(name, value))
                 lines.push('')
-                if (Is.String(value)) {
+                if (isString(value)) {
                     let tstr
                     if (value === 'function') {
                         const pstr = thisPath.join('.')
@@ -96,7 +101,7 @@ function createUtilsSpecs() {
                         tstr = `it('TODO...')`
                     }
                     lines.push(spaces(indent + 1) + tstr)
-                } else if (Is.Object(value)) {
+                } else if (isObject(value)) {
                     addContent(value, thisPath)
                 } else {
                     logger.warn('Cannot render spec for', {name, type: typeOf(value)})

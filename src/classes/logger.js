@@ -29,21 +29,21 @@ const util = {
     formatWithOptions,
 } = require('util')
 
-const {Caret} = require('../util/chars.js')
-const {cat}   = require('../util/strings.js')
+const {Caret} = require('../chars.js')
+const {cat}   = require('../strings.js')
 const HashProxy = require('./hash-proxy.js')
-const {parseStack}    = require('../util/errors.js')
-const {merge, spread} = require('../util/merging.js')
+const {parseStack}    = require('../errors.js')
+const {merge, spread} = require('../merging.js')
 const {
     Chalk,
     DefaultColorLevel,
-} = require('../util/colors.js')
+} = require('../colors.js')
 const {
     isEmptyObject,
     lget,
     lset,
     revalue,
-} = require('../util/objects.js')
+} = require('../objects.js')
 const {
     castToArray,
     isError,
@@ -51,7 +51,7 @@ const {
     isPlainObject,
     isString,
     isWriteableStream,
-} = require('../util/types.js')
+} = require('../types.js')
 
 const LevelNums = {
     error : 0,

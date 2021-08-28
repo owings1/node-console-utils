@@ -41,7 +41,7 @@ SOFTWARE.
 
 ### Files
 
-- [src/util/regexes.js](src/util/strings.js)
+- [src/regexes.js](src/strings.js)
   - `ansi.global` copied and formatted.
     [source link](https://github.com/chalk/ansi-regex/blob/c1b5e45f/index.js)
 
@@ -133,7 +133,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### Files
 
-- [src/util/codes.js](src/util/codes.js)
+- [src/codes.js](src/codes.js)
   - `isFullwidthCodePoint` copied and modified.
     [source link](https://github.com/sindresorhus/is-fullwidth-code-point/blob/27f57288/index.js)
 
@@ -178,7 +178,7 @@ THE SOFTWARE.
 ```
 ### Files
 
-- [src/util/types.js](src/util/types.js) 
+- [src/types.js](src/types.js) 
   - `isObject()` and `isPlainObject()` portions copied and modified.
     [source link](https://github.com/jonschlinkert/is-plain-object/blob/0a47f0f6/is-plain-object.js)
   
@@ -252,7 +252,7 @@ terms above.
 
 ### Files
 
-- [src/util/types.js](src/util/types.js) 
+- [src/types.js](src/types.js) 
   - `isPlainObject()` portions copied and modified.
     [source link](https://github.com/lodash/lodash/blob/2da024c3/isPlainObject.js)
 
@@ -300,7 +300,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### Files
 
-- [src/util/errors.js](src/util/errors.js) 
+- [src/errors.js](src/errors.js) 
   - `parseStack()` and `rawErrorMessage()`. Code copied and modified.
      [source link](https://github.com/mochajs/mocha/blob/e044ef02/lib/reporters/base.js)
 
@@ -344,10 +344,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### Files
 
-- [src/util/codes.js](src/util/codes.js)
+- [src/codes.js](src/codes.js)
   - `isCombiningCodePoint`, `isControlCodePoint`, and `isSurrogateCodePoint`.
       code extracted.
       [source link](https://github.com/sindresorhus/string-width/blob/89eb79aa/index.js)
-- [src/util/strings.js](src/util/strings.js)
+- [src/strings.js](src/strings.js)
   - `stringWidth()`. Code copied and formatted.
       [source link](https://github.com/sindresorhus/string-width/blob/89eb79aa/index.js)

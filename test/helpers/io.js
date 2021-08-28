@@ -1,5 +1,5 @@
 const stream = require('stream')
-const {stripAnsi} = require('../../src/util/strings.js')
+const {stripAnsi} = require('../../src/strings.js')
 
 class MockOutput extends stream.Writable {
 

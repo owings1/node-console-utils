@@ -22,11 +22,12 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-const ansi = require('../util/ansi.js')
+const ansi = require('../ansi.js')
 const {
     isBoolean,
+    isPromise,
     isWriteableStream,
-} = require('../util/types.js')
+} = require('../types.js')
 
 const Screen = module.exports = class Screen {
 
@@ -77,7 +78,7 @@ const Screen = module.exports = class Screen {
         try {
             this.hideCursor()
             const ret = cb()
-            isAsync = ret instanceof Promise
+            isAsync = isPromise(ret)
             if (isAsync) {
                 return ret.finally(() => this.showCursor())
             }

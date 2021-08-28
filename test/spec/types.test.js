@@ -24,18 +24,13 @@
  */
 const {expect} = require('chai')
 const {ger, def, def: {test}, MockOutput} = require('../helpers/index.js')
-
+const stream = require('stream')
 const {types} = require('../../index.js')
-
 
 describe('types', () => {
 
-    beforeEach(function () {
-
-    })
-
-
     def(types.typeOf, () => {
+
         test(
             {exp: 'array',    args: [ [] ]},
             {exp: 'buffer',   args: [ Buffer.alloc(0) ]},
@@ -45,6 +40,7 @@ describe('types', () => {
             {exp: 'number',   args: [ 1 ]},
             {exp: 'number',   args: [ NaN ]},
             {exp: 'object',   args: [ {} ]},
+            {exp: 'promise',  args: [ new Promise(r => r()) ]},
             {exp: 'regex',    args: [ /a/ ]},
             {exp: 'stream',   args: [ new MockOutput ]},
             {exp: 'string',   args: [ 'foo' ]},
@@ -52,7 +48,7 @@ describe('types', () => {
         )
     })
 
-    describe('Cast', () => {
+    describe('cast', () => {
 
         def(types.castToArray, {oper: 'deep.equal'}, () => {
 
@@ -72,17 +68,20 @@ describe('types', () => {
         })
     })
 
-    def('Is', () => {
+    def('is', () => {
 
-        const {Is} = types
+        const {is} = types
+        const fakew = {write: () => {}, end: () => {}}
 
-        def(Is.Array, () => {
+        def(is.array, () => {
+
             def({exp: true}, () => {
                 test(
                     {args: [[]]},
                     {args: [[1]]},
                 )
             })
+
             def({exp: false}, () => {
                 test(
                     {args: [{length: 1}]},
@@ -91,7 +90,7 @@ describe('types', () => {
             })
         })
 
-        def(Is.Boolean, () => {
+        def(is.boolean, () => {
 
             def({exp: true}, () => {
                 test(
@@ -99,6 +98,7 @@ describe('types', () => {
                     {args: [false]},
                 )
             })
+
             def({exp: false}, () => {
                 test(
                     {args: ['true']},
@@ -113,13 +113,14 @@ describe('types', () => {
             })
         })
 
-        def(Is.Buffer, () => {
+        def(is.buffer, () => {
 
             def({exp: true}, () => {
                 test(
                     {args: Buffer.alloc(0), argsstr_: 'Buffer'}
                 )
             })
+
             def({exp: false}, () => {
                 test(
                     {args: {type:"Buffer", data:[]}}
@@ -127,13 +128,14 @@ describe('types', () => {
             })
         })
 
-        def(Is.Class, () => {
+        def(is.class, () => {
 
             def({exp: true}, () => {
                 test(
                     {args: [class A{}]},
                 )
             })
+
             def({exp: false}, () => {
                 test(
                     {args: [function() {}]},
@@ -141,13 +143,14 @@ describe('types', () => {
             })
         })
 
-        def(Is.Error, () => {
+        def(is.error, () => {
 
             def({exp: true}, () => {
                 test(
                     {args: [new Error], argsstr: 'new Error'},
                 )
             })
+
             def({exp: false}, () => {
                 test(
                     {args: [Error]}
@@ -155,7 +158,7 @@ describe('types', () => {
             })
         })
 
-        def(Is.Function, () => {
+        def(is.function, () => {
 
             def({exp: true}, () => {
                 test(
@@ -164,6 +167,7 @@ describe('types', () => {
                     {args: [Error]},
                 )
             })
+
             def({exp: false}, () => {
                 test(
                     {args: [{call: ()=>{}}]},
@@ -171,7 +175,7 @@ describe('types', () => {
             })
         })
 
-        def(Is.Iterable, () => {
+        def(is.iterable, () => {
 
             def({exp: true}, () => {
                 test(
@@ -179,6 +183,7 @@ describe('types', () => {
                     {args: ['']},
                 )
             })
+
             def({exp: false}, () => {
                 test(
                     {args: [1]},
@@ -188,7 +193,7 @@ describe('types', () => {
             })
         })
 
-        def(Is.Number, () => {
+        def(is.number, () => {
 
             def({exp: true}, () => {
                 test(
@@ -198,6 +203,7 @@ describe('types', () => {
                     {args: [NaN]},
                 )
             })
+
             def({exp: false}, () => {
                 test(
                     {args: ['1']},
@@ -207,13 +213,14 @@ describe('types', () => {
             })
         })
 
-        def(Is.Object, () => {
+        def(is.object, () => {
 
             def({exp: true}, () => {
                 test(
                     {args: [{}]},
                 )
             })
+
             def({exp: false}, () => {
                 test(
                     {args: [null]},
@@ -222,7 +229,7 @@ describe('types', () => {
             })
         })
 
-        def(Is.PlainObject, () => {
+        def(is.plainObject, () => {
 
             def({exp: true}, () => {
                 test(
@@ -230,6 +237,7 @@ describe('types', () => {
                     {args: [{constructor: function(){}}]},
                 )
             })
+
             def({exp: false}, () => {
                 test(
                     {args: [function(){}]},
@@ -240,41 +248,30 @@ describe('types', () => {
             })
         })
 
-        def(Is.ReadableStream, () => {
+        def(is.regex, () => {
 
             def({exp: true}, () => {
                 test(
-                    
+                    {args: [new RegExp('a')]},
+                    {args: [/x/]},
                 )
             })
+
             def({exp: false}, () => {
                 test(
-                    
+                    {args: ['/x/']},
                 )
             })
         })
 
-        def(Is.Regex, () => {
-
-            def({exp: true}, () => {
-                test(
-
-                )
-            })
-            def({exp: false}, () => {
-                test(
-
-                )
-            })
-        })
-
-        def(Is.String, () => {
+        def(is.string, () => {
 
             def({exp: true}, () => {
                 test(
                     {args: ['']}
                 )
             })
+
             def({exp: false}, () => {
                 test(
                     {args: [new String('')]},
@@ -282,7 +279,7 @@ describe('types', () => {
             })
         })
 
-        def(Is.Symbol, () => {
+        def(is.symbol, () => {
 
             def({exp: true}, () => {
                 test(
@@ -290,6 +287,7 @@ describe('types', () => {
                     {args: [Symbol.iterator]},
                 )
             })
+
             def({exp: false}, () => {
                 test(
                     {args: [new (class Symbol{})]},
@@ -298,53 +296,70 @@ describe('types', () => {
             })
         })
 
-        def('Stream', () => {
+        def(is.readableStream, () => {
 
-            const fakew = {write: () => {}, end: () => {}}
-
-            def(Is.Stream, () => {
-
-                def({exp: true}, () => {
-                    test(
-                    
-                    )
-                })
-                def({exp: false}, () => {
-                    test(
-                    
-                    )
-                })
-            })
-            def(Is.WritableStream, () => {
-
-                def({exp: true}, () => {
-                    test(
-                        {args: [process.stdout], argsstr: 'process.stdout'},
-                        {args: [process.stderr], argsstr: 'process.stderr'},
-                    )
-                })
-                def({exp: false}, () => {
-                    test(
-                        {args: [fakew]},
-                    )
-                })
+            def({exp: true}, () => {
+                test(
+                    {args:[stream.Readable()]},
+                    {args: [process.stdin], argsstr: 'process.stdin'},
+                    {args: [process.stdout], argsstr: 'process.stdout'},
+                )
             })
 
-            def(Is.WriteableStream, {json: false}, () => {
-
-                def({exp: true}, () => {
-                    test(
-                        {args: [process.stdout], argsstr: 'process.stdout'},
-                        {args: [process.stderr], argsstr: 'process.stderr'},
-                    )
-                })
-                def({exp: false}, () => {
-                    test(
-                        {args: [fakew]},
-                    )
-                })
+            def({exp: false}, () => {
+                test(
+                    {args:[new MockOutput]},
+                    {args:[{write: () => {}, end: () => {}}]},
+                )
             })
         })
-        
+
+        def(is.stream, () => {
+
+            def({exp: true}, () => {
+                test(
+                    {args: [process.stdout], argsstr: 'process.stdout'},
+                    {args: [process.stdin], argsstr: 'process.stdin'},
+                )
+            })
+
+            def({exp: false}, () => {
+                test(
+                    {args:[fakew]},
+                )
+            })
+        })
+
+        def(is.writableStream, () => {
+
+            def({exp: true}, () => {
+                test(
+                    {args: [process.stdout], argsstr: 'process.stdout'},
+                    {args: [process.stderr], argsstr: 'process.stderr'},
+                )
+            })
+
+            def({exp: false}, () => {
+                test(
+                    {args: [fakew]},
+                )
+            })
+        })
+
+        def(is.writeableStream, {json: false}, () => {
+
+            def({exp: true}, () => {
+                test(
+                    {args: [process.stdout], argsstr: 'process.stdout'},
+                    {args: [process.stderr], argsstr: 'process.stderr'},
+                )
+            })
+
+            def({exp: false}, () => {
+                test(
+                    {args: [fakew]},
+                )
+            })
+        })
     })
 })

@@ -1,4 +1,4 @@
-const Chalk = require('../classes/chalk.js')
+const Chalk = require('./classes/chalk.js')
 const {level: DefaultLevel} = require('chalk')
 const chalkPipe = require('chalk-pipe')
 

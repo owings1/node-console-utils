@@ -3,9 +3,12 @@ const assert = require('assert')
 const {formatWithOptions: formato} = require('util')
 const {ger, TestError} = require('./errors.js')
 const {
-    typeOf,
-    Cast: {toArray},
+    arrays: {last},
+    classes: {inherits},
+    merging: {spread, merge},
+    objects: {lget, lset, update},
     types: {
+        cast: {toArray},
         isArray,
         isBoolean: isBool,
         isClass,
@@ -15,11 +18,8 @@ const {
         isPlainObject: isPlain,
         isString,
         isSymbol,
+        typeOf,
     },
-    classes: {inherits},
-    objects: {lget, lset, update},
-    merging: {spread, merge},
-    arrays: {last},
 } = require('../../index.js')
 
 const {log, error: logerr, warn} = console

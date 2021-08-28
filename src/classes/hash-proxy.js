@@ -21,12 +21,14 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {KeyExistsError, ValueError} = require('./errors.js')
-const {isObject, isFunction: isFunc} = require('../util/types.js')
-const {hasKey, keyPath, lget, lset} = require('../util/objects.js')
+const {isObject, isFunction: isFunc} = require('../types.js')
+const {hasKey, keyPath, lget, lset} = require('../objects.js')
 
 const SrcKey = Symbol('source')
 const IngKey = Symbol('ingress')
 const CrtKey = Symbol('create')
+
+const defProp = Object.defineProperty
 
 class HashProxy {
 
@@ -53,7 +55,7 @@ class HashProxy {
             opts.proto = (source.constructor && source.constructor.prototype) || null
         }
         const {ingress, target} = build(source, opts)
-        Object.defineProperty(target, CrtKey, {value: true})
+        defProp(target, CrtKey, {value: true})
         return new HashProxy(source, target, ingress, opts)//{ingress, target}
     }
 
@@ -82,7 +84,7 @@ class HashProxy {
             if (!isObject(target[key])) {
                 const tobj = Object.create(this.opts.proto)
                 const tgtProp = getTargetNodeProp(tobj)
-                Object.defineProperty(target, key, tgtProp)
+                defProp(target, key, tgtProp)
             }
             if (!isObject(source[key])) {
                 source[key] = Object.create(this.opts.proto)
@@ -90,7 +92,7 @@ class HashProxy {
             if (!isObject(ingress[key])) {
                 const iobj = Object.create(this.opts.proto)
                 const inProp = getIngressNodeProp(source[key], iobj, opts)
-                Object.defineProperty(ingress, key, inProp)
+                defProp(ingress, key, inProp)
             }
             target = target[key]
             source = source[key]
@@ -98,8 +100,8 @@ class HashProxy {
         }
         const tgtProp = getTargetLeafProp(source, leafKey, opts)
         const inProp = getIngressLeafProp(source, target, leafKey, opts)
-        Object.defineProperty(target, leafKey, tgtProp)
-        Object.defineProperty(ingress, leafKey, inProp)
+        defProp(target, leafKey, tgtProp)
+        defProp(ingress, leafKey, inProp)
         ingress[leafKey] = value
     }
 
@@ -131,8 +133,8 @@ function build(source, opts) {
             tgtProp = getTargetLeafProp(source, key, opts)
             inProp = getIngressLeafProp(source, target, key, opts)
         }
-        Object.defineProperty(target, key, tgtProp)
-        Object.defineProperty(ingress, key, inProp)
+        defProp(target, key, tgtProp)
+        defProp(ingress, key, inProp)
     })
     return {ingress, target}
 }
