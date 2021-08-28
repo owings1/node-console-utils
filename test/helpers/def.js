@@ -2,20 +2,20 @@ const {expect} = require('chai')
 const assert = require('assert')
 const {formatWithOptions: formato} = require('util')
 const {ger, TestError} = require('./errors.js')
+const {spread, merge} = require('./merging.js')
 const {
     arrays: {last},
     classes: {inherits},
-    merging: {spread, merge},
     objects: {lget, lset, update},
     types: {
-        cast: {toArray},
+        castToArray,
         isArray,
-        isBoolean: isBool,
+        isBoolean,
         isClass,
-        isFunction: isFunc,
-        isNumber: isNum,
+        isFunction,
+        isNumber,
         isObject,
-        isPlainObject: isPlain,
+        isPlainObject,
         isString,
         isSymbol,
         typeOf,
@@ -50,13 +50,13 @@ const s_ = Symbol('self')
 function def(...args) {
 
     let title, opts, cb
-    if (isFunc(last(args))) {
+    if (isFunction(last(args))) {
         cb = args.pop()
     }
     if (isString(args[0])) {
         title = args.shift()
         opts = {}
-    } else if (isFunc(args[0])) {
+    } else if (isFunction(args[0])) {
         title = '#' + args[0].name
         opts = {run: args.shift()}
     }
@@ -105,12 +105,12 @@ function def(...args) {
 }
 
 function defmod(ins, ...args) {
-    args.splice(args.length - isFunc(last(args)), 0, ins)
+    args.splice(args.length - isFunction(last(args)), 0, ins)
     return def.apply(this, args)
 }
 
 function test(...args) {
-    let opts = isFunc(args[0]) ? {run: args.shift()} : {}
+    let opts = isFunction(args[0]) ? {run: args.shift()} : {}
     opts = spread(this.opts, ...this.track, opts)
     if (!args.length) {
         const todo = {skip: true, descb: 'TODO:'}
@@ -138,7 +138,7 @@ function testmod(ins, ...args) {
 
 function set(...args) {
     const opts = spread(
-        isFunc(args[0]) ? {run: args.shift()} : {},
+        isFunction(args[0]) ? {run: args.shift()} : {},
         ...args,
     )
     this.track.push(opts)
@@ -150,7 +150,7 @@ module.exports = def()
 const createTests = tests => tests.forEach((opts, i) => {
     const n = i + 1
     const test = createCase(opts)
-    if (!isFunc(test.run)) {
+    if (!isFunction(test.run)) {
         warn(['case:', n, 'test:', test])
         const msg = 'Must provide a run function.'
         if (!test.skip) {
@@ -192,7 +192,7 @@ const getit = (it, opts) => opts.skip ? it.skip : (opts.only ? it.only : it)
 
 function createCase(opts) {
     opts = {...opts}
-    opts.args = toArray(opts.args)
+    opts.args = castToArray(opts.args)
     if (opts.err) {
         if (opts.err !== true) {
             opts.exp = opts.err
@@ -211,7 +211,7 @@ function createCase(opts) {
     if (isString(opts.oper)) {
         opts.oper = opts.oper.split('.')
     }
-    opts.oper = toArray(opts.oper)
+    opts.oper = castToArray(opts.oper)
     if (!opts.desc) {
         if (opts.skip) {
             if (opts.args.length === 1 && opts.args[0] === '...' && opts.argsstr == null) {
@@ -234,7 +234,7 @@ function createCase(opts) {
 
 function getUnaryOperator(opts, val) {
     if (opts.err) {
-        if (isFunc(val)) {
+        if (isFunction(val)) {
             return 'instanceof'
         }
         return DefaultUnaryErrorOperator
@@ -283,14 +283,14 @@ function buildDesciption(opts) {
 function stringly(arg) {
     let str
     let type = typeOf(arg)
-    if (isBool(arg) || isNum(arg) || isSymbol(arg)) {
+    if (isBoolean(arg) || isNumber(arg) || isSymbol(arg)) {
         // booleans, numbers, and strings have a constructor
         str = String(arg)
     } else if (isString(arg)) {
         str = "'" + String(arg) + "'"
-    } else if (isFunc(arg)) {
+    } else if (isFunction(arg)) {
         str = `<${type} ${arg.name || 'anon'}>`
-    } else if (isPlain(arg) || isArray(arg)) {
+    } else if (isPlainObject(arg) || isArray(arg)) {
         str = formato({colors: false}, arg)
     } else if (type === 'buffer') {
         str = `${type}(${arg.length})`
@@ -315,7 +315,7 @@ function stringly(arg) {
 
 function tojson(arg) {
     return JSON.stringify(arg, (key, value) => {
-        if (isFunc(value)) {
+        if (isFunction(value)) {
             return value.name || '(function)'
         }
         if (isSymbol(value)) {

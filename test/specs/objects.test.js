@@ -31,10 +31,6 @@ const defprop = Object.defineProperty
 
 describe('objects', () => {
 
-    beforeEach(function () {
-
-    })
-
     def(objects.entries, {oper: 'deep.equal'}, () => {
         const s1 = Symbol()
         test(

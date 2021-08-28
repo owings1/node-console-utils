@@ -23,8 +23,8 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const {expect} = require('chai')
-const {ger, MockOutput} = require('../helpers/index.js')
-const {merging: {merge}, Screen} = require('../../index.js')
+const {merging: {merge}, ger, MockOutput} = require('../helpers/index.js')
+const {Screen} = require('../../index.js')
 
 describe('Screen', () => {
 

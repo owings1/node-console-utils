@@ -25,7 +25,7 @@
 const {expect} = require('chai')
 const {ger, def, def: {test, set}} = require('../helpers/index.js')
 
-const {strings, colors: {Chalk}} = require('../../index.js')
+const {strings} = require('../../index.js')
 
 describe('strings', () => {
 
@@ -103,7 +103,6 @@ describe('strings', () => {
     def(strings.breakLine, {oper: 'have.length'}, () => {
 
         const {breakLine} = strings
-        const chalk = new Chalk({level: 2})
 
         it('should return singleton empty string for empty string', function () {
             const res = breakLine('', 10)
@@ -135,7 +134,7 @@ describe('strings', () => {
 
                 const strs = [
                     '项选项选项选项项选项选项\x1B[33m\x1B[34m\x1B[33m项选项选项\x1B[39m\x1B[39m\x1B[39m💋💋\x1B[34m💋\x1B[39m',
-                    '项选项选项选项项选项选项' + chalk.yellow.blue.yellow('项选项选项') + '💋💋💋',
+                    '项选项选项选项项选项选项\x1B[33m\x1B[34m\x1B[33m项选项选项\x1B[39m\x1B[39m\x1B[39m💋💋💋',
                     '项选x项选项选项项选项选项\x1B[33m\x1B[34m\x1B[33m项选项选项\x1B[39m\x1B[39m\x1B[39m💋💋s',
                 ]
 
@@ -200,7 +199,7 @@ describe('strings', () => {
 
             def('string width 50', () => {
 
-                const str = 'This is one line that is ' + chalk.green('fifty') + ' characters in width'
+                const str = 'This is one line that is \x1B[32mfifty\x1B[39m characters in width'
 
                 set(breakLine.bind(null, str))
 
@@ -252,7 +251,7 @@ describe('strings', () => {
 
         def('background closing', () => {
 
-            const str = chalk.bgRed.black('0123456' + chalk.bgBlue('789') + 'ABCDEF')
+            const str = '\x1B[41m\x1B[30m0123456\x1B[44m789\x1B[49m\x1B[41mABCDEF\x1B[39m\x1B[49m'
             set(breakLine.bind(null, str))
 
             test(
