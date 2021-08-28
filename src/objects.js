@@ -304,25 +304,6 @@ const objects = {
         })
         return target
     },
-
-   ///**
-   // * Update the target object with the defaults if the key does not yet exist.
-   // *
-   // * @throws {TypeError}
-   // *
-   // * @param {object} The target object to update
-   // * @param {object} The defaults to use
-   // * @return {object} The target object
-   // */
-   //static ensure(target, defaults) {
-   //    target = target || {}
-   //    Object.entries(defaults).forEach(([name, method]) => {
-   //        if (!(name in target)) {
-   //            target[name] = method
-   //        }
-   //    })
-   //    return target
-   //}
 }
 
 module.exports = {
