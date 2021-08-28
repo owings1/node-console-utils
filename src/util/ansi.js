@@ -1,5 +1,5 @@
 /**
- * node-utils-h - ANSI sequences
+ * @quale/util - ANSI sequences
  *
  * Copyright (C) 2021 Doug Owings
  * 

@@ -1,5 +1,5 @@
 /**
- * node-utils-h - Logger
+ * @quale/util - Logger
  *
  * Copyright (C) 2021 Doug Owings
  *

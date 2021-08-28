@@ -1,5 +1,5 @@
 /**
- * node-utils-h - chars tests
+ * @quale/util - chars tests
  *
  * Copyright (C) 2021 Doug Owings
  *

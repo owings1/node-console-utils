@@ -1,5 +1,5 @@
 /**
- * node-utils-h - regexes
+ * @quale/util - regexes
  *
  * Copyright (C) 2021 Doug Owings
  * 

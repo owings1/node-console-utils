@@ -1,5 +1,5 @@
 /**
- * node-utils-h - objects tests
+ * @quale/util - objects tests
  *
  * Copyright (C) 2021 Doug Owings
  *

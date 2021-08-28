@@ -1,5 +1,5 @@
 /**
- * node-utils-h - string utils
+ * @quale/util - string utils
  *
  * Copyright (C) 2021 Doug Owings
  * 

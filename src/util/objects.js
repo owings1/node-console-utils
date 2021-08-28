@@ -1,5 +1,5 @@
 /**
- * node-utils-h - object utils
+ * @quale/util - object utils
  *
  * Copyright (C) 2021 Doug Owings
  * 

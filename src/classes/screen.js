@@ -1,5 +1,5 @@
 /**
- * node-utils-h - ANSI screen helper
+ * @quale/util - ANSI screen helper
  *
  * Copyright (C) 2021 Doug Owings
  * 

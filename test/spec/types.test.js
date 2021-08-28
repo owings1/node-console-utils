@@ -1,5 +1,5 @@
 /**
- * node-utils-h - types tests
+ * @quale/util - types tests
  *
  * Copyright (C) 2021 Doug Owings
  *

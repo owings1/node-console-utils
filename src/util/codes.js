@@ -1,5 +1,5 @@
 /**
- * node-utils-h - code point utils
+ * @quale/util - code point utils
  *
  * Copyright (C) 2021 Doug Owings
  * 

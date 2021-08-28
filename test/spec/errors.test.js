@@ -1,5 +1,5 @@
 /**
- * node-utils-h - errors tests
+ * @quale/util - errors tests
  *
  * Copyright (C) 2021 Doug Owings
  *

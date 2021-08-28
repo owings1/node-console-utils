@@ -1,5 +1,5 @@
 /**
- * node-utils-h - merging tests
+ * @quale/util - merging tests
  *
  * Copyright (C) 2021 Doug Owings
  *

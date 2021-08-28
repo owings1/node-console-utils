@@ -1,5 +1,5 @@
 /**
- * node-utils-h - arrays tests
+ * @quale/util - arrays tests
  *
  * Copyright (C) 2021 Doug Owings
  *

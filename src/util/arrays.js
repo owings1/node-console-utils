@@ -1,5 +1,5 @@
 /**
- * node-utils-h - array utils
+ * @quale/util - array utils
  *
  * Copyright (C) 2021 Doug Owings
  * 

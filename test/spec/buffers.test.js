@@ -1,5 +1,5 @@
 /**
- * node-utils-h - buffers tests
+ * @quale/util - buffers tests
  *
  * Copyright (C) 2021 Doug Owings
  *
