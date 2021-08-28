@@ -1,10 +1,15 @@
 {
   "name": "@quale/util",
   "version": "1.0.0",
-  "description": "chalk, logging, and other basic utils for nodejs",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "description": "core js utils",
   "main": "index.js",
   "scripts": {
     "test": "nyc --reporter=text-summary mocha test/spec/** && nyc report --reporter=lcov",
+    "clean": "rm -rf .nyc_output coverage node_modules",
+    "cl": "rm -rf .nyc_output coverage",
     "co": "open coverage/lcov-report/index.html",
     "tu": "node test/scripts/tests-update.js",
     "emoji": "node scripts/build-emoji-regex.js"
