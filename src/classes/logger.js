@@ -233,7 +233,7 @@ module.exports = class Logger {
             colors: {
                 enumerable: true,
                 get: () => Boolean(this.chalk.level),
-                set: v =>  this.chalk.level = getOptColorLevel(v),
+                set: v => this.chalk.level = getOptColorLevel(v),
             },
             styles: {get: () => chalkp.ingress, enumerable: true},
         })
