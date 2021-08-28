@@ -54,6 +54,13 @@ describe('arrays', () => {
         })
     })
 
+    def(arrays.bisect, {oper: 'deep.equal'}, () => {
+
+        test(
+            {exp: [[4],[6]], args:[[4,6], n => n > 5]},
+        )
+    })
+
     def(arrays.sum, {json: 'args'}, () => {
 
         test(
