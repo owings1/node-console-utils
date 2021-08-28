@@ -1,5 +1,10 @@
+const opts = {
+    dryRun  : Boolean(process.env.DRY_RUN),
+    isPrint : Boolean(process.env.IS_PRINT),
+}
 const {
     Logger,
+    merging : {spread},
     objects : {lset, revalue},
     strings : {endsWith},
     types   : {isFunction, isObject, isString, typeOf},
@@ -57,9 +62,9 @@ function createUtilsSpecs() {
         let spec = {}
         let count = 0
         function addSpec(obj, keyPath = []) {
-            Object.entries(obj)
-                .sort((a, b) => a[0].length - b[0].length)
-                .forEach(([key, value]) => {
+            const entries = Object.entries(obj)
+            entries.sort((a, b) => a[0].length - b[0].length)
+            entries.forEach(([key, value]) => {
                 const thisPath = keyPath.concat([key])
                 if (isObject(value)) {
                     addSpec(value, thisPath)
@@ -90,16 +95,16 @@ function createUtilsSpecs() {
                     lines.push('')
                 }
                 const thisPath = namePath.concat([name])
+                if (value === 'function') {
+                    const pstr = thisPath.join('.')
+                    const tstr = `defs(${pstr}, () => {test()})`
+                    lines.push(spaces(indent) + tstr)
+                    return
+                }
                 lines.push(spaces(indent) + specOpen(name, value))
                 lines.push('')
                 if (isString(value)) {
-                    let tstr
-                    if (value === 'function') {
-                        const pstr = thisPath.join('.')
-                        tstr = `defs(${pstr}, {}).build[{skip: true, desc: 'TODO...'}])`
-                    } else {
-                        tstr = `it('TODO...')`
-                    }
+                    const tstr = `it('TODO...')`
                     lines.push(spaces(indent + 1) + tstr)
                 } else if (isObject(value)) {
                     addContent(value, thisPath)
@@ -112,15 +117,23 @@ function createUtilsSpecs() {
         addContent(spec, [name])
         const specContent = lines.join('\n')
         const content = render(template, {name, specContent})
-        fs.writeFileSync(specFile, content)
-        logger.info('Wrote file with', count, 'specs')
+        logger.info(count, 'specs for', {name})
+        if (opts.isPrint) {
+            logger.print(content)
+        }
+        if (opts.dryRun) {
+            logger.warn('Dry run, not writing', {file: specRel})
+        } else {
+            logger.info('Writing', {file: specRel})
+            fs.writeFileSync(specFile, content)
+        }
     })
 }
 
-function main() {
+function main(argv) {
     createUtilsSpecs()
 }
 
 if (require.main === module) {
-    main()
+    main(process.argv.slice(2))
 }

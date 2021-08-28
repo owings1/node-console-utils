@@ -7,22 +7,15 @@ const colors = {
     chalk: new Chalk,
 }
 
-Object.defineProperty(colors, 'DefaultLevel', {
-    value      : DefaultLevel,
-    enumerable : true,
-    writable   : false,
+Object.defineProperties(colors, {
+    DefaultLevel: {
+        enumerable : true,
+        value: DefaultLevel,
+    },
+    DefaultColorLevel: {
+        enumerable : true,
+        get: () => colors.DefaultLevel,
+    },
 })
-Object.defineProperty(colors, 'DefaultColorLevel', {
-    get        : () => colors.DefaultLevel,
-    enumerable : true,
-})
-module.exports = {
-    ...colors,
-    ...namedf(colors),
-}
 
-function namedf(obj) {
-    return Object.fromEntries(
-        Object.values(obj).map(f => [f.name, f])
-    )
-}
+module.exports = colors
