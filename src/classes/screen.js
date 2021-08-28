@@ -23,13 +23,9 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const ansi = require('../ansi.js')
-const {
-    isBoolean,
-    isPromise,
-    isWriteableStream,
-} = require('../types.js')
+const {isBoolean, isPromise, isWriteableStream} = require('../types.js')
 
-const Screen = module.exports = class Screen {
+const Screen = module.exports = class {
 
     constructor(opts) {
         if (isWriteableStream(opts)) {

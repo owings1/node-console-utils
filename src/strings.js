@@ -28,21 +28,10 @@
  * - https://github.com/sindresorhus/string-width
  * ----------------------
  * MIT License
- * 
  * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * ----------------------
- * See file NOTICE.md for full license details.
- * ----------------------
+ * -------------------------------------------------------------------------------
+ * See file NOTICE.md for details and full license.
+ * ------------------------------------------------
  */
 const codes = require('./codes.js')
 const regexes = require('./regexes.js')
@@ -236,16 +225,13 @@ const strings = {
     },
 
     /**
+     * Get the visual width of a string.
      * string-width:
      * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
      * MIT License
      * See file NOTICE.md for full license details.
-     *
      * - Portions abstracted to separate codepoint methods.
      * - Code modified to avoid emoji regex.
-     *
-     * Get the visual width of a string
-     *
      * @param {string} The string to check
      * @return {integer} The visual width
      */

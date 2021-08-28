@@ -111,7 +111,6 @@ function typeOf(arg) {
 }
 
 const cast = {
-
     /**
      * Cast a parameter to an array. If the parameter is an array, the parameter
      * is returned, otherwise a new array is created. If it is null or undefined,
@@ -131,48 +130,6 @@ const cast = {
         }
         return arr
     },
-    ///**
-    // * Induce a boolean value.
-    // *
-    // * @param {*} The value to examine
-    // * @param {boolean} (optional) The default value
-    // * @return {boolean} The induced value
-    // */
-    //static induceBool(value, def = false) {
-    //    if (typeof value == 'boolean') {
-    //        return value
-    //    }
-    //    if (value != null) {
-    //        value = String(value).toLowerCase()
-    //        if (def) {
-    //            // Default is true, so check for explicit false.
-    //            return ['0', 'false', 'no', 'n', 'off'].indexOf(value) < 0
-    //        }
-    //        // Default is false, so check for explicit true.
-    //        return ['1', 'true', 'yes', 'y', 'on'].indexOf(value) > -1
-    //    }
-    //    return Boolean(def)
-    //}
-
-    ///**
-    // * Induce an integer value.
-    // *
-    // * @param {*} The value to examine
-    // * @param {integer} (optional) The default value
-    // * @return {integer} The induced value
-    // */
-    //static induceInt(value, def = 0) {
-    //    if (Number.isInteger(value)) {
-    //        return value
-    //    }
-    //    if (!Number.isInteger(def)) {
-    //        def = 0
-    //    }
-    //    if (value != null) {
-    //        return parseInt(value) || def
-    //    }
-    //    return def
-    //}
 }
 
 const is = {
@@ -277,13 +234,11 @@ const is = {
      * Returns true for: stream
      *
      * From:
-     *
      * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
      * https://github.com/jonschlinkert/is-plain-object/blob/0a47f0f6/is-plain-object.js
      * Copyright (c) 2014-2017, Jon Schlinkert.
      * Released under the MIT License.
-     *
-     * See file NOTICE.md for full license details.
+     * See file NOTICE.md for details and full license.
      *
      * @param {*} The parameter to check
      * @return {boolean} The result
@@ -296,20 +251,18 @@ const is = {
      * Whether the parameter is probably a "plain" object.
      *
      * Portions from:
-     *
      * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
      * https://github.com/jonschlinkert/is-plain-object/blob/0a47f0f6/is-plain-object.js
      * Copyright (c) 2014-2017, Jon Schlinkert.
      * Released under the MIT License.
      *
      * Portions from:
-     *
      * lodash <https://github.com/lodash/lodash>
      * https://github.com/lodash/lodash/blob/2da024c3/isPlainObject.js
      * Copyright JS Foundation and other contributors <https://js.foundation/>
      * Release under the MIT License.
      *
-     * See file NOTICE.md for full license details.
+     * See file NOTICE.md for details and full licenses.
      *
      * @param {*} The parameter to check
      * @return {boolean} The result
@@ -318,7 +271,6 @@ const is = {
         /* begin is-plain-object code: */
         let ctor
         let proto
-        
         if (is.object(o) === false) {
             return false
         }
@@ -328,28 +280,7 @@ const is = {
             return true
         }
         /* end is-plain-object code: */
-
-        /* The is-plain-object code continues similarly:
-
-            // If has modified prototype
-            proto = ctor.prototype
-            if (is.Object(prot) === false) {
-                return false
-            }
-            // If constructor does not have an Object-specific method
-            if (prot.hasOwnProperty('isPrototypeOf') === false) {
-                return false
-            }
-            // Most likely a plain Object
-            return true
-
-        However, this returns false:
-
-            var o = { constructor: function(){} }
-            isPlainObject(o) // false!
-
-        The lodash code does its initial object check, then proceeds as follows: */
-
+        // See test/notes/types.md for additional comments.
         /* begin lodash code */
         proto = o
         while (Object.getPrototypeOf(proto) !== null) {

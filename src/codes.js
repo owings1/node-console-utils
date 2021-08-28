@@ -33,21 +33,10 @@
  * - https://github.com/sindresorhus/string-width
  * ----------------------
  * MIT License
- * 
  * Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * ----------------------
- * See file NOTICE.md for full license details.
- * ----------------------
+ * -------------------------------------------------------------------------------
+ * See file NOTICE.md for details and full license.
+ * ------------------------------------------------
  */
 const codes = {
 
@@ -55,22 +44,13 @@ const codes = {
      * See: https://www.fileformat.info/info/unicode/category/Zs/list.htm
      */
     isBreakingSpace: function isBreakingSpaceCodePoint(cp) {
+        // See test/notes/codes.md for more notes.
         return Number.isInteger(cp) && (
             // space
             cp === 0x20 ||
             // ogham space mark
             cp === 0x1680 ||
-            // 0x2000: en quad
-            // 0x2001: em quad
-            // 0x2002: en space
-            // 0x2003: em space
-            // 0x2004: three-per-em space
-            // 0x2005: four-per-em space
-            // 0x2006: fix-per-em space
-            // 0x2007: figure space
-            // 0x2008: punctuation space
-            // 0x2009: thin space
-            // 0x200A: hair space
+            // 0x2000: en quad .. 0x200A: hair space
             (0x2000 <= cp && cp <= 0x200A) ||
             // medium mathematical space
             cp === 0x205F ||
@@ -168,10 +148,7 @@ const codes = {
      * See: https://unicode.org/reports/tr29/
      */
     isWordBreaking: function isWordBreakingCodePoint(cp) {
-        return (
-            codes.isBreakingSpace(cp) ||
-            codes.isBreakingDash(cp)
-        )
+        return codes.isBreakingSpace(cp) || codes.isBreakingDash(cp)
     },
 
     /**

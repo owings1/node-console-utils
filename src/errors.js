@@ -25,35 +25,20 @@
  * - https://mochajs.org/
  * - https://github.com/mochajs/mocha/blob/e044ef02/lib/reporters/base.js
  * Methods `parseStack()` and `getRawMessage()`
- * ----------------------
- * (The MIT License)
- * 
+ * --------------------------------------------
+ * MIT License
  * Copyright (c) 2011-2021 OpenJS Foundation and contributors, https://openjsf.org
- * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * 'Software'), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * ----------------------
- * See file NOTICE.md for full license details.
- * ----------------------
+ * -------------------------------------------------------------------------------
+ * See file NOTICE.md for details and full license.
+ * ------------------------------------------------
  */
 const {isFunction} = require('./types.js')
 
 const errors = {
 
     /**
-     * Adapted from:
-     *
-     *   https://github.com/mochajs/mocha/blob/e044ef02/lib/reporters/base.js#L245
-     *
-     * Normalize raw error message.
+     * Normalize raw error message. Adapted from:
+     * https://github.com/mochajs/mocha/blob/e044ef02/lib/reporters/base.js#L245
      *
      * @throws {TypeError}
      *
@@ -71,11 +56,8 @@ const errors = {
     },
 
     /**
-     * Adapted from:
-     *
-     *   https://github.com/mochajs/mocha/blob/e044ef02/lib/reporters/base.js#L223
-     *
-     * Get normalized message and stack info for an error.
+     * Get normalized message and stack info for an error. Adapted from:
+     * https://github.com/mochajs/mocha/blob/e044ef02/lib/reporters/base.js#L223
      *
      * @throws {TypeError}
      *
@@ -83,13 +65,10 @@ const errors = {
      * @return {object} Strings {stack, message, rawMessage}
      */
     parseStack: function parseStack(err) {
-
         // Normalize raw error message.
         const rawMessage = errors.getRawMessage(err)
-
         let message = ''
         let stack = err.stack || rawMessage
-
         if (rawMessage) {
             // Check if the stack contains the rawMessage.
             const rawStart = stack.indexOf(rawMessage)
@@ -104,7 +83,6 @@ const errors = {
                 stack = stack.slice(rawEnd + 1)
             }
         }
-
         return {stack, message, rawMessage}
     },
 }

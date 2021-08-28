@@ -12,7 +12,7 @@
     "cl": "rm -rf .nyc_output coverage",
     "co": "open coverage/lcov-report/index.html",
     "tu": "node test/scripts/tests-update.js",
-    "emoji": "node scripts/build-emoji-regex.js",
+    "emoji": "node test/scripts/build-emoji-regex.js",
     "preversion": "npm run clean && npm i && npm t",
     "version": "echo no version script to run",
     "postversion": "git push && git push --tags"
@@ -22,9 +22,12 @@
     "url": "git+https://github.com/owings1/quale-util.git"
   },
   "keywords": [
-    "chalk",
     "ansi",
-    "logging"
+    "arrays",
+    "codepoints",
+    "strings",
+    "types",
+    "unicode"
   ],
   "author": "Doug Owings <doug@dougowings.net>",
   "license": "MIT",
@@ -39,13 +42,10 @@
     "README.md"
   ],
   "homepage": "https://github.com/owings1/quale-util#readme",
-  "dependencies": {
-    "chalk": "^4.1.2",
-    "chalk-pipe": "^4.0.0",
-    "deepmerge": "^4.2.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "chai": "^4.3.4",
+    "deepmerge": "^4.2.2",
     "mocha": "^9.0.3",
     "nyc": "^15.1.0"
   },

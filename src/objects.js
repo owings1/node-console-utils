@@ -22,13 +22,11 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-const {
-    isArray,
-    isFunction,
-    isObject,
-    isSymbol,
-} = require('./types.js')
+const {isArray, isFunction, isObject, isSymbol} = require('./types.js')
 
+const getOwnNames = Object.getOwnPropertyNames
+const getOwnSymbols = Object.getOwnPropertySymbols
+const isEnum = (obj, prop) => Object.propertyIsEnumerable.call(obj, prop)
 const SymNoKey = Symbol('NoKey')
 
 const objects = {
@@ -74,9 +72,7 @@ const objects = {
         for (const k in obj) {
             return false
         }
-        return !Object.getOwnPropertySymbols(obj).some(sym =>
-            Object.propertyIsEnumerable.call(obj, sym)
-        )
+        return !getOwnSymbols(obj).some(sym => isEnum(obj, sym))
     },
 
     /**
@@ -120,13 +116,13 @@ const objects = {
      */
     keys: function objectKeys(obj, isAll = false) {
         const keys = []
-        Object.getOwnPropertyNames(obj).forEach(key => {
-            if (isAll || Object.propertyIsEnumerable.call(obj, key)) {
+        getOwnNames(obj).forEach(key => {
+            if (isAll || isEnum(obj, key)) {
                 keys.push(key)
             }
         })
-        Object.getOwnPropertySymbols(obj).forEach(key => {
-            if (isAll || Object.propertyIsEnumerable.call(obj, key)) {
+        getOwnSymbols(obj).forEach(key => {
+            if (isAll || isEnum(obj, key)) {
                 keys.push(key)
             }
         })
@@ -160,7 +156,6 @@ const objects = {
     },
 
     /**
-     *
      * @throws {TypeError}
      *
      * @param {object} The object to set
@@ -274,31 +269,7 @@ const objects = {
     update: function update(target, source) {
         target = target || {}
         source = source || {}
-        /*
-
-        Using Object.keys differs if there is a getter in the source
-        that refers to the target.
-
-            Object.keys(source).forEach(key => {
-                target[key] = source[key]
-            })
-
-        For example:
-
-            let target = {}
-            let source = {a: 1, get x() { return target.a }}
-            update(target, source)
-
-        With keys: {a: 1, x: 1}
-        With entries: {a: 1, x: undefined}
-
-        But with keys the result could be surprising to some users:
-
-            let target = {}
-            let source = {a: 1, get [9]() { return target.a }}
-
-        With keys: {'9': undefined, a: 1}
-        */
+        // See test/notes/objects.md for comments about using keys vs entries.
         objects.entries(source).forEach(([key, value]) => {
             target[key] = value
         })
