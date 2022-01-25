@@ -1,5 +1,6 @@
-const stream = require('stream')
 const {stripAnsi} = require('../../src/strings.js')
+const stream = require('stream')
+const {EventEmitter} = require('events')
 
 class MockOutput extends stream.Writable {
 
@@ -27,4 +28,55 @@ class MockOutput extends stream.Writable {
     get plain() { return stripAnsi(this.raw) }
 }
 
-module.exports = {MockOutput}
+class MockInput extends EventEmitter {
+
+    constructor(...args) {
+        super(...args)
+    }
+
+    write() { return this }
+
+    moveCursor() { return this }
+
+    setPrompt() { return this }
+
+    close() { return this }
+
+    pause () { return this }
+
+    resume() { return this }
+}
+
+class MockReadline extends EventEmitter {
+
+    constructor(opts = {}) {
+        super()
+        this.line = ''
+        this.input = new MockInput
+        this.output = new MockOutput(opts)
+        this.input.on('keypress', value => {
+           if (value) {
+               this.line += value
+           }
+        })
+    }
+
+    write(chunk) {
+        this.output.write(chunk)
+        return this
+    }
+
+    moveCursor() { return this }
+
+    setPrompt() { return this }
+
+    close() { return this }
+
+    pause () { return this }
+
+    resume() { return this }
+
+    _getCursorPos () { return {cols: 0, rows: 0} }    
+}
+
+module.exports = {MockInput, MockOutput, MockReadline}

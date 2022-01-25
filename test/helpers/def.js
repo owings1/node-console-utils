@@ -1,8 +1,8 @@
+const {ger, TestError} = require('./errors.js')
+const {spread, merge} = require('./merging.js')
 const {expect} = require('chai')
 const assert = require('assert')
 const {formatWithOptions: formato} = require('util')
-const {ger, TestError} = require('./errors.js')
-const {spread, merge} = require('./merging.js')
 const {
     arrays: {last},
     classes: {inherits},
