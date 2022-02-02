@@ -35,7 +35,7 @@ const objects = {
      * Get entries, including symbols.
      *
      * @see `objectKeys()`
-     * @throws `TypeError`
+     * @throws {TypeError}
      *
      * @param {object} obj The object
      * @param {boolean} isAll Include non-enumerable keys, default `false`
@@ -108,7 +108,7 @@ const objects = {
     /**
      * Get keys, including symbols.
      *
-     * @throws `TypeError`
+     * @throws {TypeError}
      *
      * @param {object} obj The object
      * @param {boolean} isAll Include non-enumerable keys, default `false`
@@ -130,7 +130,7 @@ const objects = {
     },
 
     /**
-     * @throws `TypeError`
+     * @throws {TypeError}
      *
      * @param {object} obj The object to query.
      * @param {string|string[]|symbol} keyPath The key path.
@@ -156,7 +156,7 @@ const objects = {
     },
 
     /**
-     * @throws `TypeError`
+     * @throws {TypeError}
      *
      * @param {object} obj The object to set
      * @param {string|string[]|symbol} keyPath The key path
@@ -185,7 +185,7 @@ const objects = {
      * Create a new object with the same values and different keys. All own and
      * enumerable properties will be iterated, including symbols.
      * 
-     * @throws `TypeError`
+     * @throws {TypeError}
      *
      * @param {object} obj Source object
      * @param {object|null} proto The prototype for the new object, default is `Object.prototype`
@@ -206,7 +206,7 @@ const objects = {
      * Create a new object with the same key and different values. All own and
      * enumerable properties will be iterated, including symbols.
      *
-     * @throws `TypeError`
+     * @throws {TypeError}
      *
      * @param {object} obj Source object
      * @param {object|null} proto The prototype for the new object, default is `Object.prototype`
@@ -227,7 +227,7 @@ const objects = {
      * Return a object with the input's values as key, with `true` as all values.
      * All own and enumerable properties will be iterated, including symbols.
      *
-     * @throws `TypeError`
+     * @throws {TypeError}
      *
      * @param {object|array} obj The input object
      * @param {object|null} proto The prototype of the hash object, default is Object.prototype
@@ -244,7 +244,7 @@ const objects = {
      * Get values, including symbols.
      *
      * @see `objectKeys()`
-     * @throws `TypeError`
+     * @throws {TypeError}
      *
      * @param {object} obj The object
      * @param {boolean} isAll Include non-enumerable keys, default `false`
@@ -258,7 +258,7 @@ const objects = {
      * Update an object with new values. All own and enumerable properties
      * will be iterated, including symbols.
      *
-     * @throws `TypeError`
+     * @throws {TypeError}
      *
      * @param {object} target The target object to update
      * @param {object} source The source object with the new values

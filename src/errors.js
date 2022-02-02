@@ -42,7 +42,7 @@ const errors = {
      *
      * @throws {TypeError}
      *
-     * @param {Error} The error to examine
+     * @param {Error} err The error to examine
      * @return {string} The normalized message
      */
     getRawMessage: function getRawErrorMessage(err) {

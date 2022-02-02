@@ -24,10 +24,14 @@
  */
 const {isArray} = require('./types.js')
 
+/**
+ * @return {array}
+ */
 function checkArray(arg, name = 'arr') {
     if (!isArray(arg)) {
         throw new TypeError(`Argument (${name}) not an array`)
     }
+    return arg
 }
 
 const arrays = {
@@ -35,7 +39,7 @@ const arrays = {
     /**
      * Append all values to an array.
      *
-     * @throws `TypeError`
+     * @throws {TypeError}
      *
      * @param {array} arr The array to push to
      * @param {array} values The values to push
@@ -47,11 +51,20 @@ const arrays = {
         return arr
     },
 
+    /**
+     * Bisect an array into two arrays. If `filter(value, key, arr)` returns 
+     * falsy, the value is placed in the first array.
+     * 
+     * @throws {TypeError}
+     * 
+     * @param {array} arr The array to bisect
+     * @param {filter} function The filter function.
+     * @return {array[array]} An array of two arrays
+     */
     bisect: function arrayBisect(arr, filter) {
-        checkArray(arr)
         const result = [[], []]
-        arr.forEach(value => {
-            result[Number(Boolean(filter(value)))].push(value)
+        checkArray(arr).forEach((value, ...eargs) => {
+            result[Number(Boolean(filter(value, ...eargs)))].push(value)
         })
         return result
     },
@@ -59,27 +72,25 @@ const arrays = {
     /**
      * Get the last element of an array.
      *
-     * @throws `TypeError`
+     * @throws {TypeError}
      *
      * @param {array} arr The array
      * @return {*} The last element or undefined.
      */
     last: function arrayLast(arr) {
-        checkArray(arr)
-        return arr[arr.length - 1]
+        return checkArray(arr)[arr.length - 1]
     },
 
     /**
      * Sum all numbers in the array.
      *
-     * @throws `TypeError`
+     * @throws {TypeError}
      *
-     * @param {number[]} arr The input array
+     * @param {number[number]} arr The input array
      * @return {number} The result sum
      */
     sum: function arraySum(arr) {
-        checkArray(arr)
-        return arr.reduce((acc, cur) => acc + cur, 0)
+        return checkArray(arr).reduce((acc, cur) => acc + cur, 0)
     },
 }
 
@@ -90,6 +101,6 @@ module.exports = {
 
 function namedf(obj) {
     return Object.fromEntries(
-        Object.values(arrays).map(f => [f.name, f])
+        Object.values(obj).map(f => [f.name, f])
     )
 }
