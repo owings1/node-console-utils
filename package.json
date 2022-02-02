@@ -42,7 +42,6 @@
     "README.md"
   ],
   "homepage": "https://github.com/owings1/quale-core#readme",
-  "dependencies": {},
   "devDependencies": {
     "chai": "^4.3.4",
     "deepmerge": "^4.2.2",
