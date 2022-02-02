@@ -26,7 +26,7 @@ const {isArray} = require('./types.js')
 
 function checkArray(arg, name = 'arr') {
     if (!isArray(arg)) {
-        throw new TypeError(`Argument (${arg}) not an array`)
+        throw new TypeError(`Argument (${name}) not an array`)
     }
 }
 
@@ -35,10 +35,10 @@ const arrays = {
     /**
      * Append all values to an array.
      *
-     * @throws {TypeError}
+     * @throws `TypeError`
      *
-     * @param {array} The array to push to
-     * @param {array} The values to push
+     * @param {array} arr The array to push to
+     * @param {array} values The values to push
      * @return {array} The input array
      */
     append: function arrayAppend(arr, values) {
@@ -59,9 +59,9 @@ const arrays = {
     /**
      * Get the last element of an array.
      *
-     * @throws {TypeError}
+     * @throws `TypeError`
      *
-     * @param {array} The array
+     * @param {array} arr The array
      * @return {*} The last element or undefined.
      */
     last: function arrayLast(arr) {
@@ -72,10 +72,10 @@ const arrays = {
     /**
      * Sum all numbers in the array.
      *
-     * @throws {TypeError}
+     * @throws `TypeError`
      *
-     * @param {array} The input array
-     * @return {integer} The result sum
+     * @param {number[]} arr The input array
+     * @return {number} The result sum
      */
     sum: function arraySum(arr) {
         checkArray(arr)

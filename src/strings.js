@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /**
- * stringWidth copied from string-width:
+ * stringWidth copied and modified from string-width:
  * - https://www.npmjs.com/package/string-width
  * - https://github.com/sindresorhus/string-width
  * ----------------------
@@ -41,10 +41,10 @@ const BG_CLOSE = '\x1B[49m'
 const strings = {
     /**
      *
-     * @param {string} The line to break
-     * @param {integer} The max width
-     * @param {object} (optional) The options {tolerance=0, trimBreak=false}
-     * @return {array} The lines
+     * @param {string} str The line to break
+     * @param {integer} maxWidth The max width
+     * @param {object} opts The options {tolerance=0, trimBreak=false}
+     * @return {string[]} The lines
      */
     breakLine: function breakLine(str, maxWidth, opts = {}) {
         if (!str || !Number.isInteger(maxWidth) || maxWidth < 2) {
@@ -67,7 +67,7 @@ const strings = {
         }
         // Routine to search for the next ANSI sequences.
         const searchAnsi = () => {
-            ansiMatch = str.substr(index).match(regexes.ansi.consec)
+            ansiMatch = str.substring(index).match(regexes.ansi.consec)
             ansiIndex = ansiMatch ? ansiMatch.index + index : null
         }
         // Prime the first ANSI match. When a match fails, don't check the
@@ -172,8 +172,8 @@ const strings = {
      * String ends with. Every string ends with the empty string.
      *
      * @throws {TypeError}
-     * @param {string} String to examine
-     * @param {string} The end string to search for
+     * @param {string} str String to examine
+     * @param {string} srch The end string to search for
      * @return {boolean}
      */
     endsWith: function endsWith(str, srch) {
@@ -184,7 +184,7 @@ const strings = {
      * Escape special regex characters in a string.
      *
      * @throws {TypeError}
-     * @param {string} The string to escape
+     * @param {string} str The string to escape
      * @return {string} The escaped string
      */
     escapeRegex: function escapeRegex(str) {
@@ -195,7 +195,7 @@ const strings = {
      * Lowercase the first letter of a string.
      *
      * @throws {TypeError}
-     * @param {string} The input string
+     * @param {string} str The input string
      * @return {string} The result string
      */
     lcfirst: function lcfirst(str) {
@@ -206,7 +206,7 @@ const strings = {
      * Strip ANSI sequences from a string.
      *
      * @throws {TypeError}
-     * @param {string} The input string
+     * @param {string} str The input string
      * @return {string} The result string
      */
     stripAnsi: function stripAnsi(str) {
@@ -217,7 +217,7 @@ const strings = {
      * Capitalize the first letter of a string.
      *
      * @throws {TypeError}
-     * @param {string} The input string
+     * @param {string} str The input string
      * @return {string} The result string
      */
     ucfirst: function ucfirst(str) {
@@ -232,7 +232,7 @@ const strings = {
      * See file NOTICE.md for full license details.
      * - Portions abstracted to separate codepoint methods.
      * - Code modified to avoid emoji regex.
-     * @param {string} The string to check
+     * @param {string} str The string to check
      * @return {integer} The visual width
      */
     widthOf: function stringWidth(str) {

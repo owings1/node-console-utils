@@ -26,9 +26,9 @@ const {isFunction} = require('./types.js')
 
 const buffers = {
     /**
-     * @throws {TypeError}
-     * @param {buffer}
-     * @param {buffer}
+     * @throws `TypeError`
+     * @param {buffer} a The first bufffer
+     * @param {buffer} b The second buffer
      * @return {boolean}
      */
     equal: function buffersEqual(a, b) {

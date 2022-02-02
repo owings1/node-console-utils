@@ -35,10 +35,10 @@ const objects = {
      * Get entries, including symbols.
      *
      * @see `objectKeys()`
-     * @throws {TypeError}
+     * @throws `TypeError`
      *
-     * @param {object} The object
-     * @param {boolean} (optional) Include non-enumerable keys, default `false`
+     * @param {object} obj The object
+     * @param {boolean} isAll Include non-enumerable keys, default `false`
      * @return {array} The entries
      */
     entries: function objectEntries(obj, isAll = false) {
@@ -48,8 +48,8 @@ const objects = {
     /**
      * Check whether the key path exists.
      *
-     * @param {object} The object
-     * @param {string|array|symbol} The key path
+     * @param {object} obj The object
+     * @param {string|string[]|symbol} key The key path
      * @return {boolean}
      */
     hasKey: function hasKey(obj, key) {
@@ -62,7 +62,7 @@ const objects = {
      *
      * @see `isNullOrEmpty()`
      *
-     * @param {*} The input to check
+     * @param {*} obj The input to check
      * @return {boolean}
      */
     isEmpty: function isEmptyObject(obj) {
@@ -76,7 +76,7 @@ const objects = {
     },
 
     /**
-     * @param {object}
+     * @param {object} obj
      * @return {boolean}
      */
     isNonEmpty: function isNonEmptyObject(obj) {
@@ -84,7 +84,7 @@ const objects = {
     },
 
     /**
-     * @param {object}
+     * @param {object} arg
      * @return {boolean}
      */
     isNullOrEmpty: function isNullOrEmptyObject(arg) {
@@ -92,8 +92,8 @@ const objects = {
     },
 
     /**
-     * @param {string|array|symbol}
-     * @return {array}
+     * @param {string|string[]|symbol} kpath
+     * @return {string[]}
      */
     keyPath: function getKeyPath(kpath) {
         if (isArray(kpath)) {
@@ -108,11 +108,11 @@ const objects = {
     /**
      * Get keys, including symbols.
      *
-     * @throws {TypeError}
+     * @throws `TypeError`
      *
-     * @param {object} The object
-     * @param {boolean} (optional) Include non-enumerable keys, default `false`
-     * @return {array} The keys
+     * @param {object} obj The object
+     * @param {boolean} isAll Include non-enumerable keys, default `false`
+     * @return {string[]} The keys
      */
     keys: function objectKeys(obj, isAll = false) {
         const keys = []
@@ -130,14 +130,14 @@ const objects = {
     },
 
     /**
-     * @throws {TypeError}
+     * @throws `TypeError`
      *
-     * @param {object} The object to query.
-     * @param {string|array|symbol} The key path.
-     * @param {*} (optional) The value to return if not found.
+     * @param {object} obj The object to query.
+     * @param {string|string[]|symbol} keyPath The key path.
+     * @param {*} dflt The value to return if not found.
      * @return {*} The value, default value, or undefined.
      */
-    lget: function lget(obj, keyPath, dflt) {
+    lget: function lget(obj, keyPath, dflt = undefined) {
         keyPath = objects.keyPath(keyPath)
         if (keyPath.length === 0) {
             return dflt
@@ -156,14 +156,13 @@ const objects = {
     },
 
     /**
-     * @throws {TypeError}
+     * @throws `TypeError`
      *
-     * @param {object} The object to set
-     * @param {string|array|symbol} The key path
-     * @param {*} The value
-     * @param {object|null} (optional) Prototype for creating new objects,
-              default is `Object.prototype`.
-     * @return {object}
+     * @param {object} obj The object to set
+     * @param {string|string[]|symbol} keyPath The key path
+     * @param {*} value The value
+     * @param {object|null} proto Prototype for creating new objects, default is `Object.prototype`.
+     * @return {object} The obj parameter
      */
     lset: function lset(obj, keyPath, value, proto = Object.prototype) {
         if (!isObject(obj)) {
@@ -186,11 +185,11 @@ const objects = {
      * Create a new object with the same values and different keys. All own and
      * enumerable properties will be iterated, including symbols.
      * 
-     * @throws {TypeError}
+     * @throws `TypeError`
      *
-     * @param {object} Source object
-     * @param {object|null} (optional) The prototype for the new object
-     * @param {function} The callback, receives `key`, `index`
+     * @param {object} obj Source object
+     * @param {object|null} proto The prototype for the new object, default is `Object.prototype`
+     * @param {function} cb The callback, receives `key`, `index`
      * @return {object} The new object
      */
     rekey: function rekey(obj, ...args) {
@@ -207,11 +206,11 @@ const objects = {
      * Create a new object with the same key and different values. All own and
      * enumerable properties will be iterated, including symbols.
      *
-     * @throws {TypeError}
+     * @throws `TypeError`
      *
-     * @param {object} Source object
-     * @param {object|null} (optional) The prototype for the new object
-     * @param {function} The callback, receives `value`, `index`
+     * @param {object} obj Source object
+     * @param {object|null} proto The prototype for the new object, default is `Object.prototype`
+     * @param {function} cb The callback, receives `value`, `index`
      * @return {object} The new object
      */
     revalue: function revalue(obj, ...args) {
@@ -228,11 +227,10 @@ const objects = {
      * Return a object with the input's values as key, with `true` as all values.
      * All own and enumerable properties will be iterated, including symbols.
      *
-     * @throws {TypeError}
+     * @throws `TypeError`
      *
-     * @param {object|array} The input object
-     * @param {object|null} (optional) The prototype of the hash object.
-     *        Default is Object.prototype
+     * @param {object|array} obj The input object
+     * @param {object|null} proto The prototype of the hash object, default is Object.prototype
      * @return {object} The result object
      */
     valueHash: function valueHash(obj, proto = Object.prototype) {
@@ -246,10 +244,10 @@ const objects = {
      * Get values, including symbols.
      *
      * @see `objectKeys()`
-     * @throws {TypeError}
+     * @throws `TypeError`
      *
-     * @param {object} The object
-     * @param {boolean} (optional) Include non-enumerable keys, default `false`
+     * @param {object} obj The object
+     * @param {boolean} isAll Include non-enumerable keys, default `false`
      * @return {array} The values
      */
     values: function objectValues(obj, isAll = false) {
@@ -260,10 +258,10 @@ const objects = {
      * Update an object with new values. All own and enumerable properties
      * will be iterated, including symbols.
      *
-     * @throws {TypeError}
+     * @throws `TypeError`
      *
-     * @param {object} The target object to update
-     * @param {object} The source object with the new values
+     * @param {object} target The target object to update
+     * @param {object} source The source object with the new values
      * @return {object} The target object
      */
     update: function update(target, source) {

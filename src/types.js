@@ -77,9 +77,9 @@ const {EventEmitter} = require('events')
 /**
  * Returns a useful type value for the parameter. The default is to return the
  * value of `typeof arg`, else one of the following: 'array', 'buffer', 'class',
- * 'object', 'null', 'regex', or 'stream'.
+ * 'object', 'null', 'regex', 'promise', or 'stream'.
  *
- * @param {*} The parameter to check
+ * @param {*} arg The parameter to check
  * @return {string} The type
  */
 function typeOf(arg) {
@@ -117,7 +117,7 @@ const cast = {
      * an empty array is returned, otherwise a singleton array with the parameter
      * is return.
      *
-     * @param {*} The parameter to cast
+     * @param {*} val The parameter to cast
      * @return {array} The parameter if it is an array, or a new array
      */
     toArray: function castToArray(val) {
@@ -137,7 +137,7 @@ const is = {
     /**
      * Whether the parameter is an array.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     array: function isArray(arg) {
@@ -148,7 +148,7 @@ const is = {
      * Whether the parameter is a boolean. Returns false if it was constructed
      * with the `new` keyword.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     boolean: function isBoolean(arg) {
@@ -158,7 +158,7 @@ const is = {
     /**
      * Whether the parameter is a buffer.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     buffer: function isBuffer(arg) {
@@ -169,7 +169,7 @@ const is = {
      * Whether the parameter is probably a class. This tries to determine
      * whether something *must* be constructed with the `new` keyword.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     class: function isClass(arg) {
@@ -190,7 +190,7 @@ const is = {
     /**
      * Whether the parameter is an instance of Error.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     error: function isError(arg) {
@@ -200,7 +200,7 @@ const is = {
     /**
      * Whether the parameter is a function.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     function: function isFunction(arg) {
@@ -210,7 +210,7 @@ const is = {
     /**
      * Whether the parameter is iterable. NB: an object is not iterable.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     iterable: function isIterable(arg) {
@@ -220,7 +220,7 @@ const is = {
     /**
      * Whether the parameter is a number.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     number: function isNumber(arg) {
@@ -240,7 +240,7 @@ const is = {
      * Released under the MIT License.
      * See file NOTICE.md for details and full license.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     object: function isObject(arg) {
@@ -264,7 +264,7 @@ const is = {
      *
      * See file NOTICE.md for details and full licenses.
      *
-     * @param {*} The parameter to check
+     * @param {*} o The parameter to check
      * @return {boolean} The result
      */
     plainObject: function isPlainObject(o) {
@@ -290,6 +290,12 @@ const is = {
         /* end lodash code */
     },
 
+    /**
+     * Whether the parameter is a Promise.
+     *
+     * @param {*} arg The parameter to check
+     * @return {boolean} The result
+     */
     promise: function isPromise(arg) {
         return arg instanceof Promise
     },
@@ -297,7 +303,7 @@ const is = {
     /**
      * Whether the parameter is a readable stream.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     readableStream: function isReadableStream(arg) {
@@ -307,7 +313,7 @@ const is = {
     /**
      * Whether the parameter is a RegExp.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     regex: function isRegex(arg) {
@@ -317,7 +323,7 @@ const is = {
     /**
      * Whether the parameter is a stream.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     stream: function isStream(arg) {
@@ -328,7 +334,7 @@ const is = {
      * Whether the parameter is a string. Returns false if it was constructed
      * with the `new` keyword.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     string: function isString(arg) {
@@ -338,7 +344,7 @@ const is = {
     /**
      * Whether the parameter is a Symbol.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     symbol: function isSymbol(arg) {
@@ -348,7 +354,7 @@ const is = {
     /**
      * Alias for `isWriteableStream()`.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     writableStream: function isWritableStream(arg) {
@@ -358,7 +364,7 @@ const is = {
     /**
      * Whether the parameter is a writable (writeable) stream.
      *
-     * @param {*} The parameter to check
+     * @param {*} arg The parameter to check
      * @return {boolean} The result
      */
     writeableStream: function isWriteableStream(arg) {
