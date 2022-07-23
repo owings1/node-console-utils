@@ -1,12 +1,18 @@
 {
   "name": "@quale/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "node": ">=12.0.0"
   },
   "description": "core js utils",
   "type": "module",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./hash-proxy.js": "./src/classes/hash-proxy.js",
+    "./screen.js": "./src/classes/screen.js",
+    "./*.js": "./src/*.js"
+  },
   "scripts": {
     "test": "nyc --reporter=text-summary mocha test/specs/** && nyc report --reporter=lcov",
     "clean": "npm run cl && rm -rf node_modules",
