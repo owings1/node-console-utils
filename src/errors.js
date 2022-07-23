@@ -32,68 +32,55 @@
  * See file NOTICE.md for details and full license.
  * ------------------------------------------------
  */
-const {isFunction} = require('./types.js')
+import {isFunction} from './types.js'
 
-const errors = {
 
-    /**
-     * Normalize raw error message. Adapted from:
-     * https://github.com/mochajs/mocha/blob/e044ef02/lib/reporters/base.js#L245
-     *
-     * @throws {TypeError}
-     *
-     * @param {Error} err The error to examine
-     * @return {string} The normalized message
-     */
-    getRawMessage: function getRawErrorMessage(err) {
-        if (isFunction(err.inspect)) {
-            return err.inspect()
-        }
-        if (err.message && isFunction(err.message.toString)) {
-            return err.message.toString()
-        }
-        return ''
-    },
-
-    /**
-     * Get normalized message and stack info for an error. Adapted from:
-     * https://github.com/mochajs/mocha/blob/e044ef02/lib/reporters/base.js#L223
-     *
-     * @throws {TypeError}
-     *
-     * @param {Error} The error to parse
-     * @return {object} Strings {stack, message, rawMessage}
-     */
-    parseStack: function parseStack(err) {
-        // Normalize raw error message.
-        const rawMessage = errors.getRawMessage(err)
-        let message = ''
-        let stack = err.stack || rawMessage
-        if (rawMessage) {
-            // Check if the stack contains the rawMessage.
-            const rawStart = stack.indexOf(rawMessage)
-            if (rawStart > -1) {
-                // Add everything from the start of the stack until the end
-                // of the the raw message to errMessage, which will
-                // typically include the error name at the beginning.
-                const rawEnd = rawStart + rawMessage.length
-                message += stack.slice(0, rawEnd)
-                // Remove everything up to the raw message, and the following
-                // newline character from the stack.
-                stack = stack.slice(rawEnd + 1)
-            }
-        }
-        return {stack, message, rawMessage}
-    },
+/**
+ * Normalize raw error message. Adapted from:
+ * https://github.com/mochajs/mocha/blob/e044ef02/lib/reporters/base.js#L245
+ *
+ * @throws {TypeError}
+ *
+ * @param {Error} err The error to examine
+ * @return {string} The normalized message
+ */
+export function getRawMessage(err) {
+    if (isFunction(err.inspect)) {
+        return err.inspect()
+    }
+    if (err.message && isFunction(err.message.toString)) {
+        return err.message.toString()
+    }
+    return ''
 }
 
-module.exports = {
-    ...errors,
-    ...namedf(errors),
-}
-
-function namedf(obj) {
-    return Object.fromEntries(
-        Object.values(obj).map(f => [f.name, f])
-    )
+/**
+ * Get normalized message and stack info for an error. Adapted from:
+ * https://github.com/mochajs/mocha/blob/e044ef02/lib/reporters/base.js#L223
+ *
+ * @throws {TypeError}
+ *
+ * @param {Error} The error to parse
+ * @return {object} Strings {stack, message, rawMessage}
+ */
+export function parseStack(err) {
+    // Normalize raw error message.
+    const rawMessage = getRawMessage(err)
+    let message = ''
+    let stack = err.stack || rawMessage
+    if (rawMessage) {
+        // Check if the stack contains the rawMessage.
+        const rawStart = stack.indexOf(rawMessage)
+        if (rawStart > -1) {
+            // Add everything from the start of the stack until the end
+            // of the the raw message to errMessage, which will
+            // typically include the error name at the beginning.
+            const rawEnd = rawStart + rawMessage.length
+            message += stack.slice(0, rawEnd)
+            // Remove everything up to the raw message, and the following
+            // newline character from the stack.
+            stack = stack.slice(rawEnd + 1)
+        }
+    }
+    return {stack, message, rawMessage}
 }

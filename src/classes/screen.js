@@ -22,10 +22,10 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-const ansi = require('../ansi.js')
-const {isBoolean, isPromise, isWriteableStream} = require('../types.js')
+import ansi from '../ansi.js'
+import {isBoolean, isPromise, isWriteableStream} from '../types.js'
 
-const Screen = module.exports = class {
+export default class Screen {
 
     constructor(opts) {
         if (isWriteableStream(opts)) {

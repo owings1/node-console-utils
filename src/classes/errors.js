@@ -20,18 +20,12 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-class BaseError extends Error {
+export class BaseError extends Error {
     constructor(...args) {
         super(...args)
         this.name = this.constructor.name
     }
 }
 
-class KeyExistsError extends BaseError {}
-class ValueError extends BaseError {}
-
-module.exports = {
-    BaseError,
-    KeyExistsError,
-    ValueError,
-}
+export class KeyExistsError extends BaseError {}
+export class ValueError extends BaseError {}

@@ -22,85 +22,139 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-const {isArray} = require('./types.js')
 
 /**
- * @return {array}
+ * @param {*} arg
+ * @param {String} name
+ * @return {Array}
  */
 function checkArray(arg, name = 'arr') {
-    if (!isArray(arg)) {
+    if (!Array.isArray(arg)) {
         throw new TypeError(`Argument (${name}) not an array`)
     }
     return arg
 }
 
-const arrays = {
-
-    /**
-     * Append all values to an array.
-     *
-     * @throws {TypeError}
-     *
-     * @param {array} arr The array to push to
-     * @param {array} values The values to push
-     * @return {array} The input array
-     */
-    append: function arrayAppend(arr, values) {
-        checkArray(arr)
-        values.forEach(value => arr.push(value))
-        return arr
-    },
-
-    /**
-     * Bisect an array into two arrays. If `filter(value, key, arr)` returns 
-     * falsy, the value is placed in the first array.
-     * 
-     * @throws {TypeError}
-     * 
-     * @param {array} arr The array to bisect
-     * @param {filter} function The filter function.
-     * @return {array[array]} An array of two arrays
-     */
-    bisect: function arrayBisect(arr, filter) {
-        const result = [[], []]
-        checkArray(arr).forEach((value, ...eargs) => {
-            result[Number(Boolean(filter(value, ...eargs)))].push(value)
-        })
-        return result
-    },
-
-    /**
-     * Get the last element of an array.
-     *
-     * @throws {TypeError}
-     *
-     * @param {array} arr The array
-     * @return {*} The last element or undefined.
-     */
-    last: function arrayLast(arr) {
-        return checkArray(arr)[arr.length - 1]
-    },
-
-    /**
-     * Sum all numbers in the array.
-     *
-     * @throws {TypeError}
-     *
-     * @param {number[number]} arr The input array
-     * @return {number} The result sum
-     */
-    sum: function arraySum(arr) {
-        return checkArray(arr).reduce((acc, cur) => acc + cur, 0)
-    },
+/**
+ * Append all values to an array.
+ *
+ * @throws {TypeError}
+ *
+ * @param {Array} arr The array to push to
+ * @param {Array} values The values to push
+ * @return {Array} The input array
+ */
+export function append(arr, values) {
+    checkArray(arr)
+    values.forEach(value => arr.push(value))
+    return arr
 }
 
-module.exports = {
-    ...arrays,
-    ...namedf(arrays),
+/**
+ * Bisect an array into two arrays. If `filter(value, key, arr)` returns 
+ * falsy, the value is placed in the first array.
+ * 
+ * @throws {TypeError}
+ * 
+ * @param {Array} arr The array to bisect
+ * @param {filter} function The filter function.
+ * @return {array[]} An array of two arrays
+ */
+export function bisect(arr, filter) {
+    const result = [[], []]
+    checkArray(arr).forEach((value, ...eargs) => {
+        result[Number(Boolean(filter(value, ...eargs)))].push(value)
+    })
+    return result
 }
 
-function namedf(obj) {
-    return Object.fromEntries(
-        Object.values(obj).map(f => [f.name, f])
-    )
+/**
+ * Get the last element of an array.
+ *
+ * @throws {TypeError}
+ *
+ * @param {Array} arr The array
+ * @return {*} The last element or undefined.
+ */
+export function last(arr) {
+    return checkArray(arr)[arr.length - 1]
+}
+
+/**
+ * Sum all numbers in the array.
+ *
+ * @throws {TypeError}
+ *
+ * @param {number[]} arr The input array
+ * @return {number} The result sum
+ */
+export function sum(arr) {
+    return checkArray(arr).reduce((acc, cur) => acc + cur, 0)
+}
+
+/**
+ * Find the closest index and value of `target` in `arr`.
+ * 
+ * @param {Number} target The search value.
+ * @param {Number[]} arr The array to search.
+ * @return {object|undefined} Object with `index` and `value` properties, or
+ *  undefined if array is empty.
+ */
+export function closest(target, arr) {
+    const {length} = arr
+    if (length === 0) {
+        return
+    }
+    if (length === 1) {
+        return {index: 0, value: arr[0]}
+    }
+    target = Number(target)
+    let minDiff = Infinity
+    let low = 0
+    let high = length - 1
+    let index
+    while (low <= high) {
+        const mid = Math.floor((low + high) / 2)
+        let diffLeft
+        let diffRight
+        if (mid + 1 < length) {
+            diffRight = Math.abs(arr[mid + 1] - target)
+        }
+        if (mid > 0) {
+            diffLeft = Math.abs(arr[mid - 1] - target)
+        }
+        if (diffLeft !== undefined && diffLeft < minDiff) {
+            minDiff = diffLeft
+            index = mid - 1
+        }
+        if (diffRight !== undefined && diffRight < minDiff) {
+            minDiff = diffRight
+            index = mid + 1
+        }
+        if (arr[mid] < target) {
+            low = mid + 1
+        } else if (arr[mid] > target) {
+            high = mid - 1
+        } else {
+            index = mid
+            break
+        }
+    }
+    return {index, value: arr[index]}
+}
+
+/**
+ * Shuffle an array.
+ * 
+ * @param {Array} arr The array.
+ * @return {Array} The array.
+ */
+export function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1))
+        let temp = arr[i]
+        arr[i] = arr[j]
+        arr[j] = temp
+    }
+    return arr
 }

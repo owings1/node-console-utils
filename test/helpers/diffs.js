@@ -54,10 +54,11 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-const {arrays: {append}} = require('@quale/core')
-const {colors: {Chalk}} = require('@quale/term')
+// const {colors: {Chalk}} = require('@quale/term')
+import {colors} from '@quale/term'
+import diff from 'diff'
 
-const diff = require('diff')
+const {Chalk} = colors
 const chalk = new Chalk()
 const noBlanks = line => typeof line != 'undefined' && line !== null
 

@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const isApple = process.env.TERM_PROGRAM === 'Apple_Terminal'
-const ansi = module.exports = {
+const ansi = {
 
     up: n => {
         n = safen(n)
@@ -100,6 +100,8 @@ const ansi = module.exports = {
 
     showCursor: () => '\x1B[?25h',
 }
+
+export default ansi
 
 function safen(n) {
     if (Number.isFinite(n) && Number.isInteger(n) && n > 0) {

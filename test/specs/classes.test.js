@@ -22,10 +22,11 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-const {expect} = require('chai')
-const {ger, def, def: {test}} = require('../helpers/index.js')
+import {def} from '../helpers/index.js'
+const {set, test} = def
+import {expect} from 'chai'
 
-const {classes} = require('../../index.js')
+import * as classes from '../../src/classes.js'
 
 describe('classes', () => {
 

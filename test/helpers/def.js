@@ -1,28 +1,28 @@
-const {ger, TestError} = require('./errors.js')
-const {spread, merge} = require('./merging.js')
-const {expect} = require('chai')
-const assert = require('assert')
-const {formatWithOptions: formato} = require('util')
-const {
-    arrays: {last},
-    classes: {inherits},
-    objects: {lget, lset, update},
-    types: {
-        castToArray,
-        isArray,
-        isBoolean,
-        isClass,
-        isFunction,
-        isNumber,
-        isObject,
-        isPlainObject,
-        isString,
-        isSymbol,
-        typeOf,
-    },
-} = require('../../index.js')
+import {ger, TestError} from './errors.js'
+import {spread, merge} from './merging.js'
+import {expect} from 'chai'
+import {formatWithOptions} from 'util'
+import * as types from '../../src/types.js'
+import {inherits} from '../../src/classes.js'
+import {lget, lset, update} from '../../src/objects.js'
+import {last} from '../../src/arrays.js'
 
-const {log, error: logerr, warn} = console
+const {
+    castToArray,
+    isArray,
+    isBoolean,
+    isClass,
+    isFunction,
+    isNumber,
+    isObject,
+    isPlainObject,
+    isString,
+    isSymbol,
+    typeOf,
+} = types
+
+const formato = formatWithOptions
+const {log, warn} = console
 
 const DefaultUnaryOperator = 'equal'
 const DefaultUnaryErrorOperator = 'erri'
@@ -145,7 +145,7 @@ function set(...args) {
     return this.def
 }
 
-module.exports = def()
+export default new def()
 
 const createTests = tests => tests.forEach((opts, i) => {
     const n = i + 1

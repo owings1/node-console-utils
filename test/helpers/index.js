@@ -1,5 +1,6 @@
-const {ger} = require('./errors.js')
-const {MockOutput} = require('./io.js')
-const def = require('./def.js')
-const merging = require('./merging.js')
-module.exports = {ger, MockOutput, def, merging}
+import {ger} from './errors.js'
+import {MockOutput} from './io.js'
+import * as merging from './merging.js'
+import def from './def.js'
+const {merge} = merging
+export {ger, def, MockOutput, merging, merge}

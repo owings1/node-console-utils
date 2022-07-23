@@ -1,5 +1,5 @@
-const {Assertion} = require('chai')
-const helpers = {
+import {Assertion} from 'chai'
+export const helpers = {
     erry: function (type) {
         const obj = this._obj
         // preconditon, whether positive or negative assertion
@@ -23,5 +23,3 @@ const helpers = {
         )
     }
 }
-
-module.exports = {helpers}

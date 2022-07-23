@@ -22,42 +22,31 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-const {isFunction} = require('./types.js')
+import {isFunction} from './types.js'
 
-const buffers = {
-    /**
-     * @throws {TypeError}
-     * @param {Buffer} a The first bufffer
-     * @param {Buffer} b The second buffer
-     * @return {boolean}
-     */
-    equal: function buffersEqual(a, b) {
-        if (isFunction(a.equals)) {
-            return a.equals(b)
-        }
-        if (isFunction(a.compare)) {
-            return a.compare(b) == 0
-        }
-        const len = a.length
-        if (len !== b.length) {
+/**
+ * @throws {TypeError}
+ * @param {Buffer} a The first bufffer
+ * @param {Buffer} b The second buffer
+ * @return {boolean}
+ */
+export function equal(a, b) {
+    if (isFunction(a.equals)) {
+        return a.equals(b)
+    }
+    if (isFunction(a.compare)) {
+        return a.compare(b) == 0
+    }
+    const len = a.length
+    if (len !== b.length) {
+        return false
+    }
+    for (let i = 0; i < len; ++i) {
+        if (a.readUInt8(i) !== b.readUInt8(i)) {
             return false
         }
-        for (let i = 0; i < len; ++i) {
-            if (a.readUInt8(i) !== b.readUInt8(i)) {
-                return false
-            }
-        }
-        return true
-    },
+    }
+    return true
 }
 
-module.exports = {
-    ...buffers,
-    ...namedf(buffers),
-}
-
-function namedf(obj) {
-    return Object.fromEntries(
-        Object.values(obj).map(f => [f.name, f])
-    )
-}
+export {equal as buffersEqual}

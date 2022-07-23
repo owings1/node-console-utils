@@ -22,9 +22,15 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-const {expect} = require('chai')
-const {merging: {merge}, ger, MockOutput} = require('../helpers/index.js')
-const {Screen} = require('../../index.js')
+// const {expect} = require('chai')
+// const {merging: {merge}, ger, MockOutput} = require('../helpers/index.js')
+// const {Screen} = require('../../index.js')
+
+
+import {ger, merge, MockOutput} from '../helpers/index.js'
+import {expect} from 'chai'
+
+import Screen from '../../src/classes/screen.js'
 
 describe('Screen', () => {
 

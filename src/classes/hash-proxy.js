@@ -20,17 +20,17 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-const {KeyExistsError, ValueError} = require('./errors.js')
-const {isObject, isFunction: isFunc} = require('../types.js')
-const {hasKey, keyPath, lget, lset} = require('../objects.js')
+import {KeyExistsError, ValueError} from './errors.js'
+import {isObject, isFunction as isFunc} from '../types.js'
+import {hasKey, keyPath, lget, lset} from '../objects.js'
 
-const SrcKey = Symbol('source')
-const IngKey = Symbol('ingress')
+// const SrcKey = Symbol('source')
+// const IngKey = Symbol('ingress')
 const CrtKey = Symbol('create')
 
 const defProp = Object.defineProperty
 
-class HashProxy {
+export default class HashProxy {
 
     static create(source, opts) {
         checkArg(source, 'source', 'object', isObject)
@@ -117,8 +117,6 @@ class HashProxy {
         lset(this.ingress, kpath, value)
     }
 }
-
-module.exports = HashProxy
 
 function build(source, opts) {
     const ingress = Object.create(opts.proto)

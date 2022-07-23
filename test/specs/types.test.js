@@ -22,10 +22,17 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-const {expect} = require('chai')
-const {ger, def, def: {test}, MockOutput} = require('../helpers/index.js')
-const stream = require('stream')
-const {types} = require('../../index.js')
+// const {expect} = require('chai')
+// const {ger, def, def: {test}, MockOutput} = require('../helpers/index.js')
+// const stream = require('stream')
+// const {types} = require('../../index.js')
+
+import stream from 'stream'
+import {def, MockOutput} from '../helpers/index.js'
+const {set, test} = def
+import {expect} from 'chai'
+
+import * as types from '../../src/types.js'
 
 describe('types', () => {
 

@@ -1,8 +1,7 @@
-const {stripAnsi} = require('../../src/strings.js')
-const stream = require('stream')
-const {EventEmitter} = require('events')
-
-class MockOutput extends stream.Writable {
+import {stripAnsi} from '../../src/strings.js'
+import * as stream from 'stream'
+import {EventEmitter} from 'events'
+export class MockOutput extends stream.Writable {
 
     constructor(opts = {}) {
         super()
@@ -28,7 +27,7 @@ class MockOutput extends stream.Writable {
     get plain() { return stripAnsi(this.raw) }
 }
 
-class MockInput extends EventEmitter {
+export class MockInput extends EventEmitter {
 
     constructor(...args) {
         super(...args)
@@ -47,7 +46,7 @@ class MockInput extends EventEmitter {
     resume() { return this }
 }
 
-class MockReadline extends EventEmitter {
+export class MockReadline extends EventEmitter {
 
     constructor(opts = {}) {
         super()
@@ -78,5 +77,3 @@ class MockReadline extends EventEmitter {
 
     _getCursorPos () { return {cols: 0, rows: 0} }    
 }
-
-module.exports = {MockInput, MockOutput, MockReadline}

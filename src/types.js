@@ -72,7 +72,7 @@
  * See file NOTICE.md for full license details.
  * ----------------------
  */
-const {EventEmitter} = require('events')
+import {EventEmitter} from 'events'
 
 /**
  * Returns a useful type value for the parameter. The default is to return the
@@ -80,312 +80,309 @@ const {EventEmitter} = require('events')
  * 'object', 'null', 'regex', 'promise', or 'stream'.
  *
  * @param {*} arg The parameter to check
- * @return {string} The type
+ * @return {String} The type
  */
-function typeOf(arg) {
+export function typeOf(arg) {
     if (arg === null) {
         return 'null'
     }
-    if (is.array(arg)) {
+    if (isArray(arg)) {
         return 'array'
     }
-    if (is.buffer(arg)) {
+    if (isBuffer(arg)) {
         return 'buffer'
     }
-    if (is.stream(arg)) {
+    if (isStream(arg)) {
         return 'stream'
     }
-    if (is.class(arg)) {
+    if (isClass(arg)) {
         return 'class'
     }
-    if (is.regex(arg)) {
+    if (isRegex(arg)) {
         return 'regex'
     }
-    if (is.promise(arg)) {
+    if (isPromise(arg)) {
         return 'promise'
     }
-    if (is.object(arg)) {
+    if (isObject(arg)) {
         return 'object'
     }
     return typeof arg
 }
 
-const cast = {
-    /**
-     * Cast a parameter to an array. If the parameter is an array, the parameter
-     * is returned, otherwise a new array is created. If it is null or undefined,
-     * an empty array is returned, otherwise a singleton array with the parameter
-     * is return.
-     *
-     * @param {*} val The parameter to cast
-     * @return {array} The parameter if it is an array, or a new array
-     */
-    toArray: function castToArray(val) {
-        if (is.array(val)) {
-            return val
-        }
-        const arr = []
-        if (val != null) {
-            arr.push(val)
-        }
-        return arr
-    },
+/**
+ * Cast a parameter to an array. If the parameter is an array, the parameter
+ * is returned, otherwise a new array is created. If it is null or undefined,
+ * an empty array is returned, otherwise a singleton array with the parameter
+ * is return.
+ *
+ * @param {*} val The parameter to cast
+ * @return {Array} The parameter if it is an array, or a new array
+ */
+export function castToArray(val) {
+    if (isArray(val)) {
+        return val
+    }
+    const arr = []
+    if (val != null) {
+        arr.push(val)
+    }
+    return arr
 }
 
-const is = {
-
-    /**
-     * Whether the parameter is an array.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    array: function isArray(arg) {
-        return Array.isArray(arg)
-    },
-
-    /**
-     * Whether the parameter is a boolean. Returns false if it was constructed
-     * with the `new` keyword.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    boolean: function isBoolean(arg) {
-        return arg === true || arg === false
-    },
-
-    /**
-     * Whether the parameter is a buffer.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    buffer: function isBuffer(arg) {
-        return Buffer.isBuffer(arg)
-    },
-
-    /**
-     * Whether the parameter is probably a class. This tries to determine
-     * whether something *must* be constructed with the `new` keyword.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    class: function isClass(arg) {
-        if (is.function(arg) === false) {
-            return false
-        }
-        const str = Function.prototype.toString.call(arg)
-        if (str.indexOf('class') === 0 && (str[5] === ' ' || str[5] === '{')) {
-            return true
-        }
-        // See: https://babeljs.io/docs/en/babel-plugin-transform-classes
-        if (str.includes('classCallCheck')) {
-            return true
-        }
-        return str.includes('Cannot call a class as a function')
-    },
-
-    /**
-     * Whether the parameter is an instance of Error.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    error: function isError(arg) {
-        return arg instanceof Error
-    },
-
-    /**
-     * Whether the parameter is a function.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    function: function isFunction(arg) {
-        return typeof arg === 'function'
-    },
-
-    /**
-     * Whether the parameter is iterable. NB: an object is not iterable.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    iterable: function isIterable(arg) {
-        return arg != null && is.function(arg[Symbol.iterator])
-    },
-
-    /**
-     * Whether the parameter is a number.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    number: function isNumber(arg) {
-        return typeof arg === 'number'
-    },
-
-    /**
-     * Whether the parameter is an object.
-     *
-     * Returns false for: buffer, null, function, new String/Boolean
-     * Returns true for: stream
-     *
-     * From:
-     * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
-     * https://github.com/jonschlinkert/is-plain-object/blob/0a47f0f6/is-plain-object.js
-     * Copyright (c) 2014-2017, Jon Schlinkert.
-     * Released under the MIT License.
-     * See file NOTICE.md for details and full license.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    object: function isObject(arg) {
-        return Object.prototype.toString.call(arg) === '[object Object]'
-    },
-
-    /**
-     * Whether the parameter is probably a "plain" object.
-     *
-     * Portions from:
-     * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
-     * https://github.com/jonschlinkert/is-plain-object/blob/0a47f0f6/is-plain-object.js
-     * Copyright (c) 2014-2017, Jon Schlinkert.
-     * Released under the MIT License.
-     *
-     * Portions from:
-     * lodash <https://github.com/lodash/lodash>
-     * https://github.com/lodash/lodash/blob/2da024c3/isPlainObject.js
-     * Copyright JS Foundation and other contributors <https://js.foundation/>
-     * Release under the MIT License.
-     *
-     * See file NOTICE.md for details and full licenses.
-     *
-     * @param {*} o The parameter to check
-     * @return {boolean} The result
-     */
-    plainObject: function isPlainObject(o) {
-        /* begin is-plain-object code: */
-        let ctor
-        let proto
-        if (is.object(o) === false) {
-            return false
-        }
-        // If has modified constructor
-        ctor = o.constructor
-        if (ctor === undefined) {
-            return true
-        }
-        /* end is-plain-object code: */
-        // See test/notes/types.md for additional comments.
-        /* begin lodash code */
-        proto = o
-        while (Object.getPrototypeOf(proto) !== null) {
-            proto = Object.getPrototypeOf(proto)
-        }
-        return Object.getPrototypeOf(o) === proto
-        /* end lodash code */
-    },
-
-    /**
-     * Whether the parameter is a Promise.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    promise: function isPromise(arg) {
-        return arg instanceof Promise
-    },
-
-    /**
-     * Whether the parameter is a readable stream.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    readableStream: function isReadableStream(arg) {
-        return arg instanceof EventEmitter && is.function(arg.read)
-    },
-
-    /**
-     * Whether the parameter is a RegExp.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    regex: function isRegex(arg) {
-        return arg instanceof RegExp
-    },
-
-    /**
-     * Whether the parameter is a stream.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    stream: function isStream(arg) {
-        return is.readableStream(arg) || is.writeableStream(arg)
-    },
-
-    /**
-     * Whether the parameter is a string. Returns false if it was constructed
-     * with the `new` keyword.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    string: function isString(arg) {
-        return typeof arg === 'string'
-    },
-
-    /**
-     * Whether the parameter is a Symbol.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    symbol: function isSymbol(arg) {
-        return typeof arg === 'symbol'
-    },
-
-    /**
-     * Alias for `isWriteableStream()`.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    writableStream: function isWritableStream(arg) {
-        return is.writeableStream(arg)
-    },
-
-    /**
-     * Whether the parameter is a writable (writeable) stream.
-     *
-     * @param {*} arg The parameter to check
-     * @return {boolean} The result
-     */
-    writeableStream: function isWriteableStream(arg) {
-        return (
-            arg instanceof EventEmitter &&
-            is.function(arg.write) &&
-            is.function(arg.end)
-        )
-    },
+/**
+ * Whether the parameter is an array.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isArray(arg) {
+    return Array.isArray(arg)
 }
 
-module.exports = {
-    typeOf,
-    cast,
-    is,
-    ...namedf(cast),
-    ...namedf(is),
+/**
+ * Whether the parameter is a boolean. Returns false if it was constructed
+ * with the `new` keyword.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isBoolean(arg) {
+    return arg === true || arg === false
 }
 
-function namedf(obj) {
-    return Object.fromEntries(
-        Object.values(obj).map(f => [f.name, f])
+/**
+ * Whether the parameter is a buffer.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isBuffer(arg) {
+    return Buffer.isBuffer(arg)
+}
+
+/**
+ * Whether the parameter is probably a class. This tries to determine
+ * whether something *must* be constructed with the `new` keyword.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isClass(arg) {
+    if (isFunction(arg) === false) {
+        return false
+    }
+    const str = Function.prototype.toString.call(arg)
+    if (str.indexOf('class') === 0 && (str[5] === ' ' || str[5] === '{')) {
+        return true
+    }
+    // See: https://babeljs.io/docs/en/babel-plugin-transform-classes
+    if (str.includes('classCallCheck')) {
+        return true
+    }
+    return str.includes('Cannot call a class as a function')
+}
+
+/**
+ * Whether the parameter is an instance of Error.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isError(arg) {
+    return arg instanceof Error
+}
+
+/**
+ * Whether the parameter is a function.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isFunction(arg) {
+    return typeof arg === 'function'
+}
+
+/**
+ * Whether the parameter is iterable. NB: an object is not iterable.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isIterable(arg) {
+    return arg != null && isFunction(arg[Symbol.iterator])
+}
+
+/**
+ * Whether the parameter is a number.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isNumber(arg) {
+    return typeof arg === 'number'
+}
+
+/**
+ * Whether the parameter is an object.
+ *
+ * Returns false for: buffer, null, function, new String/Boolean
+ * Returns true for: stream
+ *
+ * From:
+ * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+ * https://github.com/jonschlinkert/is-plain-object/blob/0a47f0f6/is-plain-object.js
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ * See file NOTICE.md for details and full license.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isObject(arg) {
+    return Object.prototype.toString.call(arg) === '[object Object]'
+}
+
+/**
+ * Whether the parameter is probably a "plain" object.
+ *
+ * Portions from:
+ * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+ * https://github.com/jonschlinkert/is-plain-object/blob/0a47f0f6/is-plain-object.js
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ *
+ * Portions from:
+ * lodash <https://github.com/lodash/lodash>
+ * https://github.com/lodash/lodash/blob/2da024c3/isPlainObject.js
+ * Copyright JS Foundation and other contributors <https://js.foundation/>
+ * Release under the MIT License.
+ *
+ * See file NOTICE.md for details and full licenses.
+ *
+ * @param {*} o The parameter to check
+ * @return {Boolean} The result
+ */
+export function isPlainObject(o) {
+    /* begin is-plain-object code: */
+    let ctor
+    let proto
+    if (isObject(o) === false) {
+        return false
+    }
+    // If has modified constructor
+    ctor = o.constructor
+    if (ctor === undefined) {
+        return true
+    }
+    /* end is-plain-object code: */
+    // See test/notes/types.md for additional comments.
+    /* begin lodash code */
+    proto = o
+    while (Object.getPrototypeOf(proto) !== null) {
+        proto = Object.getPrototypeOf(proto)
+    }
+    return Object.getPrototypeOf(o) === proto
+    /* end lodash code */
+}
+
+/**
+ * Whether the parameter is a Promise.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isPromise(arg) {
+    return arg instanceof Promise
+}
+
+/**
+ * Whether the parameter is a readable stream.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isReadableStream(arg) {
+    return arg instanceof EventEmitter && isFunction(arg.read)
+}
+
+/**
+ * Whether the parameter is a RegExp.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isRegex(arg) {
+    return arg instanceof RegExp
+}
+
+/**
+ * Whether the parameter is a stream.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isStream(arg) {
+    return isReadableStream(arg) || isWriteableStream(arg)
+}
+
+/**
+ * Whether the parameter is a string. Returns false if it was constructed
+ * with the `new` keyword.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isString(arg) {
+    return typeof arg === 'string'
+}
+
+/**
+ * Whether the parameter is a Symbol.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isSymbol(arg) {
+    return typeof arg === 'symbol'
+}
+
+/**
+ * Whether the parameter is a writable (writeable) stream.
+ *
+ * @param {*} arg The parameter to check
+ * @return {Boolean} The result
+ */
+export function isWriteableStream(arg) {
+    return (
+        arg instanceof EventEmitter &&
+        isFunction(arg.write) &&
+        isFunction(arg.end)
     )
+}
+
+export {isWriteableStream as isWritableStream}
+
+export const cast = {
+    toArray: castToArray,
+}
+export const is = {
+    array: isArray,
+    boolean: isBoolean,
+    buffer: isBuffer,
+    class: isClass,
+    error: isError,
+    function: isFunction,
+    iterable: isIterable,
+    number: isNumber,
+    object: isObject,
+    plainObject: isPlainObject,
+    promise: isPromise,
+    readableStream: isReadableStream,
+    regex: isRegex,
+    stream: isStream,
+    string: isString,
+    symbol: isSymbol,
+    writableStream: isWriteableStream,
+    writeableStream: isWriteableStream,
 }

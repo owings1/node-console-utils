@@ -33,20 +33,21 @@
  * See file NOTICE.md for details and full license.
  * ------------------------------------------------
  */
-const regexes = module.exports = {
-    ansi: {
-        // Base regex (global) from: https://github.com/chalk/ansi-regex/blob/c1b5e45f/index.js
-        global :  /[\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]))/g,
-        // Matches all consecutive sequences.
-        consec : /([\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~])))+/,
-        // Match all background sequences, open or close.
-        bgGlobal: /\x1B\[4[0-9]([0-9;]*m)?/g,
-    },
-    lineBreak: {
-        // See: https://unicode.org/reports/tr29/
-        global: /\r?\n|[\x0B\x0C\x85\u2028\u2029]/g,
-    },
-    // Regex special chars.
-    // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#using_special_characters
-    special: /[.*+?^${}()|[\]\\]/g,
+
+export const ansi = {
+    // Base regex (global) from: https://github.com/chalk/ansi-regex/blob/c1b5e45f/index.js
+    global :  /[\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]))/g,
+    // Matches all consecutive sequences.
+    consec : /([\x1B\x9B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\x07)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~])))+/,
+    // Match all background sequences, open or close.
+    bgGlobal: /\x1B\[4[0-9]([0-9;]*m)?/g,
 }
+
+export const lineBreak = {
+    // See: https://unicode.org/reports/tr29/
+    global: /\r?\n|[\x0B\x0C\x85\u2028\u2029]/g,
+}
+
+// Regex special chars.
+// See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#using_special_characters
+export const special = /[.*+?^${}()|[\]\\]/g
