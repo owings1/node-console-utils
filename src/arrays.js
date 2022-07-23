@@ -44,11 +44,14 @@ function checkArray(arg, name = 'arr') {
  * @param {Array} values The values to push
  * @return {Array} The input array
  */
-export function append(arr, values) {
+export function extend(arr, values) {
     checkArray(arr)
     values.forEach(value => arr.push(value))
     return arr
 }
+
+/** @deprecated */
+export const append = extend
 
 /**
  * Bisect an array into two arrays. If `filter(value, key, arr)` returns 

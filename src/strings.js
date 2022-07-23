@@ -232,7 +232,7 @@ export function ucfirst(str) {
  * - Portions abstracted to separate codepoint methods.
  * - Code modified to avoid emoji regex.
  * @param {String} str The string to check
- * @return {integer} The visual width
+ * @return {Number} The visual width
  */
 export function stringWidth(str) {
     if (typeof str !== 'string' || str.length === 0) {

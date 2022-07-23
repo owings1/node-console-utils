@@ -39,7 +39,12 @@
  */
 
 /**
- * See: https://www.fileformat.info/info/unicode/category/Zs/list.htm
+ * Whether a codepoint represents a breaking space.
+ * 
+ * @see https://www.fileformat.info/info/unicode/category/Zs/list.htm
+ * 
+ * @param {Number} cp The code point
+ * @return {Boolean}
  */
 export function isBreakingSpace(cp) {
     // See test/notes/codes.md for more notes.
@@ -60,23 +65,34 @@ export function isBreakingSpace(cp) {
 /**
  * Diacritics are always added after the main character.
  * Code extracted from string-width, (C) Sindre Sorhus, MIT License.
+ * 
+ * @param {Number} cp The code point
+ * @return {Boolean}
  */
-export function isCombining(cp) { // isCombiningCodePoint
+export function isCombining(cp) {
     return Number.isInteger(cp) && cp >= 0x300 && cp <= 0x36F
 }
 
 /**
  * Control codes are not visually represented.
  * Code extracted from string-width, (C) Sindre Sorhus, MIT License.
+ * 
+ * @param {Number} cp The code point
+ * @return {Boolean}
  */
-export function isControl(cp) { // isControlCodePoint
+export function isControl(cp) {
     return Number.isInteger(cp) && (cp <= 0x1F || (cp >= 0x7F && cp <= 0x9F))
 }
 
 /**
- * See: https://www.fileformat.info/info/unicode/category/Zs/list.htm
+ * Whether a codepoint represents a non-breaking space.
+ * 
+ * @see https://www.fileformat.info/info/unicode/category/Zs/list.htm
+ * 
+ * @param {Number} cp The code point
+ * @return {Boolean}
  */
-export function isNonBreakingSpace(cp) { //isNonBreakingSpaceCodePoint
+export function isNonBreakingSpace(cp) {
     return Number.isInteger(cp) && (
         // no-break space
         cp === 0xA0 ||
@@ -86,17 +102,25 @@ export function isNonBreakingSpace(cp) { //isNonBreakingSpaceCodePoint
 }
 
 /**
- * See: https://www.fileformat.info/info/unicode/category/Zs/list.htm
+ * Whether a codepoint represents a space.
+ * 
+ * @see https://www.fileformat.info/info/unicode/category/Zs/list.htm
+ * 
+ * @param {Number} cp The code point
+ * @return {Boolean}
  */
-export function isSpace(cp) { //isSpaceCodePoint
+export function isSpace(cp) {
     return isNonBreakingSpace(cp) || isBreakingSpace(cp)
 }
 
 /**
  * Surrogates come in pairs, e.g. emojis.
  * Code extracted from string-width, (C) Sindre Sorhus, MIT License.
+ * 
+ * @param {Number} cp The code point
+ * @return {Boolean}
  */
-export function isSurrogate(cp) { // isSurrogateCodePoint
+export function isSurrogate(cp) {
     return Number.isInteger(cp) && cp > 0xFFFF
 }
 
@@ -108,8 +132,11 @@ export function isSurrogate(cp) { // isSurrogateCodePoint
  * ------------
  * Code points are derived from:
  * https://unicode.org/Public/UNIDATA/EastAsianWidth.txt
+ * 
+ * @param {Number} cp The code point
+ * @return {Boolean}
  */
-export function isFullwidth(cp) { // isFullwidthCodePoint
+export function isFullwidth(cp) {
     return Number.isInteger(cp) && cp >= 0x1100 && (
         cp <= 0x115F || // Hangul Jamo
         cp === 0x2329 || // LEFT-POINTING ANGLE BRACKET
@@ -143,16 +170,22 @@ export function isFullwidth(cp) { // isFullwidthCodePoint
 }
 
 /**
- * See: https://unicode.org/reports/tr29/
+ * @see https://unicode.org/reports/tr29/
+ * 
+ * @param {Number} cp The code point
+ * @return {Boolean}
  */
-export function isWordBreaking(cp) { //isWordBreakingCodePoint
+export function isWordBreaking(cp) {
     return isBreakingSpace(cp) || isBreakingDash(cp)
 }
 
 /**
- * See: https://www.compart.com/en/unicode/category/Pd
+ * @see https://www.compart.com/en/unicode/category/Pd
+ * 
+ * @param {Number} cp The code point
+ * @return {Boolean}
  */
-export function isBreakingDash(cp) { // isBreakingDashCodePoint
+export function isBreakingDash(cp) {
     return Number.isInteger(cp) && (
         // hyphen-minus
         cp === 0x2D ||

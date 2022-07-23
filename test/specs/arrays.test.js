@@ -22,13 +22,14 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+import {expect} from 'chai'
 import {def} from '../helpers/index.js'
 const {set, test} = def
 import * as arrays from '../../src/arrays.js'
 
 describe('arrays', () => {
 
-    def(arrays.append, () => {
+    def(arrays.extend, () => {
 
         def('errors', {json: 'args'}, () => {
             test({err: TypeError, args: []})
@@ -69,5 +70,14 @@ describe('arrays', () => {
             {exp:  0, args: [[]]},
             {exp: 10, args: [[5,5]]},
         )
+    })
+
+    describe('closest', function() {
+        it('simple test', function() {
+            const arr = [1, 4, 8, 12]
+            const {index, value} = arrays.closest(5, arr)
+            expect(index).to.equal(1)
+            expect(value).to.equal(4)
+        })
     })
 })
