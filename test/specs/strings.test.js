@@ -22,12 +22,6 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-// const {expect} = require('chai')
-// const {ger, def, def: {test, set}} = require('../helpers/index.js')
-
-// const {strings} = require('../../index.js')
-
-
 import {def} from '../helpers/index.js'
 const {set, test} = def
 import {expect} from 'chai'
