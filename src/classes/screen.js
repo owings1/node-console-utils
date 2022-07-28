@@ -86,6 +86,8 @@ export default class Screen {
     }
 }
 
+export {Screen}
+
 Object.entries(ansi).forEach(([method, func]) => {
     Screen.prototype[method] = function (...args) {
         if (this.isAnsi) {

@@ -1,6 +1,6 @@
 {
   "name": "@quale/core",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "engines": {
     "node": ">=12.0.0"
   },
@@ -17,6 +17,7 @@
     "./codes.js": "./src/codes.js",
     "./errors.js": "./src/errors.js",
     "./objects.js": "./src/objects.js",
+    "./operators.js": "./src/operators.js",
     "./regexes.js": "./src/regexes.js",
     "./strings.js": "./src/strings.js",
     "./types.js": "./src/types.js"

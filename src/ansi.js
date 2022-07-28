@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 const isApple = process.env.TERM_PROGRAM === 'Apple_Terminal'
-const ansi = {
+export const ansi = {
 
     up: n => {
         n = safen(n)

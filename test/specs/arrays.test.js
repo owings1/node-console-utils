@@ -58,6 +58,9 @@ describe('arrays', () => {
 
         test(
             {exp: [[4],[6]], args:[[4,6], n => n > 5]},
+            {exp: [[1,2], []], args:[[1,2], n => n > 2]},
+            {exp: [[1], [2]], args: [[1,2]]},
+            {exp: [[1,2], [3]], args: [[1,2,3]]},
         )
     })
 
@@ -72,12 +75,18 @@ describe('arrays', () => {
         )
     })
 
+    describe('closestIndex', function() {
+        it('simple test', function() {
+            const arr = [1, 4, 8, 12]
+            const res = arrays.closestIndex(5, arr)
+            expect(res).to.equal(1)
+        })
+    })
     describe('closest', function() {
         it('simple test', function() {
             const arr = [1, 4, 8, 12]
-            const {index, value} = arrays.closest(5, arr)
-            expect(index).to.equal(1)
-            expect(value).to.equal(4)
+            const res = arrays.closest(5, arr)
+            expect(res).to.equal(4)
         })
     })
 })

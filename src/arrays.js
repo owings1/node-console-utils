@@ -22,94 +22,113 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+import {add} from './operators.js'
 
 /**
- * @param {*} arg
- * @param {String} name
- * @return {Array}
- */
-function checkArray(arg, name = 'arr') {
-    if (!Array.isArray(arg)) {
-        throw new TypeError(`Argument (${name}) not an array`)
-    }
-    return arg
-}
-
-/**
- * Append all values to an array.
- *
- * @throws {TypeError}
+ * Append all values to an array
  *
  * @param {Array} arr The array to push to
  * @param {Array} values The values to push
  * @return {Array} The input array
  */
 export function extend(arr, values) {
-    checkArray(arr)
     values.forEach(value => arr.push(value))
     return arr
 }
 
-/** @deprecated */
-export const append = extend
-
 /**
- * Bisect an array into two arrays. If `filter(value, key, arr)` returns 
- * falsy, the value is placed in the first array.
+ * Bisect an array into two arrays according to a filter(value, index, arr)
+ * If filter returns falsy, the value is placed in the first array.
  * 
- * @throws {TypeError}
+ * If no filter is specified, the array is split in the middle, left-biased
+ * for odd-lengthed arrays.
  * 
- * @param {Array} arr The array to bisect
- * @param {filter} function The filter function.
+ * @param {Array} arr The array to bisec
+ * @param {filter} function The filter function
  * @return {array[]} An array of two arrays
  */
-export function bisect(arr, filter) {
+export function bisect(arr, filter = undefined) {
+    filter = filter || defaultBisectFilter
     const result = [[], []]
-    checkArray(arr).forEach((value, ...eargs) => {
+    arr.forEach((value, ...eargs) => {
         result[Number(Boolean(filter(value, ...eargs)))].push(value)
     })
     return result
 }
 
 /**
- * Get the last element of an array.
- *
- * @throws {TypeError}
+ * Get the last element of an array
  *
  * @param {Array} arr The array
- * @return {*} The last element or undefined.
+ * @return {*} The last element or undefined
  */
 export function last(arr) {
-    return checkArray(arr)[arr.length - 1]
+    return arr[arr.length - 1]
 }
 
 /**
- * Sum all numbers in the array.
+ * Normalize negative index to positive
+ * 
+ * @param {Array} arr The array
+ * @param {Number} index The relative or absolute index
+ * @return {Number} Normalized index
+ */
+export function absindex(arr, index) {
+    if (index < 0) {
+        return index + arr.length
+    }
+    return index
+}
+
+/**
+ * Get at index, supports negative index
+ * 
+ * @param {Array} arr The array
+ * @param {Number} index The index
+ * @return {*}
+ */
+export function at(arr, index) {
+    return arr[absindex(arr, index)]
+}
+
+/**
+ * Sum all numbers in the array
  *
- * @throws {TypeError}
- *
- * @param {number[]} arr The input array
- * @return {number} The result sum
+ * @param {Number[]} arr The input array
+ * @return {Number} The result sum
  */
 export function sum(arr) {
-    return checkArray(arr).reduce((acc, cur) => acc + cur, 0)
+    return arr.reduce(add, 0)
 }
 
 /**
- * Find the closest index and value of `target` in `arr`.
+ * Find the closest value to `target` in a sorted array
  * 
- * @param {Number} target The search value.
- * @param {Number[]} arr The array to search.
- * @return {object|undefined} Object with `index` and `value` properties, or
- *  undefined if array is empty.
+ * @param {Number} target The search value
+ * @param {Number[]} arr The array to search
+ * @return {Number|undefined} The closest value or undefined if array is empty
  */
 export function closest(target, arr) {
+    const index = closestIndex(target, arr)
+    if (index !== undefined) {
+        return arr[index]
+    }
+}
+
+/**
+ * Find the index of the closest value to `target` in a sorted array
+ * 
+ * @param {Number} target The search value
+ * @param {Number[]} arr The array to search
+ * @return {Number|undefined} The closest index or undefined if array is empty
+ */
+export function closestIndex(target, arr) {
     const {length} = arr
     if (length === 0) {
         return
     }
     if (length === 1) {
-        return {index: 0, value: arr[0]}
+        return 0
     }
     target = Number(target)
     let minDiff = Infinity
@@ -118,21 +137,19 @@ export function closest(target, arr) {
     let index
     while (low <= high) {
         const mid = Math.floor((low + high) / 2)
-        let diffLeft
-        let diffRight
         if (mid + 1 < length) {
-            diffRight = Math.abs(arr[mid + 1] - target)
+            let diff = Math.abs(arr[mid + 1] - target)
+            if (diff < minDiff) {
+                minDiff = diff
+                index = mid + 1
+            }
         }
         if (mid > 0) {
-            diffLeft = Math.abs(arr[mid - 1] - target)
-        }
-        if (diffLeft !== undefined && diffLeft < minDiff) {
-            minDiff = diffLeft
-            index = mid - 1
-        }
-        if (diffRight !== undefined && diffRight < minDiff) {
-            minDiff = diffRight
-            index = mid + 1
+            let diff = Math.abs(arr[mid - 1] - target)
+            if (diff < minDiff) {
+                minDiff = diff
+                index = mid - 1
+            }
         }
         if (arr[mid] < target) {
             low = mid + 1
@@ -143,7 +160,7 @@ export function closest(target, arr) {
             break
         }
     }
-    return {index, value: arr[index]}
+    return index
 }
 
 /**
@@ -160,4 +177,15 @@ export function shuffle(arr) {
         arr[j] = temp
     }
     return arr
+}
+
+/**
+ * @param {*} value
+ * @param {Number} index
+ * @param {Array} arr
+ * @return {Boolean}
+ */
+function defaultBisectFilter(value, index, arr) {
+    // bias left
+    return index >= Math.ceil(arr.length / 2)
 }

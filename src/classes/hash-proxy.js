@@ -24,8 +24,6 @@ import {KeyExistsError, ValueError} from './errors.js'
 import {isObject, isFunction as isFunc} from '../types.js'
 import {hasKey, keyPath, lget, lset} from '../objects.js'
 
-// const SrcKey = Symbol('source')
-// const IngKey = Symbol('ingress')
 const CrtKey = Symbol('create')
 
 const defProp = Object.defineProperty
@@ -117,6 +115,8 @@ export default class HashProxy {
         lset(this.ingress, kpath, value)
     }
 }
+
+export {HashProxy}
 
 function build(source, opts) {
     const ingress = Object.create(opts.proto)
