@@ -13,7 +13,6 @@
     "./ansi.js": "./src/ansi.js",
     "./arrays.js": "./src/arrays.js",
     "./buffers.js": "./src/buffers.js",
-    "./classes.js": "./src/classes.js",
     "./codes.js": "./src/codes.js",
     "./errors.js": "./src/errors.js",
     "./objects.js": "./src/objects.js",
