@@ -73,42 +73,7 @@
  * ----------------------
  */
 import {EventEmitter} from 'events'
-
-/**
- * Returns a useful type value for the parameter. The default is to return the
- * value of `typeof arg`, else one of the following: 'array', 'buffer', 'class',
- * 'object', 'null', 'regex', 'promise', or 'stream'.
- *
- * @param {*} arg The parameter to check
- * @return {String} The type
- */
-export function typeOf(arg) {
-    if (arg === null) {
-        return 'null'
-    }
-    if (isArray(arg)) {
-        return 'array'
-    }
-    if (isBuffer(arg)) {
-        return 'buffer'
-    }
-    if (isStream(arg)) {
-        return 'stream'
-    }
-    if (isClass(arg)) {
-        return 'class'
-    }
-    if (isRegex(arg)) {
-        return 'regex'
-    }
-    if (isPromise(arg)) {
-        return 'promise'
-    }
-    if (isObject(arg)) {
-        return 'object'
-    }
-    return typeof arg
-}
+const getProto = Object.getPrototypeOf
 
 /**
  * Cast a parameter to an array. If the parameter is an array, the parameter
@@ -128,6 +93,24 @@ export function castToArray(val) {
         arr.push(val)
     }
     return arr
+}
+
+
+/**
+ * Get class/prototype ancestors
+ * 
+ * @param {Function} cls
+ * @return {Function[]}
+ */
+export function getSubclasses(cls) {
+    const ancs = []
+    if (!isFunction(cls)) {
+        return ancs
+    }
+    for (let anc = getProto(cls); anc && anc.name; anc = getProto(anc)) {
+        ancs.push(anc)
+    }
+    return ancs
 }
 
 /**
@@ -169,7 +152,7 @@ export function isBuffer(arg) {
  * @return {Boolean} The result
  */
 export function isClass(arg) {
-    if (isFunction(arg) === false) {
+    if (!isFunction(arg)) {
         return false
     }
     const str = Function.prototype.toString.call(arg)
@@ -279,10 +262,10 @@ export function isPlainObject(o) {
     // See test/notes/types.md for additional comments.
     /* begin lodash code */
     proto = o
-    while (Object.getPrototypeOf(proto) !== null) {
-        proto = Object.getPrototypeOf(proto)
+    while (getProto(proto) !== null) {
+        proto = getProto(proto)
     }
-    return Object.getPrototypeOf(o) === proto
+    return getProto(o) === proto
     /* end lodash code */
 }
 
@@ -338,6 +321,25 @@ export function isString(arg) {
 }
 
 /**
+ * Check if a class is a subclass of another
+ * 
+ * @param {Function} cls
+ * @param {Function} parent
+ * @return {Boolean}
+ */
+export function isSubclass(cls, parent) {
+    if (!isFunction(cls) || !isFunction(parent)) {
+        return false
+    }
+    for (let anc = getProto(cls); anc && anc.name; anc = getProto(anc)) {
+        if (anc === parent) {
+            return true
+        }
+    }
+    return false
+}
+
+/**
  * Whether the parameter is a Symbol.
  *
  * @param {*} arg The parameter to check
@@ -361,11 +363,50 @@ export function isWriteableStream(arg) {
     )
 }
 
+/**
+ * Returns a useful type value for the parameter. The default is to return the
+ * value of `typeof arg`, else one of the following: 'array', 'buffer', 'class',
+ * 'object', 'null', 'regex', 'promise', or 'stream'.
+ *
+ * @param {*} arg The parameter to check
+ * @return {String} The type
+ */
+export function typeOf(arg) {
+    if (arg === null) {
+        return 'null'
+    }
+    const type = typeof arg
+    if (type !== 'object') {
+        if (type === 'function' && isClass(arg)) {
+            return 'class'
+        }
+        return type
+    }
+    if (isArray(arg)) {
+        return 'array'
+    }
+    if (isBuffer(arg)) {
+        return 'buffer'
+    }
+    if (isStream(arg)) {
+        return 'stream'
+    }
+    if (isRegex(arg)) {
+        return 'regex'
+    }
+    if (isPromise(arg)) {
+        return 'promise'
+    }
+    return type
+}
+
 export {isWriteableStream as isWritableStream}
 
+/** @deprecated */
 export const cast = {
     toArray: castToArray,
 }
+/** @deprecated */
 export const is = {
     array: isArray,
     boolean: isBoolean,

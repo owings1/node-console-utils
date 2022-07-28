@@ -22,7 +22,10 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+import process from 'process'
+
 const isApple = process.env.TERM_PROGRAM === 'Apple_Terminal'
+
 export const ansi = {
 
     up: n => {

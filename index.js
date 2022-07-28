@@ -1,12 +1,9 @@
-import * as Errors from './src/classes/errors.js'
-import HashProxy from './src/classes/hash-proxy.js'
-import Screen from './src/classes/screen.js'
-export {Errors, HashProxy, Screen}
-
+export * as Errors from './src/classes/errors.js'
+export {HashProxy} from './src/classes/hash-proxy.js'
+export {Screen} from './src/classes/screen.js'
 export {ansi} from './src/ansi.js'
 export * as arrays from './src/arrays.js'
 export * as buffers from './src/buffers.js'
-export * as classes from './src/classes.js'
 export * as codes from './src/codes.js'
 export * as errors from './src/errors.js'
 export * as objects from './src/objects.js'

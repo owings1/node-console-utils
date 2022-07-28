@@ -3,7 +3,6 @@ import {spread, merge} from './merging.js'
 import {expect} from 'chai'
 import {formatWithOptions} from 'util'
 import * as types from '../../src/types.js'
-import {inherits} from '../../src/classes.js'
 import {lget, lset, update} from '../../src/objects.js'
 import {last} from '../../src/arrays.js'
 
@@ -17,6 +16,7 @@ const {
     isObject,
     isPlainObject,
     isString,
+    isSubclass,
     isSymbol,
     typeOf,
 } = types
@@ -250,7 +250,7 @@ function buildDesciption(opts) {
             return opts[strkey]
         }
         if (err && key === 'exp') {
-            if (exp === Error || inherits(exp, Error)) {
+            if (exp === Error || isSubclass(exp, Error)) {
                 return exp.name
             }
             if (isString(exp)) {

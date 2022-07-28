@@ -72,10 +72,9 @@ describe('types', () => {
 
     def('is', () => {
 
-        const {is} = types
         const fakew = {write: () => {}, end: () => {}}
 
-        def(is.array, () => {
+        def(types.isArray, () => {
 
             def({exp: true}, () => {
                 test(
@@ -92,7 +91,7 @@ describe('types', () => {
             })
         })
 
-        def(is.boolean, () => {
+        def(types.isBoolean, () => {
 
             def({exp: true}, () => {
                 test(
@@ -115,7 +114,7 @@ describe('types', () => {
             })
         })
 
-        def(is.buffer, () => {
+        def(types.isBuffer, () => {
 
             def({exp: true}, () => {
                 test(
@@ -130,7 +129,7 @@ describe('types', () => {
             })
         })
 
-        def(is.class, () => {
+        def(types.isClass, () => {
 
             def({exp: true}, () => {
                 test(
@@ -145,7 +144,7 @@ describe('types', () => {
             })
         })
 
-        def(is.error, () => {
+        def(types.isError, () => {
 
             def({exp: true}, () => {
                 test(
@@ -160,7 +159,7 @@ describe('types', () => {
             })
         })
 
-        def(is.function, () => {
+        def(types.isFunction, () => {
 
             def({exp: true}, () => {
                 test(
@@ -177,7 +176,7 @@ describe('types', () => {
             })
         })
 
-        def(is.iterable, () => {
+        def(types.isIterable, () => {
 
             def({exp: true}, () => {
                 test(
@@ -195,7 +194,7 @@ describe('types', () => {
             })
         })
 
-        def(is.number, () => {
+        def(types.isNumber, () => {
 
             def({exp: true}, () => {
                 test(
@@ -215,7 +214,7 @@ describe('types', () => {
             })
         })
 
-        def(is.object, () => {
+        def(types.isObject, () => {
 
             def({exp: true}, () => {
                 test(
@@ -231,7 +230,7 @@ describe('types', () => {
             })
         })
 
-        def(is.plainObject, () => {
+        def(types.isPlainObject, () => {
 
             def({exp: true}, () => {
                 test(
@@ -250,7 +249,7 @@ describe('types', () => {
             })
         })
 
-        def(is.regex, () => {
+        def(types.isRegex, () => {
 
             def({exp: true}, () => {
                 test(
@@ -266,7 +265,7 @@ describe('types', () => {
             })
         })
 
-        def(is.string, () => {
+        def(types.isString, () => {
 
             def({exp: true}, () => {
                 test(
@@ -281,7 +280,7 @@ describe('types', () => {
             })
         })
 
-        def(is.symbol, () => {
+        def(types.isSymbol, () => {
 
             def({exp: true}, () => {
                 test(
@@ -298,7 +297,7 @@ describe('types', () => {
             })
         })
 
-        def(is.readableStream, () => {
+        def(types.isReadableStream, () => {
 
             def({exp: true}, () => {
                 test(
@@ -316,7 +315,7 @@ describe('types', () => {
             })
         })
 
-        def(is.stream, () => {
+        def(types.isStream, () => {
 
             def({exp: true}, () => {
                 test(
@@ -332,7 +331,7 @@ describe('types', () => {
             })
         })
 
-        def(is.writableStream, () => {
+        def(types.isWritableStream, () => {
 
             def({exp: true}, () => {
                 test(
@@ -348,7 +347,7 @@ describe('types', () => {
             })
         })
 
-        def(is.writeableStream, {json: false}, () => {
+        def(types.isWriteableStream, {json: false}, () => {
 
             def({exp: true}, () => {
                 test(
@@ -360,6 +359,46 @@ describe('types', () => {
             def({exp: false}, () => {
                 test(
                     {args: [fakew]},
+                )
+            })
+        })
+    })
+
+    describe('classes', () => {
+
+        describe('A > B > C, R > S, R > T', () => {
+    
+            class A {}
+            class B extends A {}
+            class C extends B {}
+    
+            class R {}
+            class S extends R {}
+            class T extends R {}
+    
+            def(types.isSubclass, () => {
+            
+                def({exp: true}, () => {
+                    test(
+                        {args: [TypeError, Error]},
+                        {args: [B, A]},
+                        {args: [C, B]},
+                        {args: [C, A]},
+                    )
+                })
+    
+                def({exp: false}, () => {
+                    test(
+                        {args: [T, S]},
+                        {args: [T, B]},
+                        {args: [A, A]},
+                    )
+                })
+            })
+    
+            def(types.getSubclasses, {oper: 'deep.equal'}, () => {
+                test(
+                    {exp: [B, A], args: [C]},
                 )
             })
         })
