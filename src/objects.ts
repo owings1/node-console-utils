@@ -26,46 +26,41 @@ import {isFunction, isObject, isSymbol} from './types.js'
 
 const getOwnNames = Object.getOwnPropertyNames
 const getOwnSymbols = Object.getOwnPropertySymbols
-const enumable = (obj:object, prop:any):boolean => Object.propertyIsEnumerable.call(obj, prop)
+const enumable = (obj: object, prop: any): boolean => Object.propertyIsEnumerable.call(obj, prop)
 const SymNoKey = Symbol('NoKey')
 
 export {isObject}
 
+type KeyPath = Array<string|symbol>
+type KeyPathish = string|symbol|KeyPath
+
 /**
- * Get entries, including symbols.
- *
+ * Get entries, including symbols
  * @see objectKeys()
- * @throws {TypeError}
- *
- * @param {object} obj The object
- * @param {Boolean} isAll Include non-enumerable keys, default `false`
- * @return {array} The entries
+ * @param obj The object
+ * @param isAll Include non-enumerable keys, default `false`
+ * @return The entries
  */
-export function entries(obj:object, isAll:boolean = false): any[] {
+export function entries(obj: object, isAll: boolean = false): any[] {
     return keys(obj, isAll).map(key => [key, obj[key]])
 }
 
 /**
- * Check whether the key path exists.
- *
- * @param {object} obj The object
- * @param {string|string[]|symbol} key The key path
- * @return {Boolean}
+ * Check whether the key path exists
+ * @param obj The object
+ * @param key The key path
  */
-export function hasKey(obj:object, key:string|symbol|Array<string|symbol>): boolean {
+export function hasKey(obj: object, key: KeyPathish): boolean {
     return lget(obj, key, SymNoKey) !== SymNoKey
 }
 
 /**
  * Check whether an object is empty. Returns `false` if the parameter is
  * not an object. All enumerable properties are checked, including symbols.
- *
  * @see isNullOrEmpty()
- *
- * @param {*} obj The input to check
- * @return {Boolean}
+ * @param obj The input to check
  */
-export function isEmpty(obj:any): boolean {
+export function isEmpty(obj: any): boolean {
     if (isObject(obj) === false) {
         return false
     }
@@ -76,26 +71,23 @@ export function isEmpty(obj:any): boolean {
 }
 
 /**
- * @param {object} obj
- * @return {Boolean}
+ * @param obj The input to check
  */
-export function isNonEmpty(obj:object): boolean {
+export function isNonEmpty(obj: object): boolean {
     return isObject(obj) && !isEmpty(obj)
 }
 
 /**
- * @param {object} arg
- * @return {Boolean}
+ * @param arg The input to check
  */
-export function isNullOrEmpty(arg:any):boolean {
+export function isNullOrEmpty(arg: any): boolean {
     return arg === null || typeof arg === 'undefined' || isEmpty(arg)
 }
 
 /**
- * @param {String|String[]|Symbol} kpath
- * @return {String[]}
+ * @param kpath A key path expression
  */
-export function keyPath(kpath:string|symbol|Array<string|symbol>): Array<string|symbol> {
+export function keyPath(kpath: KeyPathish): KeyPath {
     if (Array.isArray(kpath)) {
         return kpath
     }
@@ -106,16 +98,13 @@ export function keyPath(kpath:string|symbol|Array<string|symbol>): Array<string|
 }
 
 /**
- * Get keys, including symbols.
- *
- * @throws {TypeError}
- *
- * @param {object} obj The object
- * @param {Boolean} isAll Include non-enumerable keys, default `false`
- * @return {String[]} The keys
+ * Get keys, including symbols
+ * @param obj The object
+ * @param isAll Include non-enumerable keys, default `false`
+ * @return The keys
  */
-export function keys(obj:object, isAll: boolean = false): Array<string|symbol> {
-    const keys: Array<string|symbol> = []
+export function keys(obj: object, isAll: boolean = false): KeyPath {
+    const keys: KeyPath = []
     getOwnNames(obj).forEach(key => {
         if (isAll || enumable(obj, key)) {
             keys.push(key)
@@ -130,14 +119,12 @@ export function keys(obj:object, isAll: boolean = false): Array<string|symbol> {
 }
 
 /**
- * @throws {TypeError}
- *
- * @param {object} obj The object to query.
- * @param {String|String[]|Symbol} path The key path.
- * @param {*} defaultValue The value to return if not found.
- * @return {*} The value, default value, or undefined.
+ * @param obj The object to query
+ * @param path The key path
+ * @param defaultValue The value to return if not found
+ * @return The value, default value, or undefined
  */
-export function lget(obj:object, path:string|symbol|Array<string|symbol>, defaultValue:any = undefined):any {
+export function lget(obj: object, path: KeyPathish, defaultValue: any = undefined): any {
     path = keyPath(path)
     if (path.length === 0) {
         return defaultValue
@@ -157,14 +144,13 @@ export function lget(obj:object, path:string|symbol|Array<string|symbol>, defaul
 
 /**
  * @throws {TypeError}
- *
- * @param {object} obj The object to set
- * @param {String|String[]|Symbol} path The key path.
- * @param {*} value The value
- * @param {object|null} proto Prototype for creating new objects, default is `Object.prototype`.
- * @return {object} The obj parameter
+ * @param obj The object to set
+ * @param path The key path.
+ * @param value The value
+ * @param proto Prototype for creating new objects, default is `Object.prototype`.
+ * @return The obj parameter
  */
-export function lset(obj:object, path:string|symbol|Array<string|symbol>, value:any, proto:object = Object.prototype):object {
+export function lset(obj: object, path: KeyPathish, value: any, proto: object = Object.prototype): object {
     if (!isObject(obj)) {
         throw new TypeError(`Argument (obj) must be an object.`)
     }
@@ -184,54 +170,44 @@ export function lset(obj:object, path:string|symbol|Array<string|symbol>, value:
 /**
  * Create a new object with the same values and different keys. All own and
  * enumerable properties will be iterated, including symbols.
- * 
- * @throws {TypeError}
- * 
- * @param {object} obj Source object
- * @param {object|Function} proto The prototype for the new object, default is `Object.prototype`
- * @param {Function|undefined} cb The callback, receives `key`, `index`
- * @return {object} The new object
+ * @param obj Source object
+ * @param cb The callback, receives `key`, `index`
+ * @return The new object
  */
-export function rekey(obj:object, proto:object|Function|undefined, cb:Function|undefined): object {
-    if (proto === undefined) {
-        throw new TypeError('Missing second argument')
-    }
-    if (cb === undefined) {
-        // @ts-ignore
-        cb = proto
-        proto = Object.prototype
-    }
-    const ret = Object.create(proto)
-    entries(obj).forEach(([key, value], i) =>
-        // @ts-ignore
-        ret[cb(key, i)] = value
-    )
+export function rekey(obj: object, cb: Function): object
+/**
+ * @param obj Source object
+ * @param proto The prototype for the new object, default is `Object.prototype`
+ * @param cb The callback, receives `key`, `index`
+ * @return The new object
+ */
+export function rekey(obj: object, proto: object|null, cb: Function): object
+export function rekey(obj:object, ...args): object {
+    const cb: Function = args.pop()
+    const ret = Object.create(args.length ? args[0] : Object.prototype)
+    entries(obj).forEach(([key, value], i) => ret[cb(key, i)] = value)
     return ret
 }
 
 /**
  * Create a new object with the same key and different values. All own and
  * enumerable properties will be iterated, including symbols.
- *
- * @throws {TypeError}
- *
- * @param {object} obj Source object
- * @param {object|Function} proto The prototype for the new object, default is `Object.prototype`
- * @param {Function|undefined} cb The callback, receives `value`, `index`
- * @return {object} The new object
+ * @param obj Source object
+ * @param cb The callback, receives `value`, `index`
+ * @return The new object
  */
-export function revalue(obj:object, proto:object|Function|undefined, cb:Function|undefined): object {
-    if (proto === undefined) {
-        throw new TypeError('Missing second argument')
-    }
-    if (cb === undefined) {
-        // @ts-ignore
-        cb = proto
-        proto = Object.prototype
-    }
-    const ret = Object.create(proto)
+export function revalue(obj: object, cb: Function): object
+/**
+ * @param obj Source object
+ * @param proto The prototype for the new object, default is `Object.prototype`
+ * @param cb The callback, receives `value`, `index`
+ * @return The new object
+ */
+export function revalue(obj: object, proto: object|null, cb: Function): object
+export function revalue(obj:object, ...args): object {
+    const cb: Function = args.pop()
+    const ret = Object.create(args.length ? args[0] : Object.prototype)
     entries(obj).forEach(([key, value], i) =>
-        // @ts-ignore
         ret[key] = cb(value, i)
     )
     return ret
@@ -240,14 +216,11 @@ export function revalue(obj:object, proto:object|Function|undefined, cb:Function
 /**
  * Return a object with the input's values as key, with `true` as all values.
  * All own and enumerable properties will be iterated, including symbols.
- *
- * @throws {TypeError}
- *
- * @param {object|array} obj The input object
- * @param {object|null} proto The prototype of the hash object, default is Object.prototype
- * @return {object} The result object
+ * @param obj The input object
+ * @param proto The prototype of the hash object, default is Object.prototype
+ * @return The result object
  */
-export function valueHash(obj: object|any[], proto:object|null = Object.prototype): object {
+export function valueHash(obj: object|any[], proto: object|null = Object.prototype): object {
     const vals = Array.isArray(obj) ? obj : values(obj)
     const ret = Object.create(proto)
     vals.forEach((value: any) => ret[value] = true)
@@ -256,29 +229,23 @@ export function valueHash(obj: object|any[], proto:object|null = Object.prototyp
 
 /**
  * Get values, including symbols.
- *
- * @see objectKeys()
- * @throws {TypeError}
- *
- * @param {object} obj The object
- * @param {Boolean} isAll Include non-enumerable keys, default `false`
- * @return {Array} The values
+ * @see objectKeys
+ * @param obj The object
+ * @param isAll Include non-enumerable keys, default `false`
+ * @return The values
  */
-export function values(obj:object, isAll:boolean = false): any[] {
+export function values(obj: object, isAll: boolean = false): any[] {
     return keys(obj, isAll).map(key => obj[key])
 }
 
 /**
  * Update an object with new values. All own and enumerable properties
  * will be iterated, including symbols.
- *
- * @throws {TypeError}
- *
- * @param {object} target The target object to update
- * @param {object} source The source object with the new values
- * @return {object} The target object
+ * @param target The target object to update
+ * @param source The source object with the new values
+ * @return The target object
  */
-export function update(target:any, source:any): object {
+export function update(target: object|null, source: object|null): object {
     target = target || {}
     source = source || {}
     // See test/notes/objects.md for comments about using keys vs entries.

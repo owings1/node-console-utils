@@ -29,10 +29,14 @@ const CrtKey = Symbol('create')
 const defProp = Object.defineProperty
 
 type HashProxyOpts = {
-    transform?: Function
-    filter?: Function
+    transform: Function
+    filter: Function
     proto: object|null
+    enumerable?: boolean
 }
+
+type KeyPath = string|symbol|Array<string|symbol>
+type Key = string|symbol
 
 export default class HashProxy {
 
@@ -40,6 +44,7 @@ export default class HashProxy {
     target: object
     ingress: object
     opts: HashProxyOpts
+
     static create(source: object, opts: HashProxyOpts) {
         checkArg(source, 'source', 'object', isObject)
         if (opts) {
@@ -65,7 +70,7 @@ export default class HashProxy {
         }
         const {ingress, target} = build(source, opts)
         defProp(target, CrtKey, {value: true})
-        return new HashProxy(source, target, ingress, opts)//{ingress, target}
+        return new HashProxy(source, target, ingress, opts)
     }
 
     constructor(source: object, target: object, ingress: object, opts: HashProxyOpts) {
@@ -79,7 +84,7 @@ export default class HashProxy {
         this.opts = opts
     }
 
-    createEntry(kpath, value) {
+    createEntry(kpath: KeyPath, value: any) {
         checkEntry(kpath, value)
         kpath = keyPath(kpath)
         if (hasKey(this.source, kpath)) {
@@ -87,6 +92,9 @@ export default class HashProxy {
         }
         const {opts} = this
         const leafKey = kpath.pop()
+        if (leafKey === undefined) {
+            throw new TypeError('Empty keypath')
+        }
         let {source, target, ingress} = this
         for (let i = 0; i < kpath.length; ++i) {
             const key = kpath[i]
@@ -114,7 +122,7 @@ export default class HashProxy {
         ingress[leafKey] = value
     }
 
-    upsertEntry(kpath, value) {
+    upsertEntry(kpath: KeyPath, value: any) {
         checkEntry(kpath, value)
         kpath = keyPath(kpath)
         if (!hasKey(this.source, kpath)) {
@@ -129,11 +137,11 @@ export default class HashProxy {
 
 export {HashProxy}
 
-function build(source, opts) {
+function build(source: object, opts: HashProxyOpts): {ingress: object, target: object} {
     const ingress = Object.create(opts.proto)
     const target = Object.create(opts.proto)
     Object.keys(source).forEach(key => {
-        let inProp, tgtProp
+        let inProp: object, tgtProp: object
         if (isObject(source[key])) {
             const next = build(source[key], opts)
             tgtProp = getTargetNodeProp(next.target)
@@ -148,7 +156,7 @@ function build(source, opts) {
     return {ingress, target}
 }
 
-function getIngressNodeProp(srcNode, nextIn, opts) {
+function getIngressNodeProp(srcNode: object, nextIn: object, opts: HashProxyOpts) {
     const enumerable = Boolean(opts.enumerable)
     return {
         enumerable,
@@ -166,7 +174,7 @@ function getIngressNodeProp(srcNode, nextIn, opts) {
     }
 }
 
-function getTargetNodeProp(nextTarget) {
+function getTargetNodeProp(nextTarget: object) {
     return {
         value: nextTarget,
         enumerable: true,
@@ -174,7 +182,7 @@ function getTargetNodeProp(nextTarget) {
 }
 
 // src, tgt are already resolved to depth - 1
-function getIngressLeafProp(srcLeaf, tgtLeaf, key, opts) {
+function getIngressLeafProp(srcLeaf: object, tgtLeaf: object, key: Key, opts: HashProxyOpts) {
     const enumerable = Boolean(opts.enumerable)
     const {filter, transform} = opts
     return {
@@ -190,7 +198,7 @@ function getIngressLeafProp(srcLeaf, tgtLeaf, key, opts) {
     }
 }
 
-function getTargetLeafProp(srcLeaf, key, opts) {
+function getTargetLeafProp(srcLeaf: object, key: Key, opts: HashProxyOpts) {
     const {transform} = opts
     return {
         value: transform(srcLeaf[key]),
@@ -201,7 +209,7 @@ function getTargetLeafProp(srcLeaf, key, opts) {
     }
 }
 
-function passthru(value) {
+function passthru<T>(value: T): T {
     return value
 }
 
@@ -209,13 +217,13 @@ function truth() {
     return true
 }
 
-function checkArg(value, name, desc, check) {
+function checkArg(value: any, name: string, desc: string, check: (value:any) => any) {
     if (!check(value)) {
         throw new TypeError(`Argument (${name}) must be a ${desc}`)
     }
 }
 
-function checkEntry(kpath, value) {
+function checkEntry(kpath: any, value: any) {
     kpath = keyPath(kpath)
     if (!kpath) {
         throw new TypeError(`Bad keypath ${kpath}`)

@@ -24,7 +24,7 @@
  */
 import * as ansi from '../ansi.js'
 import {isBoolean, isPromise, isWriteableStream} from '../types.js'
-
+import {Stream} from 'stream'
 export default class Screen {
 
     opts: {
@@ -33,19 +33,19 @@ export default class Screen {
     }
     str: object
 
-    constructor(opts) {
+    constructor(opts: Stream|boolean|object) {
         if (isWriteableStream(opts)) {
             opts = {output: opts}
         } else if (isBoolean(opts)) {
             opts = {isAnsi: opts}
         }
+        // @ts-ignore
         this.opts = {isAnsi: true, output: process.stdout, ...opts}
         this.str = ansi //{...ansi}
     }
 
     /**
-     * @param {String} str
-     * @return {Screen} self
+     * @param str
      */
     write(str: string) {
         this.output.write(str)

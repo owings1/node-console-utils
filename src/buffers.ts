@@ -25,12 +25,10 @@
 import {isFunction} from './types.js'
 
 /**
- * @throws {TypeError}
- * @param {Buffer} a The first bufffer
- * @param {Buffer} b The second buffer
- * @return {boolean}
+ * @param a The first bufffer
+ * @param b The second buffer
  */
-export function equal(a:Buffer, b:Buffer):boolean {
+export function equal(a: Buffer, b: Buffer): boolean {
     if (isFunction(a.equals)) {
         return a.equals(b)
     }

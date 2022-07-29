@@ -27,9 +27,9 @@ import {add} from './operators.js'
 /**
  * Append all values to an array
  *
- * @param {Array} arr The array to push to
- * @param {Array} values The values to push
- * @return {Array} The input array
+ * @param arr The array to push to
+ * @param values The values to push
+ * @return The input array
  */
 export function extend<T>(arr: T[], values: any[]): T[] {
     values.forEach(value => arr.push(value))
@@ -43,15 +43,14 @@ export function extend<T>(arr: T[], values: any[]): T[] {
  * If no filter is specified, the array is split in the middle, left-biased
  * for odd-lengthed arrays.
  * 
- * @param {Array} arr The array to bisect
- * @param {Function} filter The filter function
- * @return {array[]} An array of two arrays
+ * @param arr The array to bisect
+ * @param filter The filter function
+ * @return An array of two arrays
  */
-export function bisect<T>(arr: T[], filter?: (...args:any) => any): T[][] {
+export function bisect<T>(arr: T[], filter?: (...args: any) => any): T[][] {
     filter = filter || defaultBisectFilter
-    const result = [[], []]
+    const result: T[][] = [[], []]
     arr.forEach((value, i, arr) => {
-        // @ts-ignore
         result[Number(Boolean(filter(value, i, arr)))].push(value)
     })
     return result
@@ -60,8 +59,8 @@ export function bisect<T>(arr: T[], filter?: (...args:any) => any): T[][] {
 /**
  * Get the last element of an array
  *
- * @param {Array} arr The array
- * @return {*} The last element or undefined
+ * @param arr The array
+ * @return The last element or undefined
  */
 export function last<T>(arr: T[]): T|undefined {
     return arr[arr.length - 1]
@@ -70,9 +69,9 @@ export function last<T>(arr: T[]): T|undefined {
 /**
  * Normalize negative index to positive
  * 
- * @param {Array} arr The array
- * @param {Number} index The relative or absolute index
- * @return {Number} Normalized index
+ * @param arr The array
+ * @param index The relative or absolute index
+ * @return Normalized index
  */
 export function absindex(arr: any[], index: number): number {
     if (index < 0) {
@@ -84,9 +83,9 @@ export function absindex(arr: any[], index: number): number {
 /**
  * Get at index, supports negative index
  * 
- * @param {Array} arr The array
- * @param {Number} index The index
- * @return {*}
+ * @param arr The array
+ * @param index The index
+ * @return The value at the index
  */
 export function at<T>(arr: T[], index: number): T|undefined {
     return arr[absindex(arr, index)]
@@ -95,8 +94,8 @@ export function at<T>(arr: T[], index: number): T|undefined {
 /**
  * Sum all numbers in the array
  *
- * @param {Number[]} arr The input array
- * @return {Number} The result sum
+ * @param arr The input array
+ * @return The result sum
  */
 export function sum(arr: number[]): number {
     return arr.reduce(add, 0)
@@ -105,11 +104,11 @@ export function sum(arr: number[]): number {
 /**
  * Find the closest value to `target` in a sorted array
  * 
- * @param {Number} target The search value
- * @param {Number[]} arr The array to search
- * @return {Number|undefined} The closest value or undefined if array is empty
+ * @param target The search value
+ * @param arr The array to search
+ * @return The closest value or undefined if array is empty
  */
-export function closest(target:number, arr:number[]): number|undefined {
+export function closest(target: number, arr: number[]): number|undefined {
     const index = closestIndex(target, arr)
     if (index !== undefined) {
         return arr[index]
@@ -119,11 +118,11 @@ export function closest(target:number, arr:number[]): number|undefined {
 /**
  * Find the index of the closest value to `target` in a sorted array
  * 
- * @param {Number} target The search value
- * @param {Number[]} arr The array to search
- * @return {Number|undefined} The closest index or undefined if array is empty
+ * @param target The search value
+ * @param arr The array to search
+ * @return The closest index or undefined if array is empty
  */
-export function closestIndex(target:number, arr:number[]): number|undefined {
+export function closestIndex(target: number, arr: number[]): number|undefined {
     const {length} = arr
     if (length === 0) {
         return
@@ -165,10 +164,10 @@ export function closestIndex(target:number, arr:number[]): number|undefined {
 }
 
 /**
- * Shuffle an array.
+ * Shuffle an array
  * 
- * @param {Array} arr The array.
- * @return {Array} The array.
+ * @param arr The array
+ * @return The array
  */
 export function shuffle<T>(arr: T[]): T[] {
     for (let i = arr.length - 1; i > 0; i--) {
@@ -180,13 +179,7 @@ export function shuffle<T>(arr: T[]): T[] {
     return arr
 }
 
-/**
- * @param {*} value
- * @param {Number} index
- * @param {Array} arr
- * @return {Boolean}
- */
-function defaultBisectFilter(value:any, index:number, arr: any[]): boolean {
+function defaultBisectFilter<T>(value: T, index: number, arr: T[]): boolean {
     // bias left
     return index >= Math.ceil(arr.length / 2)
 }
