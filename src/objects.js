@@ -34,14 +34,14 @@ export {isObject}
 /**
  * Get entries, including symbols.
  *
- * @see `objectKeys()`
+ * @see objectKeys()
  * @throws {TypeError}
  *
  * @param {object} obj The object
  * @param {Boolean} isAll Include non-enumerable keys, default `false`
  * @return {array} The entries
  */
-export function entries(obj, isAll = false) {//objectEntries
+export function entries(obj, isAll = false) {
     return keys(obj, isAll).map(key => [key, obj[key]])
 }
 
@@ -60,12 +60,12 @@ export function hasKey(obj, key) {
  * Check whether an object is empty. Returns `false` if the parameter is
  * not an object. All enumerable properties are checked, including symbols.
  *
- * @see `isNullOrEmpty()`
+ * @see isNullOrEmpty()
  *
  * @param {*} obj The input to check
  * @return {Boolean}
  */
-export function isEmpty(obj) {//isEmptyObject
+export function isEmpty(obj) {
     if (isObject(obj) === false) {
         return false
     }
@@ -87,7 +87,7 @@ export function isNonEmpty(obj) {//isNonEmptyObject
  * @param {object} arg
  * @return {Boolean}
  */
-export function isNullOrEmpty(arg) {//isNullOrEmptyObject
+export function isNullOrEmpty(arg) {
     return arg === null || typeof arg === 'undefined' || isEmpty(arg)
 }
 
@@ -95,11 +95,13 @@ export function isNullOrEmpty(arg) {//isNullOrEmptyObject
  * @param {String|String[]|Symbol} kpath
  * @return {String[]}
  */
-export function keyPath(kpath) {//getKeyPath
+export function keyPath(kpath) {
     if (isArray(kpath)) {
+        // @ts-ignore
         return kpath
     }
     if (isSymbol(kpath)) {
+        // @ts-ignore
         return [kpath]
     }
     return String(kpath).split('.')
@@ -114,7 +116,7 @@ export function keyPath(kpath) {//getKeyPath
  * @param {Boolean} isAll Include non-enumerable keys, default `false`
  * @return {String[]} The keys
  */
-export function keys(obj, isAll = false) {//objectKeys
+export function keys(obj, isAll = false) {
     const keys = []
     getOwnNames(obj).forEach(key => {
         if (isAll || enumable(obj, key)) {
@@ -186,17 +188,23 @@ export function lset(obj, path, value, proto = Object.prototype) {
  * enumerable properties will be iterated, including symbols.
  * 
  * @throws {TypeError}
- *
+ * 
  * @param {object} obj Source object
- * @param {object|null} proto The prototype for the new object, default is `Object.prototype`
- * @param {Function} cb The callback, receives `key`, `index`
+ * @param {object|Function} proto The prototype for the new object, default is `Object.prototype`
+ * @param {Function|undefined} cb The callback, receives `key`, `index`
  * @return {object} The new object
  */
-export function rekey(obj, ...args) {
-    const cb = args.pop()
-    const proto = args.length === 1 ? args[0] : Object.prototype
+export function rekey(obj, proto, cb) {
+    if (proto === undefined) {
+        throw new TypeError('Missing second argument')
+    }
+    if (cb === undefined) {
+        cb = proto
+        proto = Object.prototype
+    }
     const ret = Object.create(proto)
     entries(obj).forEach(([key, value], i) =>
+        // @ts-ignore
         ret[cb(key, i)] = value
     )
     return ret
@@ -209,15 +217,21 @@ export function rekey(obj, ...args) {
  * @throws {TypeError}
  *
  * @param {object} obj Source object
- * @param {object|null} proto The prototype for the new object, default is `Object.prototype`
- * @param {Function} cb The callback, receives `value`, `index`
+ * @param {object|Function} proto The prototype for the new object, default is `Object.prototype`
+ * @param {Function|undefined} cb The callback, receives `value`, `index`
  * @return {object} The new object
  */
-export function revalue(obj, ...args) {
-    const cb = args.pop()
-    const proto = args.length === 1 ? args[0] : Object.prototype
+export function revalue(obj, proto, cb) {
+    if (proto === undefined) {
+        throw new TypeError('Missing second argument')
+    }
+    if (cb === undefined) {
+        cb = proto
+        proto = Object.prototype
+    }
     const ret = Object.create(proto)
     entries(obj).forEach(([key, value], i) =>
+        // @ts-ignore
         ret[key] = cb(value, i)
     )
     return ret
@@ -243,7 +257,7 @@ export function valueHash(obj, proto = Object.prototype) {
 /**
  * Get values, including symbols.
  *
- * @see `objectKeys()`
+ * @see objectKeys()
  * @throws {TypeError}
  *
  * @param {object} obj The object

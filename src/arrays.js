@@ -43,15 +43,16 @@ export function extend(arr, values) {
  * If no filter is specified, the array is split in the middle, left-biased
  * for odd-lengthed arrays.
  * 
- * @param {Array} arr The array to bisec
- * @param {filter} function The filter function
+ * @param {Array} arr The array to bisect
+ * @param {Function} filter The filter function
  * @return {array[]} An array of two arrays
  */
-export function bisect(arr, filter = undefined) {
+export function bisect(arr, filter) {
     filter = filter || defaultBisectFilter
     const result = [[], []]
-    arr.forEach((value, ...eargs) => {
-        result[Number(Boolean(filter(value, ...eargs)))].push(value)
+    arr.forEach((value, i, arr) => {
+        // @ts-ignore
+        result[Number(Boolean(filter(value, i, arr)))].push(value)
     })
     return result
 }
@@ -131,7 +132,7 @@ export function closestIndex(target, arr) {
         return 0
     }
     target = Number(target)
-    let minDiff = Infinity
+    let min = Infinity
     let low = 0
     let high = length - 1
     let index
@@ -139,15 +140,15 @@ export function closestIndex(target, arr) {
         const mid = Math.floor((low + high) / 2)
         if (mid + 1 < length) {
             let diff = Math.abs(arr[mid + 1] - target)
-            if (diff < minDiff) {
-                minDiff = diff
+            if (diff < min) {
+                min = diff
                 index = mid + 1
             }
         }
         if (mid > 0) {
             let diff = Math.abs(arr[mid - 1] - target)
-            if (diff < minDiff) {
-                minDiff = diff
+            if (diff < min) {
+                min = diff
                 index = mid - 1
             }
         }

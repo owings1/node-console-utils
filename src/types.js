@@ -286,6 +286,7 @@ export function isPromise(arg) {
  * @return {Boolean} The result
  */
 export function isReadableStream(arg) {
+    // @ts-ignore
     return arg instanceof EventEmitter && isFunction(arg.read)
 }
 
@@ -358,7 +359,9 @@ export function isSymbol(arg) {
 export function isWriteableStream(arg) {
     return (
         arg instanceof EventEmitter &&
+        // @ts-ignore
         isFunction(arg.write) &&
+        // @ts-ignore
         isFunction(arg.end)
     )
 }
@@ -402,28 +405,28 @@ export function typeOf(arg) {
 
 export {isWriteableStream as isWritableStream}
 
-/** @deprecated */
-export const cast = {
-    toArray: castToArray,
-}
-/** @deprecated */
-export const is = {
-    array: isArray,
-    boolean: isBoolean,
-    buffer: isBuffer,
-    class: isClass,
-    error: isError,
-    function: isFunction,
-    iterable: isIterable,
-    number: isNumber,
-    object: isObject,
-    plainObject: isPlainObject,
-    promise: isPromise,
-    readableStream: isReadableStream,
-    regex: isRegex,
-    stream: isStream,
-    string: isString,
-    symbol: isSymbol,
-    writableStream: isWriteableStream,
-    writeableStream: isWriteableStream,
-}
+// /** @deprecated */
+// export const cast = {
+//     toArray: castToArray,
+// }
+// /** @deprecated */
+// export const is = {
+//     array: isArray,
+//     boolean: isBoolean,
+//     buffer: isBuffer,
+//     class: isClass,
+//     error: isError,
+//     function: isFunction,
+//     iterable: isIterable,
+//     number: isNumber,
+//     object: isObject,
+//     plainObject: isPlainObject,
+//     promise: isPromise,
+//     readableStream: isReadableStream,
+//     regex: isRegex,
+//     stream: isStream,
+//     string: isString,
+//     symbol: isSymbol,
+//     writableStream: isWriteableStream,
+//     writeableStream: isWriteableStream,
+// }

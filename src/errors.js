@@ -45,7 +45,9 @@ import {isFunction} from './types.js'
  * @return {string} The normalized message
  */
 export function getRawMessage(err) {
+    // @ts-ignore
     if (isFunction(err.inspect)) {
+        // @ts-ignore
         return err.inspect()
     }
     if (err.message && isFunction(err.message.toString)) {
@@ -60,7 +62,7 @@ export function getRawMessage(err) {
  *
  * @throws {TypeError}
  *
- * @param {Error} The error to parse
+ * @param {Error} err The error to parse
  * @return {object} Strings {stack, message, rawMessage}
  */
 export function parseStack(err) {

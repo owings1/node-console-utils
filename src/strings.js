@@ -55,7 +55,7 @@ export function breakLine(str, maxWidth, opts = {}) {
     str = str.replace(regexes.lineBreak.global, '\n')
     // Initialize variables.
     const lines = [], bgUnclosed = []
-    let line = '', lineWidth = 0, index = 0, ansiMatch, ansiIndex
+    let line = '', lineWidth = 0, index = 0, ansiMatch, ansiIndex = NaN
     // Routine to close background style if needed, push and reset the line
     // with the open sequences (if any), and reset lineWidth.
     const push = () => {
@@ -67,7 +67,8 @@ export function breakLine(str, maxWidth, opts = {}) {
     // Routine to search for the next ANSI sequences.
     const searchAnsi = () => {
         ansiMatch = str.substring(index).match(regexes.ansi.consec)
-        ansiIndex = ansiMatch ? ansiMatch.index + index : null
+        // @ts-ignore
+        ansiIndex = ansiMatch ? ansiMatch.index + index : NaN
     }
     // Prime the first ANSI match. When a match fails, don't check the
     // regex again.
@@ -76,7 +77,8 @@ export function breakLine(str, maxWidth, opts = {}) {
         if (ansiIndex === index) {
             // ANSI segments have no width. Add the match to the line and
             // advance the index.
-            const [ansi] = ansiMatch
+            // @ts-ignore
+            const ansi = ansiMatch[0]
             line += ansi
             index += ansi.length
             // Track background open sequences so we can close and reopen
@@ -104,6 +106,9 @@ export function breakLine(str, maxWidth, opts = {}) {
             searchAnsi()
         }
         const code = str.codePointAt(index)
+        if (code === undefined) {
+            continue
+        }
         if (code === 0x0A) {
             // Line break.
             push()
@@ -159,18 +164,36 @@ export function breakLine(str, maxWidth, opts = {}) {
     return lines
 }
 
+/**
+ * @param {String[]} lines
+ * @param {Number} width
+ * @return {String[]}
+ */
 export function breakLines(lines, width) {
-    return lines.map(line => breakLine(line, width))
+    return lines.map(line => breakLine(line, width)).flat()
 }
 
+/**
+ * @param {String} content
+ * @param {Number} width
+ * @return {String}
+ */
+export function forceLineReturn(content, width) {
+    return breakLines(content.split('\n'), width).flat().join('\n')
+}
+
+/**
+ * @param {...String|String[]} args
+ * @return {String}
+ */
 export function cat(...args) {
     return args.flat().join('')
 }
 
+
 /**
  * String ends with. Every string ends with the empty string.
  *
- * @throws {TypeError}
  * @param {String} str String to examine
  * @param {String} srch The end string to search for
  * @return {Boolean}
@@ -182,7 +205,6 @@ export function endsWith(str, srch) {
 /**
  * Escape special regex characters in a string.
  *
- * @throws {TypeError}
  * @param {String} str The string to escape
  * @return {String} The escaped string
  */
@@ -193,7 +215,6 @@ export function escapeRegex(str) {
 /**
  * Lowercase the first letter of a string.
  *
- * @throws {TypeError}
  * @param {String} str The input string
  * @return {String} The result string
  */
@@ -204,7 +225,6 @@ export function lcfirst(str) {
 /**
  * Strip ANSI sequences from a string.
  *
- * @throws {TypeError}
  * @param {String} str The input string
  * @return {String} The result string
  */
@@ -215,7 +235,6 @@ export function stripAnsi(str) {
 /**
  * Capitalize the first letter of a string.
  *
- * @throws {TypeError}
  * @param {String} str The input string
  * @return {String} The result string
  */
@@ -246,6 +265,9 @@ export function stringWidth(str) {
     let width = 0
     for (let index = 0; index < str.length; ++index) {
         const codePoint = str.codePointAt(index)
+        if (codePoint === undefined) {
+            continue
+        }
         // Ignore control characters
         if (codes.isControl(codePoint)) {
             continue
@@ -265,6 +287,3 @@ export function stringWidth(str) {
     }
     return width
 }
-
-export const widthOf = stringWidth
-
