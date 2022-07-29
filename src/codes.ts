@@ -63,7 +63,7 @@ export function isBreakingSpace(cp: number): boolean {
 /**
  * Diacritics are always added after the main character.
  * Code extracted from string-width, (C) Sindre Sorhus, MIT License.
- * @param {Number} cp The code point
+ * @param cp The code point
  */
 export function isCombining(cp: number): boolean {
     return Number.isInteger(cp) && cp >= 0x300 && cp <= 0x36F
@@ -72,7 +72,7 @@ export function isCombining(cp: number): boolean {
 /**
  * Control codes are not visually represented.
  * Code extracted from string-width, (C) Sindre Sorhus, MIT License.
- * @param {Number} cp The code point
+ * @param cp The code point
  */
 export function isControl(cp: number): boolean {
     return Number.isInteger(cp) && (cp <= 0x1F || (cp >= 0x7F && cp <= 0x9F))
@@ -81,7 +81,7 @@ export function isControl(cp: number): boolean {
 /**
  * Whether a codepoint represents a non-breaking space.
  * @see https://www.fileformat.info/info/unicode/category/Zs/list.htm
- * @param {Number} cp The code point
+ * @param cp The code point
  */
 export function isNonBreakingSpace(cp: number): boolean {
     return Number.isInteger(cp) && (
@@ -95,7 +95,7 @@ export function isNonBreakingSpace(cp: number): boolean {
 /**
  * Whether a codepoint represents a space.
  * @see https://www.fileformat.info/info/unicode/category/Zs/list.htm
- * @param {Number} cp The code point
+ * @param cp The code point
  */
 export function isSpace(cp: number): boolean {
     return isNonBreakingSpace(cp) || isBreakingSpace(cp)
@@ -104,7 +104,7 @@ export function isSpace(cp: number): boolean {
 /**
  * Surrogates come in pairs, e.g. emojis.
  * Code extracted from string-width, (C) Sindre Sorhus, MIT License.
- * @param {Number} cp The code point
+ * @param cp The code point
  */
 export function isSurrogate(cp: number): boolean {
     return Number.isInteger(cp) && cp > 0xFFFF
@@ -118,7 +118,7 @@ export function isSurrogate(cp: number): boolean {
  * ------------
  * Code points are derived from:
  * https://unicode.org/Public/UNIDATA/EastAsianWidth.txt
- * @param {Number} cp The code point
+ * @param cp The code point
  */
 export function isFullwidth(cp: number): boolean {
     return Number.isInteger(cp) && cp >= 0x1100 && (
@@ -155,7 +155,7 @@ export function isFullwidth(cp: number): boolean {
 
 /**
  * @see https://unicode.org/reports/tr29/
- * @param {Number} cp The code point
+ * @param cp The code point
  */
 export function isWordBreaking(cp: number): boolean {
     return isBreakingSpace(cp) || isBreakingDash(cp)
@@ -163,7 +163,7 @@ export function isWordBreaking(cp: number): boolean {
 
 /**
  * @see https://www.compart.com/en/unicode/category/Pd
- * @param {Number} cp The code point
+ * @param cp The code point
  */
 export function isBreakingDash(cp: number): boolean {
     return Number.isInteger(cp) && (

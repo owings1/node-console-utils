@@ -81,8 +81,8 @@ const getProto = Object.getPrototypeOf
  * an empty array is returned, otherwise a singleton array with the parameter
  * is return.
  *
- * @param {*} val The parameter to cast
- * @return {Array} The parameter if it is an array, or a new array
+ * @param val The parameter to cast
+ * @return The parameter if it is an array, or a new array
  */
 export function castToArray(val: any): any[] {
     if (isArray(val)) {
@@ -97,9 +97,8 @@ export function castToArray(val: any): any[] {
 
 /**
  * Get class/prototype ancestors
- * 
- * @param {Function} cls
- * @return {Function[]}
+ * @param cls The class
+ * @return The subclasses
  */
 export function getSubclasses(cls: Function): Function[] {
     const ancs: Function[] = []
@@ -114,43 +113,39 @@ export function getSubclasses(cls: Function): Function[] {
 
 /**
  * Whether the parameter is an array.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isArray(arg:any): boolean {
+export function isArray(arg: any): boolean {
     return Array.isArray(arg)
 }
 
 /**
  * Whether the parameter is a boolean. Returns false if it was constructed
  * with the `new` keyword.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isBoolean(arg:any): boolean {
+export function isBoolean(arg: any): boolean {
     return arg === true || arg === false
 }
 
 /**
- * Whether the parameter is a buffer.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * Whether the parameter is a buffer
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isBuffer(arg:any): boolean {
+export function isBuffer(arg: any): boolean {
     return Buffer.isBuffer(arg)
 }
 
 /**
  * Whether the parameter is probably a class. This tries to determine
  * whether something *must* be constructed with the `new` keyword.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isClass(arg:any): boolean {
+export function isClass(arg: any): boolean {
     if (!isFunction(arg)) {
         return false
     }
@@ -166,47 +161,43 @@ export function isClass(arg:any): boolean {
 }
 
 /**
- * Whether the parameter is an instance of Error.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * Whether the parameter is an instance of Error
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isError(arg:any): boolean {
+export function isError(arg: any): boolean {
     return arg instanceof Error
 }
 
 /**
- * Whether the parameter is a function.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * Whether the parameter is a function
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isFunction(arg:any): boolean {
+export function isFunction(arg: any): boolean {
     return typeof arg === 'function'
 }
 
 /**
- * Whether the parameter is iterable. NB: an object is not iterable.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * Whether the parameter is iterable. NB: an object is not iterable
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isIterable(arg:any): boolean {
+export function isIterable(arg: any): boolean {
     return arg != null && isFunction(arg[Symbol.iterator])
 }
 
 /**
- * Whether the parameter is a number.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * Whether the parameter is a number
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isNumber(arg:any): boolean {
+export function isNumber(arg: any): boolean {
     return typeof arg === 'number'
 }
 
 /**
- * Whether the parameter is an object.
+ * Whether the parameter is an object
  *
  * Returns false for: buffer, null, function, new String/Boolean
  * Returns true for: stream
@@ -218,15 +209,15 @@ export function isNumber(arg:any): boolean {
  * Released under the MIT License.
  * See file NOTICE.md for details and full license.
  *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isObject(arg:any): boolean {
+export function isObject(arg: any): boolean {
     return Object.prototype.toString.call(arg) === '[object Object]'
 }
 
 /**
- * Whether the parameter is probably a "plain" object.
+ * Whether the parameter is probably a "plain" object
  *
  * Portions from:
  * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
@@ -242,8 +233,8 @@ export function isObject(arg:any): boolean {
  *
  * See file NOTICE.md for details and full licenses.
  *
- * @param {*} o The parameter to check
- * @return {Boolean} The result
+ * @param arg The parameter to check
+ * @return The result
  */
 export function isPlainObject(o:any): boolean {
     /* begin is-plain-object code: */
@@ -269,63 +260,56 @@ export function isPlainObject(o:any): boolean {
 }
 
 /**
- * Whether the parameter is a Promise.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * Whether the parameter is a Promise
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isPromise(arg:any): boolean {
+export function isPromise(arg: any): boolean {
     return arg instanceof Promise
 }
 
 /**
- * Whether the parameter is a readable stream.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * Whether the parameter is a readable stream
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isReadableStream(arg:any): boolean {
+export function isReadableStream(arg: any): boolean {
     // @ts-ignore
     return arg instanceof EventEmitter && isFunction(arg.read)
 }
 
 /**
- * Whether the parameter is a RegExp.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * Whether the parameter is a RegExp
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isRegex(arg:any): boolean {
+export function isRegex(arg: any): boolean {
     return arg instanceof RegExp
 }
 
 /**
- * Whether the parameter is a stream.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * Whether the parameter is a stream
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isStream(arg:any): boolean {
+export function isStream(arg: any): boolean {
     return isReadableStream(arg) || isWriteableStream(arg)
 }
 
 /**
  * Whether the parameter is a string. Returns false if it was constructed
  * with the `new` keyword.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isString(arg) {
+export function isString(arg: any): boolean {
     return typeof arg === 'string'
 }
 
 /**
  * Check if a class is a subclass of another
- * 
- * @param {Function} cls
- * @param {Function} parent
- * @return {Boolean}
+ * @param cls
+ * @param parent
  */
 export function isSubclass(cls: Function, parent: Function): boolean {
     if (!isFunction(cls) || !isFunction(parent)) {
@@ -341,21 +325,19 @@ export function isSubclass(cls: Function, parent: Function): boolean {
 
 /**
  * Whether the parameter is a Symbol.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isSymbol(arg:any): boolean {
+export function isSymbol(arg: any): boolean {
     return typeof arg === 'symbol'
 }
 
 /**
  * Whether the parameter is a writable (writeable) stream.
- *
- * @param {*} arg The parameter to check
- * @return {Boolean} The result
+ * @param arg The parameter to check
+ * @return The result
  */
-export function isWriteableStream(arg:any): boolean {
+export function isWriteableStream(arg: any): boolean {
     return (
         arg instanceof EventEmitter &&
         // @ts-ignore
@@ -370,10 +352,10 @@ export function isWriteableStream(arg:any): boolean {
  * value of `typeof arg`, else one of the following: 'array', 'buffer', 'class',
  * 'object', 'null', 'regex', 'promise', or 'stream'.
  *
- * @param {*} arg The parameter to check
- * @return {String} The type
+ * @param arg The parameter to check
+ * @return The type
  */
-export function typeOf(arg:any): string {
+export function typeOf(arg: any): string {
     if (arg === null) {
         return 'null'
     }

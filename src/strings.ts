@@ -40,12 +40,12 @@ const BG_CLOSE = '\x1B[49m'
 
 /**
  *
- * @param {String} str The line to break
- * @param {Number} maxWidth The max width
- * @param {Object} opts The options {tolerance=0, trimBreak=false}
- * @param {Number} opts.tolerance
- * @param {Boolean} opts.trimBreak
- * @return {String[]} The lines
+ * @param str The line to break
+ * @param maxWidth The max width
+ * @param opts The options {tolerance=0, trimBreak=false}
+ * @param opts.tolerance
+ * @param opts.trimBreak
+ * @return The lines
  */
 export function breakLine(str: string, maxWidth: number, opts?: any): string[] {
     if (!str || !Number.isInteger(maxWidth) || maxWidth < 2) {
@@ -165,26 +165,23 @@ export function breakLine(str: string, maxWidth: number, opts?: any): string[] {
 }
 
 /**
- * @param {String[]} lines
- * @param {Number} width
- * @return {String[]}
+ * @param lines
+ * @param width
  */
 export function breakLines(lines: string[], width: number): string[] {
     return lines.map(line => breakLine(line, width)).flat()
 }
 
 /**
- * @param {String} content
- * @param {Number} width
- * @return {String}
+ * @param content
+ * @param width
  */
 export function forceLineReturn(content: string, width: number): string {
     return breakLines(content.split('\n'), width).flat().join('\n')
 }
 
 /**
- * @param {...String|String[]} args
- * @return {String}
+ * @param args
  */
 export function cat(...args: (string | string[])[]): string {
     return args.flat().join('')
