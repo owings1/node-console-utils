@@ -40,6 +40,7 @@ describe('buffers', () => {
         it('should accept buffer with null equals', function () {
             const a = Buffer.from('a')
             const b = Buffer.from('a')
+            // @ts-ignore
             a.equals = b.equals = null
             const res = buffers.equal(a, b)
             expect(res).to.equal(true)
@@ -48,7 +49,9 @@ describe('buffers', () => {
         it('should return true for buffer with null equals,compare', function () {
             const a = Buffer.from('a')
             const b = Buffer.from('a')
+            // @ts-ignore
             a.equals = b.equals = null
+            // @ts-ignore
             a.compare = b.compare = null
             const res = buffers.equal(a, b)
             expect(res).to.equal(true)
@@ -57,7 +60,9 @@ describe('buffers', () => {
         it('should return false for buffer with null equals,compare', function () {
             const a = Buffer.from('a')
             const b = Buffer.from('b')
+            // @ts-ignore
             a.equals = b.equals = null
+            // @ts-ignore
             a.compare = b.compare = null
             const res = buffers.equal(a, b)
             expect(res).to.equal(false)

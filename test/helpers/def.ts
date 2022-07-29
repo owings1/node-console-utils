@@ -1,3 +1,4 @@
+// @ts-nocheck 
 import {ger, TestError} from './errors.js'
 import {spread, merge} from './merging.js'
 import {expect} from 'chai'

@@ -23,7 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 import {def} from '../helpers/index.js'
-const {set, test} = def
+const {test} = def
 import {expect} from 'chai'
 
 import * as errors from '../../src/errors.js'
@@ -39,6 +39,7 @@ describe('errors', () => {
 
     def(errors.parseStack, () => {
         it('should return object with rawMessage, message, stack', function () {
+            // @ts-ignore
             const res = errors.parseStack(new Error('test'))
             expect(Object.keys(res).sort()).to.deep.equal(['message', 'rawMessage', 'stack'])
         })

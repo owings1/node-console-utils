@@ -42,20 +42,22 @@ const BG_CLOSE = '\x1B[49m'
  *
  * @param {String} str The line to break
  * @param {Number} maxWidth The max width
- * @param {object} opts The options {tolerance=0, trimBreak=false}
+ * @param {Object} opts The options {tolerance=0, trimBreak=false}
+ * @param {Number} opts.tolerance
+ * @param {Boolean} opts.trimBreak
  * @return {String[]} The lines
  */
-export function breakLine(str, maxWidth, opts = {}) {
+export function breakLine(str: string, maxWidth: number, opts?: any): string[] {
     if (!str || !Number.isInteger(maxWidth) || maxWidth < 2) {
         // Allow for width Infinity, protect againt NaN or < 1.
         return [str]
     }
-    const {tolerance = 0, trimBreak = false} = opts
+    const {tolerance = 0, trimBreak = false} = opts || {}
     // Normalize line breaks.
     str = str.replace(regexes.lineBreak.global, '\n')
     // Initialize variables.
-    const lines = [], bgUnclosed = []
-    let line = '', lineWidth = 0, index = 0, ansiMatch, ansiIndex = NaN
+    const lines: string[] = [], bgUnclosed: string[] = []
+    let line = '', lineWidth = 0, index = 0, ansiMatch, ansiIndex
     // Routine to close background style if needed, push and reset the line
     // with the open sequences (if any), and reset lineWidth.
     const push = () => {
@@ -67,8 +69,7 @@ export function breakLine(str, maxWidth, opts = {}) {
     // Routine to search for the next ANSI sequences.
     const searchAnsi = () => {
         ansiMatch = str.substring(index).match(regexes.ansi.consec)
-        // @ts-ignore
-        ansiIndex = ansiMatch ? ansiMatch.index + index : NaN
+        ansiIndex = ansiMatch ? ansiMatch.index + index : null
     }
     // Prime the first ANSI match. When a match fails, don't check the
     // regex again.
@@ -77,8 +78,7 @@ export function breakLine(str, maxWidth, opts = {}) {
         if (ansiIndex === index) {
             // ANSI segments have no width. Add the match to the line and
             // advance the index.
-            // @ts-ignore
-            const ansi = ansiMatch[0]
+            const [ansi] = ansiMatch
             line += ansi
             index += ansi.length
             // Track background open sequences so we can close and reopen
@@ -169,7 +169,7 @@ export function breakLine(str, maxWidth, opts = {}) {
  * @param {Number} width
  * @return {String[]}
  */
-export function breakLines(lines, width) {
+export function breakLines(lines: string[], width: number): string[] {
     return lines.map(line => breakLine(line, width)).flat()
 }
 
@@ -178,7 +178,7 @@ export function breakLines(lines, width) {
  * @param {Number} width
  * @return {String}
  */
-export function forceLineReturn(content, width) {
+export function forceLineReturn(content: string, width: number): string {
     return breakLines(content.split('\n'), width).flat().join('\n')
 }
 
@@ -186,10 +186,9 @@ export function forceLineReturn(content, width) {
  * @param {...String|String[]} args
  * @return {String}
  */
-export function cat(...args) {
+export function cat(...args: (string | string[])[]): string {
     return args.flat().join('')
 }
-
 
 /**
  * String ends with. Every string ends with the empty string.
@@ -198,7 +197,7 @@ export function cat(...args) {
  * @param {String} srch The end string to search for
  * @return {Boolean}
  */
-export function endsWith(str, srch) {
+export function endsWith(str: string, srch: string): boolean {
     return str.length - str.lastIndexOf(srch) === srch.length
 }
 
@@ -208,7 +207,7 @@ export function endsWith(str, srch) {
  * @param {String} str The string to escape
  * @return {String} The escaped string
  */
-export function escapeRegex(str) {
+export function escapeRegex(str: string): string {
     return str.replace(regexes.special, '\\$&')
 }
 
@@ -218,7 +217,7 @@ export function escapeRegex(str) {
  * @param {String} str The input string
  * @return {String} The result string
  */
-export function lcfirst(str) {
+export function lcfirst(str: string): string {
     return str ? str[0].toLowerCase() + str.substring(1) : str
 }
 
@@ -228,7 +227,7 @@ export function lcfirst(str) {
  * @param {String} str The input string
  * @return {String} The result string
  */
-export function stripAnsi(str) {
+export function stripAnsi(str: string): string {
     return str.replace(regexes.ansi.global, '')
 }
 
@@ -238,7 +237,7 @@ export function stripAnsi(str) {
  * @param {String} str The input string
  * @return {String} The result string
  */
-export function ucfirst(str) {
+export function ucfirst(str: string): string {
     return str ? str[0].toUpperCase() + str.substring(1) : str
 }
 
@@ -253,7 +252,7 @@ export function ucfirst(str) {
  * @param {String} str The string to check
  * @return {Number} The visual width
  */
-export function stringWidth(str) {
+export function stringWidth(str: string): number {
     if (typeof str !== 'string' || str.length === 0) {
         return 0
     }

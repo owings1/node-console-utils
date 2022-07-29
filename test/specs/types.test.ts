@@ -1,3 +1,4 @@
+// @ts-nocheck 
 /**
  * @quale/core - types tests
  *
@@ -24,7 +25,7 @@
  */
 import stream from 'stream'
 import {def, MockOutput} from '../helpers/index.js'
-const {set, test} = def
+const {test} = def
 import {expect} from 'chai'
 
 import * as types from '../../src/types.js'

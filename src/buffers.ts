@@ -1,4 +1,6 @@
 /**
+ * @quale/core - buffer utils
+ *
  * Copyright (C) 2021-2022 Doug Owings
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -20,12 +22,31 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-export class BaseError extends Error {
-    constructor(...args) {
-        super(...args)
-        this.name = this.constructor.name
+import {isFunction} from './types.js'
+
+/**
+ * @throws {TypeError}
+ * @param {Buffer} a The first bufffer
+ * @param {Buffer} b The second buffer
+ * @return {boolean}
+ */
+export function equal(a:Buffer, b:Buffer):boolean {
+    if (isFunction(a.equals)) {
+        return a.equals(b)
     }
+    if (isFunction(a.compare)) {
+        return a.compare(b) == 0
+    }
+    const len = a.length
+    if (len !== b.length) {
+        return false
+    }
+    for (let i = 0; i < len; ++i) {
+        if (a.readUInt8(i) !== b.readUInt8(i)) {
+            return false
+        }
+    }
+    return true
 }
 
-export class KeyExistsError extends BaseError {}
-export class ValueError extends BaseError {}
+export {equal as buffersEqual}

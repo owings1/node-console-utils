@@ -27,6 +27,12 @@ import {isBoolean, isPromise, isWriteableStream} from '../types.js'
 
 export default class Screen {
 
+    opts: {
+        isAnsi: boolean
+        output: any
+    }
+    str: object
+
     constructor(opts) {
         if (isWriteableStream(opts)) {
             opts = {output: opts}
@@ -41,7 +47,7 @@ export default class Screen {
      * @param {String} str
      * @return {Screen} self
      */
-    write(str) {
+    write(str: string) {
         this.output.write(str)
         return this
     }
@@ -73,31 +79,31 @@ export default class Screen {
         return this.output.columns || 256
     }
 
-    up(n) {
+    up(n: number) {
         if (this.isAnsi) {
             this.write(ansi.up(n))
         }
         return this
     }
-    down(n) {
+    down(n: number) {
         if (this.isAnsi) {
             this.write(ansi.down(n))
         }
         return this
     }
-    left(n) {
+    left(n: number) {
         if (this.isAnsi) {
             this.write(ansi.left(n))
         }
         return this
     }
-    right(n) {
+    right(n: number) {
         if (this.isAnsi) {
             this.write(ansi.right(n))
         }
         return this
     }
-    column(n) {
+    column(n: number) {
         if (this.isAnsi) {
             this.write(ansi.column(n))
         }
@@ -109,7 +115,7 @@ export default class Screen {
         }
         return this
     }
-    erase(n) {
+    erase(n: number) {
         if (this.isAnsi) {
             this.write(ansi.erase(n))
         }
@@ -127,19 +133,19 @@ export default class Screen {
         }
         return this
     }
-    moveTo(x, y) {
+    moveTo(x: number, y: number) {
         if (this.isAnsi) {
             this.write(ansi.moveTo(x, y))
         }
         return this
     }
-    writeRows(left, top, height, line) {
+    writeRows(left: number, top: number, height: number, line: string) {
         if (this.isAnsi) {
             this.write(ansi.writeRows(left, top, height, line))
         }
         return this
     }
-    eraseLines(n) {
+    eraseLines(n: number) {
         if (this.isAnsi) {
             this.write(ansi.eraseLines(n))
         }
@@ -172,7 +178,7 @@ export default class Screen {
     /**
      * @param {Function} cb
      */
-    noCursor(cb) {
+    noCursor(cb: () => any) {
         let isAsync = false
         try {
             this.hideCursor()

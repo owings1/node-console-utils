@@ -32,25 +32,18 @@
  * See file NOTICE.md for details and full license.
  * ------------------------------------------------
  */
-import {isFunction} from './types.js'
-
-
 /**
  * Normalize raw error message. Adapted from:
  * https://github.com/mochajs/mocha/blob/e044ef02/lib/reporters/base.js#L245
  *
- * @throws {TypeError}
- *
  * @param {Error} err The error to examine
  * @return {string} The normalized message
  */
-export function getRawMessage(err) {
-    // @ts-ignore
-    if (isFunction(err.inspect)) {
-        // @ts-ignore
+export function getRawMessage(err: { inspect: () => any; message: { toString: () => any } }): string {
+    if (typeof err.inspect === 'function') {
         return err.inspect()
     }
-    if (err.message && isFunction(err.message.toString)) {
+    if (err.message && typeof err.message.toString === 'function') {
         return err.message.toString()
     }
     return ''
@@ -60,13 +53,12 @@ export function getRawMessage(err) {
  * Get normalized message and stack info for an error. Adapted from:
  * https://github.com/mochajs/mocha/blob/e044ef02/lib/reporters/base.js#L223
  *
- * @throws {TypeError}
- *
  * @param {Error} err The error to parse
  * @return {object} Strings {stack, message, rawMessage}
  */
-export function parseStack(err) {
+export function parseStack(err: { stack: any }): object {
     // Normalize raw error message.
+    // @ts-ignore
     const rawMessage = getRawMessage(err)
     let message = ''
     let stack = err.stack || rawMessage
@@ -86,3 +78,12 @@ export function parseStack(err) {
     }
     return {stack, message, rawMessage}
 }
+
+class BaseError extends Error {
+    get name() {
+        return this.constructor.name
+    }
+}
+
+export class KeyExistsError extends BaseError {}
+export class ValueError extends BaseError {}

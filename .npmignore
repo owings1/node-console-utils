@@ -7,4 +7,3 @@ node_modules
 # TS -incremental file
 tsconfig.tsbuildinfo
 /.vscode
-/dist

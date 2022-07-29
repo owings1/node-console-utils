@@ -3,12 +3,16 @@ import * as stream from 'stream'
 import {EventEmitter} from 'events'
 export class MockOutput extends stream.Writable {
 
+    raw: string
+    opts: {debug?: any}
+
     constructor(opts = {}) {
         super()
         this.raw = ''
         this.opts = {...opts}
     }
 
+    // @ts-ignore
     write(chunk) {
         this.raw += chunk
         if (this.debug) {
@@ -16,6 +20,7 @@ export class MockOutput extends stream.Writable {
         }
     }
 
+    // @ts-ignore
     end() {}
 
     get debug() { return Boolean(this.opts.debug) }
@@ -47,6 +52,10 @@ export class MockInput extends EventEmitter {
 }
 
 export class MockReadline extends EventEmitter {
+
+    line: string
+    input: MockInput
+    output: MockOutput
 
     constructor(opts = {}) {
         super()

@@ -84,17 +84,16 @@ const getProto = Object.getPrototypeOf
  * @param {*} val The parameter to cast
  * @return {Array} The parameter if it is an array, or a new array
  */
-export function castToArray(val) {
+export function castToArray(val: any): any[] {
     if (isArray(val)) {
         return val
     }
-    const arr = []
+    const arr: any[] = []
     if (val != null) {
         arr.push(val)
     }
     return arr
 }
-
 
 /**
  * Get class/prototype ancestors
@@ -102,8 +101,8 @@ export function castToArray(val) {
  * @param {Function} cls
  * @return {Function[]}
  */
-export function getSubclasses(cls) {
-    const ancs = []
+export function getSubclasses(cls: Function): Function[] {
+    const ancs: Function[] = []
     if (!isFunction(cls)) {
         return ancs
     }
@@ -119,7 +118,7 @@ export function getSubclasses(cls) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isArray(arg) {
+export function isArray(arg:any): boolean {
     return Array.isArray(arg)
 }
 
@@ -130,7 +129,7 @@ export function isArray(arg) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isBoolean(arg) {
+export function isBoolean(arg:any): boolean {
     return arg === true || arg === false
 }
 
@@ -140,7 +139,7 @@ export function isBoolean(arg) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isBuffer(arg) {
+export function isBuffer(arg:any): boolean {
     return Buffer.isBuffer(arg)
 }
 
@@ -151,7 +150,7 @@ export function isBuffer(arg) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isClass(arg) {
+export function isClass(arg:any): boolean {
     if (!isFunction(arg)) {
         return false
     }
@@ -172,7 +171,7 @@ export function isClass(arg) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isError(arg) {
+export function isError(arg:any): boolean {
     return arg instanceof Error
 }
 
@@ -182,7 +181,7 @@ export function isError(arg) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isFunction(arg) {
+export function isFunction(arg:any): boolean {
     return typeof arg === 'function'
 }
 
@@ -192,7 +191,7 @@ export function isFunction(arg) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isIterable(arg) {
+export function isIterable(arg:any): boolean {
     return arg != null && isFunction(arg[Symbol.iterator])
 }
 
@@ -202,7 +201,7 @@ export function isIterable(arg) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isNumber(arg) {
+export function isNumber(arg:any): boolean {
     return typeof arg === 'number'
 }
 
@@ -222,7 +221,7 @@ export function isNumber(arg) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isObject(arg) {
+export function isObject(arg:any): boolean {
     return Object.prototype.toString.call(arg) === '[object Object]'
 }
 
@@ -246,10 +245,10 @@ export function isObject(arg) {
  * @param {*} o The parameter to check
  * @return {Boolean} The result
  */
-export function isPlainObject(o) {
+export function isPlainObject(o:any): boolean {
     /* begin is-plain-object code: */
-    let ctor
-    let proto
+    let ctor: Function
+    let proto: object
     if (isObject(o) === false) {
         return false
     }
@@ -275,7 +274,7 @@ export function isPlainObject(o) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isPromise(arg) {
+export function isPromise(arg:any): boolean {
     return arg instanceof Promise
 }
 
@@ -285,7 +284,7 @@ export function isPromise(arg) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isReadableStream(arg) {
+export function isReadableStream(arg:any): boolean {
     // @ts-ignore
     return arg instanceof EventEmitter && isFunction(arg.read)
 }
@@ -296,7 +295,7 @@ export function isReadableStream(arg) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isRegex(arg) {
+export function isRegex(arg:any): boolean {
     return arg instanceof RegExp
 }
 
@@ -306,7 +305,7 @@ export function isRegex(arg) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isStream(arg) {
+export function isStream(arg:any): boolean {
     return isReadableStream(arg) || isWriteableStream(arg)
 }
 
@@ -328,7 +327,7 @@ export function isString(arg) {
  * @param {Function} parent
  * @return {Boolean}
  */
-export function isSubclass(cls, parent) {
+export function isSubclass(cls: Function, parent: Function): boolean {
     if (!isFunction(cls) || !isFunction(parent)) {
         return false
     }
@@ -346,7 +345,7 @@ export function isSubclass(cls, parent) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isSymbol(arg) {
+export function isSymbol(arg:any): boolean {
     return typeof arg === 'symbol'
 }
 
@@ -356,7 +355,7 @@ export function isSymbol(arg) {
  * @param {*} arg The parameter to check
  * @return {Boolean} The result
  */
-export function isWriteableStream(arg) {
+export function isWriteableStream(arg:any): boolean {
     return (
         arg instanceof EventEmitter &&
         // @ts-ignore
@@ -374,7 +373,7 @@ export function isWriteableStream(arg) {
  * @param {*} arg The parameter to check
  * @return {String} The type
  */
-export function typeOf(arg) {
+export function typeOf(arg:any): string {
     if (arg === null) {
         return 'null'
     }
@@ -405,28 +404,3 @@ export function typeOf(arg) {
 
 export {isWriteableStream as isWritableStream}
 
-// /** @deprecated */
-// export const cast = {
-//     toArray: castToArray,
-// }
-// /** @deprecated */
-// export const is = {
-//     array: isArray,
-//     boolean: isBoolean,
-//     buffer: isBuffer,
-//     class: isClass,
-//     error: isError,
-//     function: isFunction,
-//     iterable: isIterable,
-//     number: isNumber,
-//     object: isObject,
-//     plainObject: isPlainObject,
-//     promise: isPromise,
-//     readableStream: isReadableStream,
-//     regex: isRegex,
-//     stream: isStream,
-//     string: isString,
-//     symbol: isSymbol,
-//     writableStream: isWriteableStream,
-//     writeableStream: isWriteableStream,
-// }

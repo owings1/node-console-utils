@@ -1,3 +1,4 @@
+// @ts-nocheck 
 import chproc from 'child_process'
 import fs from 'fs'
 import fse from 'fs-extra'

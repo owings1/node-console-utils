@@ -1,3 +1,4 @@
+// @ts-nocheck 
 /**
  * @quale/core - strings tests
  *

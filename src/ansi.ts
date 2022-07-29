@@ -26,48 +26,86 @@ import process from 'process'
 
 const isApple = process.env.TERM_PROGRAM === 'Apple_Terminal'
 
-
-export function up(n) {
+/**
+ * @param {Number} n
+ * @return {String}
+ */
+export function up(n: number): string {
     n = safen(n)
     return n ? `\x1B[${n}A` : ''
 }
 
-export function down(n) {
+/**
+ * @param {Number} n
+ * @return {String}
+ */
+export function down(n: number): string {
     n = safen(n)
     return n ? `\x1B[${n}B` : ''
 }
 
-export function right(n) {
+/**
+ * @param {Number} n
+ * @return {String}
+ */
+export function right(n: number): string {
     n = safen(n)
     return n ? `\x1B[${n}C` : ''
 }
 
-export function left(n) {
+/**
+ * @param {Number} n
+ * @return {String}
+ */
+export function left(n: number): string {
     n = safen(n)
     return n ? `\x1B[${n}D` : ''
 }
 
-export function column(n) {
+/**
+ * @param {Number} n
+ * @return {String}
+ */
+export function column(n: number): string {
     n = safen(n)
     return n ? `\x1B[${n}G` : ''
 }
 
-export function clear() {
+/**
+ * @return {String}
+ */
+export function clear(): string {
     return '\x1B[H\x1B[2J'
 }
 
-export function erase(n) {
+/**
+ * @param {Number} n
+ * @return {String}
+ */
+export function erase(n: number): string {
     n = safen(n)
     return n ? `\x1B[${n}X` : ''
 }
-export function eraseDisplayBelow() {
+
+/**
+ * @return {String}
+ */
+export function eraseDisplayBelow(): string {
     return '\x1B[0J'
 }
-export function eraseLine() {
+
+/**
+ * @return {String}
+ */
+export function eraseLine(): string {
     return '\x1B[2K'
 }
 
-export function eraseLines(n) {
+/**
+ * @param {Number} n
+ * @return {String}
+ */
+export function eraseLines(n: number): string {
     n = safen(n)
     if (!n) {
         return ''
@@ -83,13 +121,25 @@ export function eraseLines(n) {
     return str
 }
 
-export function moveTo(x, y) {
+/**
+ * @param {Number} x
+ * @param {Number} y
+ * @return {String}
+ */
+export function moveTo(x: number, y: number): string {
     x = safen(x) || 1
     y = safen(y) || 1
     return `\x1B[${y};${x}H`
 }
 
-export function writeRows(left, top, height, line) {
+/**
+ * @param {Number} left
+ * @param {Number} top
+ * @param {Number} height
+ * @param {String} line
+ * @return {String}
+ */
+export function writeRows(left: number, top: number, height: number, line: string): string {
     let str = ''
     for (let i = 0; i < height; ++i) {
         str += moveTo(left, top + i)
@@ -98,101 +148,39 @@ export function writeRows(left, top, height, line) {
     return str
 }
 
-export function saveCursor() {
+/**
+ * @return {String}
+ */
+export function saveCursor(): string {
     return isApple ? '\x1B7' : '\x1B[s'
 }
 
-export function restoreCursor() {
+/**
+ * @return {String}
+ */
+export function restoreCursor(): string {
     return isApple ? '\x1B8' : '\x1B[u'
 }
 
-export function hideCursor() {
+/**
+ * @return {String}
+ */
+export function hideCursor(): string {
     return '\x1B[?25l'
 }
-export function showCursor() {
+
+/**
+ * @return {String}
+ */
+export function showCursor(): string {
     return '\x1B[?25h'
 }
-// export const ansi = {
 
-//     up: n => {
-//         n = safen(n)
-//         return n ? `\x1B[${n}A` : ''
-//     },
-
-//     down: n => {
-//         n = safen(n)
-//         return n ? `\x1B[${n}B` : ''
-//     },
-
-//     right: n => {
-//         n = safen(n)
-//         return n ? `\x1B[${n}C` : ''
-//     },
-
-//     left: n => {
-//         n = safen(n)
-//         return n ? `\x1B[${n}D` : ''
-//     },
-
-//     column: n => {
-//         n = safen(n)
-//         return n ? `\x1B[${n}G` : ''
-//     },
-
-//     clear: () => '\x1B[H\x1B[2J',
-
-//     erase: n => {
-//         n = safen(n)
-//         return n ? `\x1B[${n}X` : ''
-//     },
-
-//     eraseDisplayBelow: () => '\x1B[0J',
-
-//     eraseLine: () => '\x1B[2K',
-
-//     eraseLines: n => {
-//         n = safen(n)
-//         if (!n) {
-//             return ''
-//         }
-//         let str = ''
-//         for (let i = 0; i < n; ++i) {
-//             str += ansi.eraseLine()
-//             if (i < n - 1) {
-//                 str += '\x1B[1A'
-//             }
-//         }
-//         str += '\x1B[G'
-//         return str
-//     },
-
-//     moveTo: (x, y) => {
-//         x = safen(x) || 1
-//         y = safen(y) || 1
-//         return `\x1B[${y};${x}H`
-//     },
-
-//     writeRows: (left, top, height, line) => {
-//         let str = ''
-//         for (let i = 0; i < height; ++i) {
-//             str += ansi.moveTo(left, top + i)
-//             str += line
-//         }
-//         return str
-//     },
-
-//     saveCursor: () => isApple ? '\x1B7' : '\x1B[s',
-
-//     restoreCursor: () => isApple ? '\x1B8' : '\x1B[u',
-
-//     hideCursor: () => '\x1B[?25l',
-
-//     showCursor: () => '\x1B[?25h',
-// }
-
-// export default ansi
-
-function safen(n) {
+/**
+ * @param {Number} n
+ * @return {Number}
+ */
+function safen(n: number): number {
     if (Number.isFinite(n) && Number.isInteger(n) && n > 0) {
         return n
     }

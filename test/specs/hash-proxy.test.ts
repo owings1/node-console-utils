@@ -1,3 +1,4 @@
+// @ts-nocheck 
 import {ger} from '../helpers/index.js'
 import {expect} from 'chai'
 

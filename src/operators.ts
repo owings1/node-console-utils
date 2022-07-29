@@ -30,7 +30,7 @@
  * @param {Number} b
  * @return {Number}
  */
-export function add(a, b) {
+export function add(a: number, b: number): number {
     return a + b
 }
 
@@ -41,7 +41,7 @@ export function add(a, b) {
  * @param {Number} b
  * @return {Number}
  */
-export function sub(a, b) {
+export function sub(a: number, b: number): number {
     return a - b
 }
 
@@ -52,7 +52,7 @@ export function sub(a, b) {
  * @param {Number} b
  * @return {Number}
  */
-export function mul(a, b) {
+export function mul(a: number, b: number): number {
     return a * b
 }
 
@@ -63,7 +63,7 @@ export function mul(a, b) {
  * @param {Number} b
  * @return {Number}
  */
-export function div(a, b) {
+export function div(a: number, b: number): number {
     return a / b
 }
 
@@ -74,7 +74,7 @@ export function div(a, b) {
  * @param {Number} b
  * @return {Number}
  */
-export function floordiv(a, b) {
+export function floordiv(a: number, b: number): number {
     return Math.floor(a / b)
 }
 
@@ -84,6 +84,6 @@ export function floordiv(a, b) {
  * @param {*} a
  * @return {Boolean}
  */
-export function not(a) {
+export function not(a: any): boolean {
     return !a
 }

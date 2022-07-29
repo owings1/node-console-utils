@@ -43,10 +43,10 @@
  * 
  * @see https://www.fileformat.info/info/unicode/category/Zs/list.htm
  * 
- * @param {Number} cp The code point
+ * @param {number} cp The code point
  * @return {Boolean}
  */
-export function isBreakingSpace(cp) {
+export function isBreakingSpace(cp: number): boolean {
     // See test/notes/codes.md for more notes.
     return Number.isInteger(cp) && (
         // space
@@ -69,7 +69,7 @@ export function isBreakingSpace(cp) {
  * @param {Number} cp The code point
  * @return {Boolean}
  */
-export function isCombining(cp) {
+export function isCombining(cp: number): boolean {
     return Number.isInteger(cp) && cp >= 0x300 && cp <= 0x36F
 }
 
@@ -80,7 +80,7 @@ export function isCombining(cp) {
  * @param {Number} cp The code point
  * @return {Boolean}
  */
-export function isControl(cp) {
+export function isControl(cp: number): boolean {
     return Number.isInteger(cp) && (cp <= 0x1F || (cp >= 0x7F && cp <= 0x9F))
 }
 
@@ -92,7 +92,7 @@ export function isControl(cp) {
  * @param {Number} cp The code point
  * @return {Boolean}
  */
-export function isNonBreakingSpace(cp) {
+export function isNonBreakingSpace(cp: number): boolean {
     return Number.isInteger(cp) && (
         // no-break space
         cp === 0xA0 ||
@@ -109,7 +109,7 @@ export function isNonBreakingSpace(cp) {
  * @param {Number} cp The code point
  * @return {Boolean}
  */
-export function isSpace(cp) {
+export function isSpace(cp: number): boolean {
     return isNonBreakingSpace(cp) || isBreakingSpace(cp)
 }
 
@@ -120,7 +120,7 @@ export function isSpace(cp) {
  * @param {Number} cp The code point
  * @return {Boolean}
  */
-export function isSurrogate(cp) {
+export function isSurrogate(cp: number): boolean {
     return Number.isInteger(cp) && cp > 0xFFFF
 }
 
@@ -136,7 +136,7 @@ export function isSurrogate(cp) {
  * @param {Number} cp The code point
  * @return {Boolean}
  */
-export function isFullwidth(cp) {
+export function isFullwidth(cp: number): boolean {
     return Number.isInteger(cp) && cp >= 0x1100 && (
         cp <= 0x115F || // Hangul Jamo
         cp === 0x2329 || // LEFT-POINTING ANGLE BRACKET
@@ -175,7 +175,7 @@ export function isFullwidth(cp) {
  * @param {Number} cp The code point
  * @return {Boolean}
  */
-export function isWordBreaking(cp) {
+export function isWordBreaking(cp: number): boolean {
     return isBreakingSpace(cp) || isBreakingDash(cp)
 }
 
@@ -185,7 +185,7 @@ export function isWordBreaking(cp) {
  * @param {Number} cp The code point
  * @return {Boolean}
  */
-export function isBreakingDash(cp) {
+export function isBreakingDash(cp: number): boolean {
     return Number.isInteger(cp) && (
         // hyphen-minus
         cp === 0x2D ||

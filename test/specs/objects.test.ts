@@ -1,3 +1,4 @@
+// @ts-nocheck 
 /**
  * @quale/core - objects tests
  *
@@ -23,7 +24,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 import {def} from '../helpers/index.js'
-const {set, test} = def
+const {test} = def
 import {expect} from 'chai'
 
 import * as objects from '../../src/objects.js'

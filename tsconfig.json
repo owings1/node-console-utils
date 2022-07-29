@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
+        "declaration": true,
         "target": "ES2020",
         "module": "es2020",
-        "outDir": "out",
+        "outDir": "dist",
         "rootDir": "src",
         "strict": true,
         "noImplicitAny": false,
@@ -11,7 +12,8 @@
         "allowJs": true,
         "moduleResolution": "node",
         "types": [
-            "node"
+            "node",
+            "mocha"
         ],
         "lib": [
             "es6"
@@ -20,7 +22,7 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "allowUnreachableCode": true,
-        "useUnknownInCatchVariables": false,
+        "useUnknownInCatchVariables": false
     },
     "include": [
         "src/**/*.ts",
@@ -28,6 +30,7 @@
     ],
     "exclude": [
         "node_modules",
-        "<node_internals>/**",
+        "dist",
+        "<node_internals>/**"
     ]
 }

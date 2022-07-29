@@ -20,7 +20,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import {KeyExistsError, ValueError} from './errors.js'
+import {KeyExistsError, ValueError} from '../errors.js'
 import {isObject, isFunction as isFunc} from '../types.js'
 import {hasKey, keyPath, lget, lset} from '../objects.js'
 
@@ -28,13 +28,24 @@ const CrtKey = Symbol('create')
 
 const defProp = Object.defineProperty
 
+type HashProxyOpts = {
+    transform?: Function
+    filter?: Function
+    proto: object|null
+}
+
 export default class HashProxy {
 
-    static create(source, opts) {
+    source: object
+    target: object
+    ingress: object
+    opts: HashProxyOpts
+    static create(source: object, opts: HashProxyOpts) {
         checkArg(source, 'source', 'object', isObject)
         if (opts) {
             checkArg(opts, 'opts', 'object', isObject)
         } else {
+            // @ts-ignore
             opts = {}
         }
         if (opts.transform) {
@@ -57,7 +68,7 @@ export default class HashProxy {
         return new HashProxy(source, target, ingress, opts)//{ingress, target}
     }
 
-    constructor(source, target, ingress, opts) {
+    constructor(source: object, target: object, ingress: object, opts: HashProxyOpts) {
         if (target[CrtKey] !== true) {
             throw new TypeError(`Must use static ${this.constructor.name} create method`)
         }
