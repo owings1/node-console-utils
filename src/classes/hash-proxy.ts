@@ -29,9 +29,9 @@ const CrtKey = Symbol('create')
 const defProp = Object.defineProperty
 
 type HashProxyOpts = {
-    transform: Function
-    filter: Function
-    proto: object|null
+    transform?: Function
+    filter?: Function
+    proto?: object|null
     enumerable?: boolean
 }
 
@@ -45,13 +45,12 @@ export default class HashProxy {
     ingress: object
     opts: HashProxyOpts
 
-    static create(source: object, opts: HashProxyOpts) {
+    static create(source: object, opts?: HashProxyOpts) {
         checkArg(source, 'source', 'object', isObject)
         if (opts) {
             checkArg(opts, 'opts', 'object', isObject)
         } else {
-            // @ts-ignore
-            opts = {}
+            opts = {} as HashProxyOpts
         }
         if (opts.transform) {
             checkArg(opts.transform, 'transform', 'function', isFunc)
