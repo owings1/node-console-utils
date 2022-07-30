@@ -22,14 +22,14 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import {isFunction, isObject, isSymbol} from './types.js'
+import {isFunction, isObject, isPlainObject, isSymbol} from './types.js'
 
 const getOwnNames = Object.getOwnPropertyNames
 const getOwnSymbols = Object.getOwnPropertySymbols
 const enumable = (obj: object, prop: any): boolean => Object.propertyIsEnumerable.call(obj, prop)
 const SymNoKey = Symbol('NoKey')
 
-export {isObject}
+export {isObject, isPlainObject}
 
 type KeyPath = Array<string|symbol>
 type KeyPathish = string|symbol|KeyPath

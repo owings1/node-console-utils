@@ -56,7 +56,7 @@ export function getRawMessage(err: { inspect: () => any; message: { toString: ()
  * @param {Error} err The error to parse
  * @return {object} Strings {stack, message, rawMessage}
  */
-export function parseStack(err: { stack: any }): object {
+export function parseStack(err: { stack: any }): {stack, message, rawMessage} {
     // Normalize raw error message.
     // @ts-ignore
     const rawMessage = getRawMessage(err)
