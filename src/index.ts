@@ -1,4 +1,3 @@
-export * as Errors from './classes/errors.js'
 export {HashProxy} from './classes/hash-proxy.js'
 export {Screen} from './classes/screen.js'
 export * as ansi from './ansi.js'
